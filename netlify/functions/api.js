@@ -170,7 +170,7 @@ const handler = async (event, context) => {
     const { path, method, body } = event;
     const data = body ? JSON.parse(body) : {};
 
-    console.log('Processing request:', { path, method, data });
+    console.log('Processing request:', { path, method, data, rawQuery: event.rawQuery });
 
     // Health check
     if (path === '/api/health') {
@@ -274,7 +274,7 @@ const handler = async (event, context) => {
     }
 
     // Default 404
-    console.log('No route matched:', { path, method, availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register'] });
+    console.log('No route matched:', { path, method, rawQuery: event.rawQuery, availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register'] });
     return {
       statusCode: 404,
       headers: { ...headers, 'Content-Type': 'application/json' },
@@ -282,6 +282,7 @@ const handler = async (event, context) => {
         error: 'Route not found', 
         path, 
         method,
+        rawQuery: event.rawQuery,
         availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register']
       })
     };
