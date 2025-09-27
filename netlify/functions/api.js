@@ -167,10 +167,20 @@ const handler = async (event, context) => {
     await connectDB();
     await initializeDefaultUsers();
 
-    const { path, method, body } = event;
+    const { path, method, body, httpMethod } = event;
     const data = body ? JSON.parse(body) : {};
+    
+    // Use httpMethod if method is not available
+    const actualMethod = method || httpMethod || 'GET';
 
-    console.log('Processing request:', { path, method, data, rawQuery: event.rawQuery });
+    console.log('Processing request:', { 
+      path, 
+      method: actualMethod, 
+      originalMethod: method,
+      httpMethod: httpMethod,
+      data, 
+      rawQuery: event.rawQuery 
+    });
 
     // Health check
     if (path === '/api/health') {
@@ -183,7 +193,7 @@ const handler = async (event, context) => {
     }
 
     // Login route
-    if (path === '/api/auth/login' && method === 'POST') {
+    if (path === '/api/auth/login' && actualMethod === 'POST') {
       console.log('Matched login route - processing login request');
       
       const { username, password } = data;
@@ -236,7 +246,7 @@ const handler = async (event, context) => {
     }
 
     // Registration route
-    if (path === '/api/auth/register' && method === 'POST') {
+    if (path === '/api/auth/register' && actualMethod === 'POST') {
       console.log('Matched registration route - processing registration request');
       
       const { username, password, name, role, userClass, email } = data;
@@ -274,14 +284,16 @@ const handler = async (event, context) => {
     }
 
     // Default 404
-    console.log('No route matched:', { path, method, rawQuery: event.rawQuery, availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register'] });
+    console.log('No route matched:', { path, actualMethod, originalMethod: method, httpMethod, rawQuery: event.rawQuery, availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register'] });
     return {
       statusCode: 404,
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         error: 'Route not found', 
         path, 
-        method,
+        method: actualMethod,
+        originalMethod: method,
+        httpMethod: httpMethod,
         rawQuery: event.rawQuery,
         availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register']
       })
