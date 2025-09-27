@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuruKulX - Test Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .credentials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .credential-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .credential-card.teacher {
+            border-left-color: #28a745;
+        }
+        .credential-card.student {
+            border-left-color: #ffc107;
+        }
+        .credential-card.admin {
+            border-left-color: #dc3545;
+        }
+        .role {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+            color: #666;
+        }
+        .username {
+            font-weight: bold;
+            color: #333;
+            margin: 5px 0;
+        }
+        .password {
+            color: #666;
+            font-family: monospace;
+        }
+        .name {
+            color: #555;
+            font-style: italic;
+        }
+        .test-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 GuruKulX - Test Login</h1>
+        
+        <div class="test-section">
+            <h2>📋 Sample Login Credentials</h2>
+            <div class="credentials">
+                <div class="credential-card admin">
+                    <div class="role">Admin</div>
+                    <div class="username">Username: admin</div>
+                    <div class="password">Password: admin123</div>
+                    <div class="name">Admin User</div>
+                </div>
+                
+                <div class="credential-card teacher">
+                    <div class="role">Teacher</div>
+                    <div class="username">Username: teacher1</div>
+                    <div class="password">Password: teacher123</div>
+                    <div class="name">Ms. Priya Sharma</div>
+                </div>
+                
+                <div class="credential-card teacher">
+                    <div class="role">Teacher</div>
+                    <div class="username">Username: teacher2</div>
+                    <div class="password">Password: teacher123</div>
+                    <div class="name">Mr. Rajesh Kumar</div>
+                </div>
+                
+                <div class="credential-card student">
+                    <div class="role">Student</div>
+                    <div class="username">Username: student1</div>
+                    <div class="password">Password: student123</div>
+                    <div class="name">Arjun Singh</div>
+                </div>
+                
+                <div class="credential-card student">
+                    <div class="role">Student</div>
+                    <div class="username">Username: student2</div>
+                    <div class="password">Password: student123</div>
+                    <div class="name">Priya Patel</div>
+                </div>
+                
+                <div class="credential-card student">
+                    <div class="role">Student</div>
+                    <div class="username">Username: student3</div>
+                    <div class="password">Password: student123</div>
+                    <div class="name">Rahul Verma</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🧪 Test Login Form</h2>
+            <div class="test-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Enter password">
+                </div>
+                <button onclick="testLogin()">Test Login</button>
+                <button onclick="clearForm()">Clear</button>
+                <button onclick="testHealth()">Test API Health</button>
+            </div>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://gurukool-x.netlify.app';
+        
+        function showResult(message, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = message;
+        }
+        
+        async function testHealth() {
+            showResult('Testing API health...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ API Health Check Successful!\nStatus: ${data.status}\nTimestamp: ${data.timestamp}`, 'success');
+                } else {
+                    showResult(`❌ API Health Check Failed!\nStatus: ${response.status}\nError: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network Error!\n${error.message}`, 'error');
+            }
+        }
+        
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                showResult('❌ Please enter both username and password', 'error');
+                return;
+            }
+            
+            showResult('Testing login...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Login Successful!\n\nUsername: ${data.user.username}\nName: ${data.user.name}\nRole: ${data.user.role}\nClass: ${data.user.class}\nLevel: ${data.user.profile.level}\nScore: ${data.user.profile.score}\nXP: ${data.user.profile.xp}\n\nToken: ${data.token ? 'Received' : 'Missing'}`, 'success');
+                } else {
+                    showResult(`❌ Login Failed!\nStatus: ${response.status}\nError: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network Error!\n${error.message}`, 'error');
+            }
+        }
+        
+        function clearForm() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('result').textContent = '';
+        }
+        
+        // Auto-test health on page load
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html>

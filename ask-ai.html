@@ -38,6 +38,9 @@
 <body>
 <main class="container">
     <h1>Ask AI - Search Assistant</h1>
+    <div id="apiStatus" style="display: none; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404;">
+        <strong>Note:</strong> If you see an error message, the AI service might be temporarily unavailable or the API key needs to be updated. The system will fallback to Wikipedia for basic information.
+    </div>
 
     <form class="search-form" id="searchForm">
         <div class="search-container">
@@ -81,15 +84,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchResults = document.getElementById('searchResults');
     const voiceSearchBtn = document.getElementById('voiceSearchBtn');
     const micIcon = document.getElementById('micIcon');
+    const apiStatus = document.getElementById('apiStatus');
 
+    // API Configuration - Update these values as needed
     const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
-    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
     const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+    
+    // Check if API key is valid
+    function validateApiKey() {
+        if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your-gemini-api-key-here' || GEMINI_API_KEY.length < 20) {
+            return false;
+        }
+        return true;
+    }
 
     async function searchWithGemini(query){
         try {
             console.log('Attempting to connect to Gemini AI...');
             console.log('Query:', query);
+            
+            // Validate API key first
+            if (!validateApiKey()) {
+                throw new Error('Invalid or missing API key. Please check the configuration.');
+            }
             
             // First try direct API call
             try {
@@ -160,9 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error calling Gemini API:', error);
             
-            // Provide a helpful error message
+            // Provide more specific error messages
             if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
                 throw new Error('CORS Error: The API cannot be called directly from the browser. Please check the browser console for more details.');
+            } else if (error.message.includes('API key')) {
+                throw new Error('API Key Error: Please check if the Gemini API key is valid and has proper permissions.');
+            } else if (error.message.includes('quota') || error.message.includes('limit')) {
+                throw new Error('API Quota Error: The API request limit has been exceeded. Please try again later.');
+            } else if (error.message.includes('network') || error.message.includes('fetch')) {
+                throw new Error('Network Error: Please check your internet connection and try again.');
             }
             
             throw error;
@@ -302,7 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const otherRefs = getOtherReferences(q);
             const results = await mockGoogleResults(q);
 
-            briefText.textContent = wiki.summary || 'Sorry, there was an error connecting to AI. Here is a Wikipedia summary instead.';
+            const errorMessage = error.message || 'Unknown error occurred';
+            briefText.textContent = wiki.summary || `Sorry, there was an error connecting to AI: ${errorMessage}. This could be due to an invalid API key, network issues, or API quota limits. Here is a Wikipedia summary instead.`;
             refList.innerHTML = '';
             // Wikipedia reference first with its actual page link
             refList.insertAdjacentHTML('beforeend',
@@ -313,6 +338,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     `<li><a href="${r.url}" target="_blank">${r.name}</a></li>`);
             });
             briefAnswer.style.display='block';
+            
+            // Show API status message
+            apiStatus.style.display = 'block';
 
             showResults(results);
         }
