@@ -1,5 +1,5 @@
 // Test the new simplified function
-const fetch = require('node-fetch');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 async function testNewFunction() {
   console.log('🧪 Testing new simplified function...\n');

@@ -140,7 +140,12 @@ const initializeDefaultUsers = async () => {
 
 // Main handler function
 const handler = async (event, context) => {
-  console.log('Function called:', { path: event.path, method: event.method });
+  console.log('Function called:', { 
+    path: event.path, 
+    method: event.method,
+    body: event.body,
+    headers: event.headers
+  });
   
   // Handle CORS
   const headers = {
@@ -169,6 +174,7 @@ const handler = async (event, context) => {
 
     // Health check
     if (path === '/api/health') {
+      console.log('Matched health route');
       return {
         statusCode: 200,
         headers: { ...headers, 'Content-Type': 'application/json' },
@@ -178,7 +184,7 @@ const handler = async (event, context) => {
 
     // Login route
     if (path === '/api/auth/login' && method === 'POST') {
-      console.log('Processing login request');
+      console.log('Matched login route - processing login request');
       
       const { username, password } = data;
       
@@ -231,7 +237,7 @@ const handler = async (event, context) => {
 
     // Registration route
     if (path === '/api/auth/register' && method === 'POST') {
-      console.log('Processing registration request');
+      console.log('Matched registration route - processing registration request');
       
       const { username, password, name, role, userClass, email } = data;
       
@@ -268,11 +274,16 @@ const handler = async (event, context) => {
     }
 
     // Default 404
-    console.log('Route not found:', { path, method });
+    console.log('No route matched:', { path, method, availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register'] });
     return {
       statusCode: 404,
       headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Route not found', path, method })
+      body: JSON.stringify({ 
+        error: 'Route not found', 
+        path, 
+        method,
+        availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register']
+      })
     };
 
   } catch (error) {
