@@ -657,9 +657,11 @@ app.use((req, res) => {
 
 // Export handler for Netlify Functions
 const handler = async (event, context) => {
+  console.log('Function called with:', { path: event.path, method: event.method });
+  
   // Set up the request and response objects
   const { method, path, headers, body } = event;
-  
+
   // Create a mock request object
   const req = {
     method,
@@ -668,7 +670,7 @@ const handler = async (event, context) => {
     body: body ? JSON.parse(body) : {},
     user: null
   };
-  
+
   // Create a mock response object
   const res = {
     status: (code) => ({
@@ -694,7 +696,7 @@ const handler = async (event, context) => {
       body: JSON.stringify(data)
     })
   };
-  
+
   // Handle CORS preflight
   if (method === 'OPTIONS') {
     return {
@@ -707,20 +709,21 @@ const handler = async (event, context) => {
       body: ''
     };
   }
-  
+
   // Connect to database
   try {
     await connectDB();
   } catch (error) {
+    console.error('Database connection failed:', error);
     return res.status(500).json({ error: 'Database connection failed' });
   }
-  
+
   // Initialize users if needed
   if (!usersInitialized) {
     await initializeDefaultUsers();
     usersInitialized = true;
   }
-  
+
   // Route the request
   try {
     // Health check
@@ -769,32 +772,48 @@ const handler = async (event, context) => {
     }
     
     if (path === '/api/auth/login' && method === 'POST') {
-      const { username, password } = req.body;
-      
-      if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password required' });
+      try {
+        console.log('Login attempt:', { username: req.body.username });
+        
+        const { username, password } = req.body;
+        
+        if (!username || !password) {
+          console.log('Missing credentials:', { username: !!username, password: !!password });
+          return res.status(400).json({ error: 'Username and password required' });
+        }
+        
+        const user = await User.findOne({ username });
+        if (!user) {
+          console.log('User not found:', username);
+          return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        
+        const isValidPassword = await user.comparePassword(password);
+        if (!isValidPassword) {
+          console.log('Invalid password for user:', username);
+          return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        
+        const jwt = require('jsonwebtoken');
+        const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+        
+        const token = jwt.sign(
+          { userId: user._id, username: user.username, role: user.role, class: user.class },
+          JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+        
+        console.log('Login successful for user:', username);
+        return res.json({ 
+          message: 'Login successful',
+          token, 
+          user: user.getPublicProfile() 
+        });
+        
+      } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({ error: 'Login failed: ' + error.message });
       }
-      
-      const user = await User.findOne({ username });
-      if (!user) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-      
-      const isValidPassword = await user.comparePassword(password);
-      if (!isValidPassword) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-      
-      const jwt = require('jsonwebtoken');
-      const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-      
-      const token = jwt.sign(
-        { userId: user._id, username: user.username, role: user.role, class: user.class },
-        JWT_SECRET,
-        { expiresIn: '24h' }
-      );
-      
-      return res.json({ token, user: user.getPublicProfile() });
     }
     
     // User profile routes
@@ -1000,12 +1019,13 @@ Please provide a helpful educational response:`;
       }
     }
     
-    // Default 404
-    return res.status(404).json({ error: 'Route not found' });
-    
+    // Default 404 - Log the path for debugging
+    console.log('Route not found:', { path, method });
+    return res.status(404).json({ error: 'Route not found', path, method });
+
   } catch (error) {
     console.error('Function error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 };
 
