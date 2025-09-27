@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask AI Search Assistant - GuruKulX</title>
+<link rel="stylesheet" href="/css/style.css" />
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+    body{font-family:Inter,sans-serif;background:#f8f9fa;color:#333;padding:20px;line-height:1.6;}
+    .container{max-width:1000px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1);padding:30px;}
+    h1{text-align:center;color:#16a34a;margin-bottom:20px;}
+    .search-form{display:flex;gap:10px;margin:20px 0;width:100%;max-width:800px;}
+    .search-container{display:flex;gap:8px;width:100%;}
+    .search-input{flex:1;padding:12px 16px;border:1px solid #ddd;border-radius:8px;font-size:16px;min-width:0;}
+    .voice-btn{background:#6b7280;color:#fff;border:none;border-radius:8px;padding:12px;cursor:pointer;font-weight:500;min-width:50px;}
+    .voice-btn:hover{background:#4b5563;}
+    .voice-btn.listening{background:#dc2626;}
+    .search-btn{background:#16a34a;color:#fff;border:none;border-radius:8px;padding:12px 20px;cursor:pointer;font-weight:500;}
+    .search-btn:hover{background:#128a3f;}
+    .brief-answer{display:none;background:#eef8ee;border-left:4px solid #16a34a;padding:16px 20px;margin:20px 0;border-radius:8px;}
+    .brief-answer h3{color:#16a34a;margin-bottom:8px;}
+    .references ul{margin-top:10px;padding-left:20px;}
+    .references li{margin-bottom:6px;}
+    .references a{color:#1a0dab;text-decoration:none;}
+    .references a:hover{text-decoration:underline;}
+    .loading{text-align:center;display:none;padding:30px;}
+    .loading-spinner{border:4px solid #f3f3f3;border-top:4px solid #16a34a;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:0 auto 15px;}
+    @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+    .results-section{display:none;}
+    .result-item{border-bottom:1px solid #eee;padding:20px 0;}
+    .result-title{font-size:18px;font-weight:600;color:#1a0dab;display:block;text-decoration:none;margin-bottom:5px;}
+    .result-title:hover{text-decoration:underline;}
+    .result-url{color:#006621;font-size:14px;margin-bottom:5px;}
+    .result-description{color:#545454;font-size:14px;line-height:1.5;}
+</style>
+</head>
+<body>
+<main class="container">
+    <h1>Ask AI - Search Assistant</h1>
+
+    <form class="search-form" id="searchForm">
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchQuery" placeholder="Ask me anything..." required>
+            <button type="button" class="voice-btn" id="voiceSearchBtn" title="Voice Search">
+                <i class="ri-mic-line" id="micIcon"></i>
+            </button>
+            <button type="submit" class="search-btn">Search</button>
+        </div>
+    </form>
+
+    <!-- Quick Answer with references -->
+    <div class="brief-answer" id="briefAnswer">
+        <h3>Quick Answer</h3>
+        <p id="briefAnswerText"></p>
+        <div class="references">
+            <strong>References:</strong>
+            <ul id="referenceList"></ul>
+        </div>
+    </div>
+
+    <div class="loading" id="loadingIndicator">
+        <div class="loading-spinner"></div>
+        <p>Searching with AI...</p>
+    </div>
+
+    <section class="results-section" id="resultsSection">
+        <div id="searchResults"><h3>Other Search Results (mock)</h3></div>
+    </section>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('searchForm');
+    const queryInput = document.getElementById('searchQuery');
+    const briefAnswer = document.getElementById('briefAnswer');
+    const briefText = document.getElementById('briefAnswerText');
+    const refList = document.getElementById('referenceList');
+    const loading = document.getElementById('loadingIndicator');
+    const resultsSection = document.getElementById('resultsSection');
+    const searchResults = document.getElementById('searchResults');
+    const voiceSearchBtn = document.getElementById('voiceSearchBtn');
+    const micIcon = document.getElementById('micIcon');
+
+    const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
+    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+
+    async function searchWithGemini(query){
+        try {
+            console.log('Attempting to connect to Gemini AI...');
+            console.log('Query:', query);
+            
+            // First try direct API call
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: query
+                            }]
+                        }]
+                    })
+                });
+                
+                console.log('Direct API Response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Direct API Response:', data);
+                    
+                    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                        return data.candidates[0].content.parts[0].text;
+                    }
+                }
+            } catch (directError) {
+                console.log('Direct API failed, trying CORS proxy...', directError);
+                
+                // Fallback to CORS proxy
+                const proxyUrl = `${CORS_PROXY}${encodeURIComponent(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`)}`;
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: query
+                            }]
+                        }]
+                    })
+                });
+                
+                console.log('CORS Proxy Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error Response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+                
+                const data = await response.json();
+                console.log('CORS Proxy API Response:', data);
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    console.error('Unexpected API response structure:', data);
+                    throw new Error('No response from Gemini AI');
+                }
+            }
+            
+            throw new Error('No response from Gemini AI');
+        } catch (error) {
+            console.error('Error calling Gemini API:', error);
+            
+            // Provide a helpful error message
+            if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
+                throw new Error('CORS Error: The API cannot be called directly from the browser. Please check the browser console for more details.');
+            }
+            
+            throw error;
+        }
+    }
+
+    // Voice search functionality
+    let recognition = null;
+    let isListening = false;
+    
+    // Check if browser supports speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        
+        recognition.onstart = function() {
+            isListening = true;
+            micIcon.className = 'ri-mic-fill';
+            voiceSearchBtn.classList.add('listening');
+            voiceSearchBtn.title = 'Listening... Click to stop';
+        };
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            queryInput.value = transcript;
+            isListening = false;
+            micIcon.className = 'ri-mic-line';
+            voiceSearchBtn.classList.remove('listening');
+            voiceSearchBtn.title = 'Voice Search';
+        };
+        
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            isListening = false;
+            micIcon.className = 'ri-mic-line';
+            voiceSearchBtn.classList.remove('listening');
+            voiceSearchBtn.title = 'Voice Search';
+            alert('Voice search failed. Please try again.');
+        };
+        
+        recognition.onend = function() {
+            isListening = false;
+            micIcon.className = 'ri-mic-line';
+            voiceSearchBtn.classList.remove('listening');
+            voiceSearchBtn.title = 'Voice Search';
+        };
+    } else {
+        voiceSearchBtn.style.display = 'none';
+    }
+    
+    voiceSearchBtn.addEventListener('click', function() {
+        if (!recognition) return;
+        
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    });
+
+    async function getWikipediaSummary(topic){
+        const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topic)}`;
+        try{
+            const res = await fetch(url);
+            if(!res.ok) throw new Error();
+            const data = await res.json();
+            return {summary: data.extract || '', url: data.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(topic)}`};
+        }catch{
+            return {summary:'', url:`https://en.wikipedia.org/wiki/${encodeURIComponent(topic)}`};
+        }
+    }
+
+    // We can only provide links for these
+    function getOtherReferences(topic){
+        return [
+            {name:'Britannica', url:`https://www.britannica.com/search?query=${encodeURIComponent(topic)}`},
+            {name:'Khan Academy', url:`https://www.khanacademy.org/search?page_search_query=${encodeURIComponent(topic)}`}
+        ];
+    }
+
+    async function mockGoogleResults(query){
+        await new Promise(r=>setTimeout(r,1000));
+        return [
+            {title:`Understanding ${query}`, url:`https://example.com/${query}`, description:`A guide to ${query}.`},
+            {title:`${query} - Wikipedia`, url:`https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`, description:`Wikipedia article for ${query}.`}
+        ];
+    }
+
+    function showResults(results){
+        searchResults.innerHTML = '<h3>Other Search Results (mock)</h3>';
+        results.forEach(r=>{
+            const div=document.createElement('div');
+            div.className='result-item';
+            div.innerHTML=`<a class="result-title" href="${r.url}" target="_blank">${r.title}</a>
+                           <div class="result-url">${r.url}</div>
+                           <div class="result-description">${r.description}</div>`;
+            searchResults.appendChild(div);
+        });
+        resultsSection.style.display='block';
+    }
+
+    form.addEventListener('submit', async e=>{
+        e.preventDefault();
+        const q = queryInput.value.trim();
+        if(!q) return;
+
+        // reset UI
+        briefAnswer.style.display='none';
+        resultsSection.style.display='none';
+        loading.style.display='block';
+
+        try {
+            // Get Gemini AI response
+            const geminiResponse = await searchWithGemini(q);
+            const otherRefs = getOtherReferences(q);
+            const results = await mockGoogleResults(q);
+
+            // update UI
+            loading.style.display='none';
+            briefText.textContent = geminiResponse;
+            refList.innerHTML = '';
+            // Add reference links
+            otherRefs.forEach(r=>{
+                refList.insertAdjacentHTML('beforeend',
+                    `<li><a href="${r.url}" target="_blank">${r.name}</a></li>`);
+            });
+            briefAnswer.style.display='block';
+
+            showResults(results);
+        } catch (error) {
+            // Handle error - fallback to Wikipedia
+            loading.style.display='none';
+            const wiki = await getWikipediaSummary(q);
+            const otherRefs = getOtherReferences(q);
+            const results = await mockGoogleResults(q);
+
+            briefText.textContent = wiki.summary || 'Sorry, there was an error connecting to AI. Here is a Wikipedia summary instead.';
+            refList.innerHTML = '';
+            // Wikipedia reference first with its actual page link
+            refList.insertAdjacentHTML('beforeend',
+                `<li><a href="${wiki.url}" target="_blank">Wikipedia Article</a></li>`);
+            // Other reference links
+            otherRefs.forEach(r=>{
+                refList.insertAdjacentHTML('beforeend',
+                    `<li><a href="${r.url}" target="_blank">${r.name}</a></li>`);
+            });
+            briefAnswer.style.display='block';
+
+            showResults(results);
+        }
+    });
+});
+</script>
+</body>
+</html>

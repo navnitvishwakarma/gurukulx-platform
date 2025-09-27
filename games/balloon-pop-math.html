@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balloon Pop Math Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #FF5722;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-item {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #37474F;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .value {
+            font-size: 1.8rem;
+            color: #FF5722;
+            margin-top: 5px;
+        }
+        
+        .lives {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .life {
+            width: 30px;
+            height: 30px;
+            background-color: #F44336;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .life::before {
+            content: "♥";
+            position: absolute;
+            color: white;
+            font-size: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #pause-btn {
+            background-color: #FF9800;
+        }
+        
+        #reset-btn {
+            background-color: #F44336;
+        }
+        
+        .game-area {
+            position: relative;
+            height: 60vh;
+            border: 3px solid #78909C;
+            border-radius: 15px;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 80px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            animation-timing-function: linear;
+            z-index: 10;
+        }
+        
+        .balloon::before {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .balloon-inner {
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .balloon:hover {
+            transform: scale(1.1);
+        }
+        
+        .message {
+            position: absolute;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FF5722;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            text-shadow: 1px 1px 2px white;
+            transition: all 0.5s;
+        }
+        
+        .warning {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 87, 34, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 30;
+            display: none;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        .instructions {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions h3 {
+            color: #37474F;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .instructions p {
+            margin-bottom: 8px;
+            color: #546E7A;
+            display: flex;
+            align-items: center;
+        }
+        
+        .instructions p span {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 100;
+            border-radius: 15px;
+        }
+        
+        .game-over h2 {
+            font-size: 3rem;
+            color: #FF5722;
+            margin-bottom: 20px;
+        }
+        
+        .game-over p {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .level-up {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            z-index: 30;
+            display: none;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            text-align: center;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .game-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Balloon Pop Math Game</h1>
+        
+        <div class="game-info">
+            <div class="info-item">
+                <div>Level</div>
+                <div class="value" id="level">1</div>
+            </div>
+            <div class="info-item">
+                <div>Score</div>
+                <div class="value" id="score">0</div>
+            </div>
+            <div class="info-item">
+                <div>Next Level</div>
+                <div class="value" id="next-level">250</div>
+            </div>
+            <div class="info-item">
+                <div>Lives</div>
+                <div class="lives" id="lives">
+                    <div class="life"></div>
+                    <div class="life"></div>
+                    <div class="life"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="start-btn">Start Game</button>
+            <button id="pause-btn">Pause</button>
+            <button id="reset-btn">Reset</button>
+        </div>
+        
+        <div class="game-area" id="game-area">
+            <!-- Warning message -->
+            <div class="warning" id="warning">You missed a balloon! Life lost!</div>
+            
+            <!-- Level up message -->
+            <div class="level-up" id="level-up">Level Up!</div>
+            
+            <!-- Game over screen (initially hidden) -->
+            <div class="game-over" id="game-over" style="display: none;">
+                <h2>Game Over!</h2>
+                <p>You ran out of lives</p>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <p>Level Reached: <span id="final-level">1</span></p>
+                <button id="play-again-btn">Play Again</button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to Play:</h3>
+            <p><span>🎯</span> Pop balloons with correct equations to earn points</p>
+            <p><span>❌</span> Avoid popping balloons with incorrect equations</p>
+            <p><span>⚡</span> Balloons move faster as you level up</p>
+            <p><span>💥</span> Game ends when you lose all 3 lives</p>
+            <p><span>🚀</span> Level up every 250 points (max level 3)</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const gameArea = document.getElementById('game-area');
+            const startBtn = document.getElementById('start-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const playAgainBtn = document.getElementById('play-again-btn');
+            const levelDisplay = document.getElementById('level');
+            const scoreDisplay = document.getElementById('score');
+            const nextLevelDisplay = document.getElementById('next-level');
+            const livesContainer = document.getElementById('lives');
+            const warningMessage = document.getElementById('warning');
+            const levelUpMessage = document.getElementById('level-up');
+            const gameOverScreen = document.getElementById('game-over');
+            const finalScoreDisplay = document.getElementById('final-score');
+            const finalLevelDisplay = document.getElementById('final-level');
+            
+            let gameRunning = false;
+            let score = 0;
+            let level = 1;
+            let lives = 3;
+            let nextLevelScore = 250;
+            let balloonInterval;
+            let balloons = [];
+            
+            // Math problems with answers
+            const mathProblems = [
+                { equation: "2 + 2", answer: 4 },
+                { equation: "5 - 3", answer: 2 },
+                { equation: "4 × 3", answer: 12 },
+                { equation: "9 ÷ 3", answer: 3 },
+                { equation: "7 + 8", answer: 15 },
+                { equation: "10 - 6", answer: 4 },
+                { equation: "6 × 4", answer: 24 },
+                { equation: "20 ÷ 5", answer: 4 },
+                { equation: "9 + 7", answer: 16 },
+                { equation: "15 - 9", answer: 6 },
+                { equation: "8 × 3", answer: 24 },
+                { equation: "18 ÷ 2", answer: 9 },
+                { equation: "13 + 7", answer: 20 },
+                { equation: "25 - 8", answer: 17 },
+                { equation: "7 × 5", answer: 35 }
+            ];
+            
+            // Incorrect answers for wrong equations
+            const wrongAnswers = [3, 5, 7, 10, 8, 14, 18, 6, 11, 20, 22, 15, 18, 16, 30];
+            
+            // Balloon colors
+            const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', 
+                           '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE',
+                           '#B2FF59', '#EEFF41', '#FFEB3B', '#FFC107', '#FF9800'];
+            
+            // Initialize game
+            function initGame() {
+                score = 0;
+                level = 1;
+                lives = 3;
+                nextLevelScore = 250;
+                
+                scoreDisplay.textContent = score;
+                levelDisplay.textContent = level;
+                nextLevelDisplay.textContent = nextLevelScore;
+                
+                // Update lives display
+                updateLivesDisplay();
+                
+                // Clear any existing balloons
+                balloons.forEach(balloon => {
+                    if (balloon.element.parentNode) {
+                        balloon.element.parentNode.removeChild(balloon.element);
+                    }
+                });
+                balloons = [];
+                
+                // Hide game over screen
+                gameOverScreen.style.display = 'none';
+            }
+            
+            // Update lives display
+            function updateLivesDisplay() {
+                livesContainer.innerHTML = '';
+                for (let i = 0; i < lives; i++) {
+                    const life = document.createElement('div');
+                    life.className = 'life';
+                    livesContainer.appendChild(life);
+                }
+            }
+            
+            // Show warning message
+            function showWarning() {
+                warningMessage.style.display = 'block';
+                setTimeout(() => {
+                    warningMessage.style.display = 'none';
+                }, 2000);
+            }
+            
+            // Show level up message
+            function showLevelUp() {
+                levelUpMessage.style.display = 'block';
+                setTimeout(() => {
+                    levelUpMessage.style.display = 'none';
+                }, 2000);
+            }
+            
+            // Start game
+            function startGame() {
+                if (gameRunning) return;
+                
+                gameRunning = true;
+                
+                // Create balloons at intervals
+                balloonInterval = setInterval(createBalloon, 1000 - (level * 200));
+            }
+            
+            // Pause game
+            function pauseGame() {
+                gameRunning = !gameRunning;
+                
+                if (gameRunning) {
+                    pauseBtn.textContent = "Pause";
+                    // Resume animations
+                    balloons.forEach(balloon => {
+                        balloon.element.style.animationPlayState = 'running';
+                    });
+                    // Continue creating balloons
+                    balloonInterval = setInterval(createBalloon, 1000 - (level * 200));
+                } else {
+                    pauseBtn.textContent = "Resume";
+                    // Pause animations
+                    balloons.forEach(balloon => {
+                        balloon.element.style.animationPlayState = 'paused';
+                    });
+                    // Stop creating balloons
+                    clearInterval(balloonInterval);
+                }
+            }
+            
+            // Reset game
+            function resetGame() {
+                gameRunning = false;
+                clearInterval(balloonInterval);
+                
+                initGame();
+                pauseBtn.textContent = "Pause";
+            }
+            
+            // Calculate speed based on level
+            function calculateSpeed() {
+                return 4 + (level * 1.5);
+            }
+            
+            // Check for level up
+            function checkLevelUp() {
+                if (score >= nextLevelScore && level < 3) {
+                    level++;
+                    nextLevelScore += 250;
+                    levelDisplay.textContent = level;
+                    nextLevelDisplay.textContent = nextLevelScore;
+                    showLevelUp();
+                }
+            }
+            
+            // Create a balloon with a math equation
+            function createBalloon() {
+                if (!gameRunning || lives <= 0) {
+                    clearInterval(balloonInterval);
+                    checkGameOver();
+                    return;
+                }
+                
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                
+                const colorIndex = Math.floor(Math.random() * colors.length);
+                balloon.style.backgroundColor = colors[colorIndex];
+                
+                const balloonInner = document.createElement('div');
+                balloonInner.className = 'balloon-inner';
+                
+                // Randomly decide if this will be a correct or incorrect equation
+                const isCorrect = Math.random() > 0.3; // 70% chance of correct equation
+                let equationText, answer;
+                
+                if (isCorrect) {
+                    const problem = mathProblems[Math.floor(Math.random() * mathProblems.length)];
+                    equationText = problem.equation;
+                    answer = problem.answer;
+                } else {
+                    const problem = mathProblems[Math.floor(Math.random() * mathProblems.length)];
+                    equationText = problem.equation;
+                    // Select a wrong answer
+                    answer = wrongAnswers[Math.floor(Math.random() * wrongAnswers.length)];
+                    // Make sure the wrong answer is actually different from the correct one
+                    while (answer === problem.answer) {
+                        answer = wrongAnswers[Math.floor(Math.random() * wrongAnswers.length)];
+                    }
+                }
+                
+                balloonInner.textContent = equationText + " = " + answer;
+                balloon.appendChild(balloonInner);
+                
+                // Random horizontal position
+                const maxLeft = gameArea.offsetWidth - balloon.offsetWidth;
+                const leftPos = Math.floor(Math.random() * maxLeft);
+                balloon.style.left = leftPos + 'px';
+                
+                // Set animation duration based on level
+                const speed = calculateSpeed();
+                balloon.style.animation = `floatUp ${speed}s linear forwards`;
+                
+                // Add click event
+                balloon.addEventListener('click', function() {
+                    if (!gameRunning) return;
+                    
+                    if (isCorrect) {
+                        // Correct equation popped
+                        score += level * 10;
+                        scoreDisplay.textContent = score;
+                        showMessage("+ " + (level * 10), balloon.offsetLeft, balloon.offsetTop, true);
+                        
+                        // Check for level up
+                        checkLevelUp();
+                    } else {
+                        // Wrong equation popped
+                        lives = Math.max(0, lives - 1);
+                        updateLivesDisplay();
+                        showMessage("Life lost!", balloon.offsetLeft, balloon.offsetTop, false);
+                        showWarning();
+                        
+                        if (lives <= 0) {
+                            checkGameOver();
+                        }
+                    }
+                    
+                    // Pop animation
+                    balloon.style.transition = 'transform 0.2s, opacity 0.2s';
+                    balloon.style.transform = 'scale(1.5)';
+                    balloon.style.opacity = '0';
+                    
+                    // Remove balloon from array and DOM after animation
+                    setTimeout(() => {
+                        const index = balloons.findIndex(b => b.element === balloon);
+                        if (index !== -1) {
+                            balloons.splice(index, 1);
+                        }
+                        if (balloon.parentNode) {
+                            balloon.parentNode.removeChild(balloon);
+                        }
+                    }, 200);
+                });
+                
+                // Add event for when balloon reaches top (missed)
+                balloon.addEventListener('animationend', function() {
+                    if (balloon.parentNode && gameRunning) {
+                        if (isCorrect) {
+                            // Player missed a correct balloon - lose a life
+                            lives = Math.max(0, lives - 1);
+                            updateLivesDisplay();
+                            showWarning();
+                            
+                            if (lives <= 0) {
+                                checkGameOver();
+                            }
+                        }
+                        
+                        const index = balloons.findIndex(b => b.element === balloon);
+                        if (index !== -1) {
+                            balloons.splice(index, 1);
+                        }
+                        balloon.parentNode.removeChild(balloon);
+                    }
+                });
+                
+                gameArea.appendChild(balloon);
+                
+                // Store balloon reference
+                balloons.push({
+                    element: balloon,
+                    isCorrect: isCorrect
+                });
+            }
+            
+            // Show message when balloon is popped
+            function showMessage(text, x, y, isPositive) {
+                const message = document.createElement('div');
+                message.className = 'message';
+                message.textContent = text;
+                message.style.left = (x - 20) + 'px';
+                message.style.top = (y - 20) + 'px';
+                message.style.color = isPositive ? '#4CAF50' : '#F44336';
+                
+                gameArea.appendChild(message);
+                
+                // Fade in
+                setTimeout(() => {
+                    message.style.opacity = '1';
+                }, 10);
+                
+                // Move up and fade out
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-50px)';
+                }, 500);
+                
+                // Remove from DOM
+                setTimeout(() => {
+                    if (message.parentNode) {
+                        message.parentNode.removeChild(message);
+                    }
+                }, 1000);
+            }
+            
+            // Check if game is over
+            function checkGameOver() {
+                if (lives <= 0) {
+                    gameRunning = false;
+                    clearInterval(balloonInterval);
+                    
+                    finalScoreDisplay.textContent = score;
+                    finalLevelDisplay.textContent = level;
+                    gameOverScreen.style.display = 'flex';
+                }
+            }
+            
+            // Event listeners
+            startBtn.addEventListener('click', startGame);
+            pauseBtn.addEventListener('click', pauseGame);
+            resetBtn.addEventListener('click', resetGame);
+            playAgainBtn.addEventListener('click', resetGame);
+            
+            // Add keyframe animation for balloons
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes floatUp {
+                    from { 
+                        bottom: -100px; 
+                        transform: translateX(0);
+                    }
+                    to { 
+                        bottom: 100%; 
+                        transform: translateX(${Math.random() > 0.5 ? '-' : ''}20px);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Initialize the game
+            initGame();
+        });
+    </script>
+</body>
+</html>

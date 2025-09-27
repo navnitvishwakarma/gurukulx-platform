@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numbers Quiz - GuruKulX</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --color-primary: #4361ee;
+            --color-accent: #f72585;
+            --color-bg: #f8f9fa;
+            --color-fg: #212529;
+            --color-muted: #6c757d;
+            --color-card: #ffffff;
+            --color-success: #16a34a;
+            --color-error: #dc2626;
+            --border-radius: 0.75rem;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-fg);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: var(--color-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Text utilities */
+        .text-balance {
+            text-wrap: balance;
+        }
+
+        .text-pretty {
+            text-wrap: pretty;
+        }
+
+        .muted {
+            color: var(--color-muted);
+        }
+
+        /* Button styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: color-mix(in srgb, var(--color-primary) 90%, black);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border-color: var(--color-muted);
+            color: var(--color-fg);
+        }
+
+        .btn-outline:hover {
+            background-color: color-mix(in srgb, var(--color-muted) 10%, transparent);
+        }
+
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Quiz Page Styles */
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--color-fg);
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb i {
+            color: var(--color-muted);
+        }
+
+        .quiz-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .quiz-progress {
+            margin-top: 1.5rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: color-mix(in srgb, var(--color-muted) 20%, transparent);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--color-primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-content {
+            margin: 2rem 0;
+        }
+
+        .quiz-intro {
+            display: flex;
+            justify-content: center;
+        }
+
+        .intro-card {
+            text-align: center;
+            padding: 2rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            max-width: 500px;
+            background: var(--color-bg);
+        }
+
+        .intro-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .intro-card h2 {
+            margin-bottom: 1rem;
+        }
+
+        .quiz-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .detail-item i {
+            color: var(--color-primary);
+        }
+
+        /* Quiz Play Styles */
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--color-muted);
+            border-radius: 0.5rem;
+        }
+
+        .question-counter {
+            font-weight: 600;
+        }
+
+        .question-score {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .question-card {
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--color-bg);
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .question-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option {
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .option:hover {
+            background: color-mix(in srgb, var(--color-muted) 20%, transparent);
+            border-color: var(--color-primary);
+        }
+
+        .option.selected {
+            background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+            border-color: var(--color-primary);
+        }
+
+        .option.correct {
+            background: color-mix(in srgb, var(--color-success) 10%, transparent);
+            border-color: var(--color-success);
+        }
+
+        .option.incorrect {
+            background: color-mix(in srgb, var(--color-error) 10%, transparent);
+            border-color: var(--color-error);
+        }
+
+        .option-prefix {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-muted);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-prefix {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .option.correct .option-prefix {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .option.incorrect .option-prefix {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Quiz End Styles */
+        .quiz-end {
+            display: flex;
+            justify-content: center;
+        }
+
+        .results-card {
+            text-align: center;
+            padding: 2rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            max-width: 500px;
+            background: var(--color-bg);
+        }
+
+        .results-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 0.75rem;
+            background: var(--color-bg);
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--color-fg);
+            opacity: 0.7;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .results-feedback {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: color-mix(in srgb, var(--color-muted) 20%, transparent);
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Review Mode */
+        .review-mode .option {
+            cursor: default;
+        }
+
+        .review-mode .option:hover {
+            background: initial;
+            border-color: var(--color-muted);
+        }
+
+        /* Full-screen mode styles */
+        .fullscreen-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--color-card);
+            border-bottom: 1px solid var(--color-muted);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .exit-fullscreen-btn {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background: var(--color-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .exit-fullscreen-btn:hover {
+            background: color-mix(in srgb, var(--color-muted) 80%, transparent);
+        }
+        
+        .fullscreen-quiz-container {
+            padding: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 1.5rem;
+            }
+            
+            .results-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .question-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            
+            .quiz-controls {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .quiz-controls .btn {
+                width: 100%;
+            }
+            
+            .results-actions {
+                flex-direction: column;
+            }
+            
+            .results-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .intro-card {
+                padding: 1.5rem;
+            }
+            
+            .question-card {
+                padding: 1.25rem;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .option {
+                padding: 0.75rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body data-page="quiz">
+    <main class="container">
+        <div class="quiz-container card">
+            <div class="breadcrumb">
+                <a href="/class-selection.html">Classes</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <a href="/class6-chapters.html">Class 6</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <a href="/chapter1-games.html">Knowing Our Numbers</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Numbers Quiz</span>
+            </div>
+            
+            <div class="quiz-header">
+                <h1 class="text-balance">Knowing Our Numbers Quiz</h1>
+                <p class="muted text-pretty">Test your knowledge of large numbers, comparisons, estimation, and Roman numerals.</p>
+                
+                <div class="quiz-progress">
+                    <div class="progress-label">
+                        <span>Quiz Progress</span>
+                        <span id="quizProgress">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="quizProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quiz-content" id="quizContent">
+                <div class="quiz-intro" id="quizIntro">
+                    <div class="intro-card">
+                        <div class="intro-icon">
+                            <i class="ri-questionnaire-line"></i>
+                        </div>
+                        <h2>Ready to Test Your Knowledge?</h2>
+                        <p>This quiz contains 10 questions about Knowing Our Numbers. You'll have unlimited time to complete it, but try to answer as accurately as possible!</p>
+                        
+                        <div class="quiz-details">
+                            <div class="detail-item">
+                                <i class="ri-question-answer-line"></i>
+                                <span>10 Multiple Choice Questions</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="ri-time-line"></i>
+                                <span>Approx. 10-15 minutes</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="ri-medal-line"></i>
+                                <span>Earn up to 50 XP</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-lg" id="startQuizBtn">Start Quiz</button>
+                    </div>
+                </div>
+                
+                <div class="quiz-play hidden" id="quizPlay">
+                    <div class="question-header">
+                        <div class="question-counter">
+                            Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span>
+                        </div>
+                        <div class="question-score">
+                            Score: <span id="currentScore">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-card">
+                        <div class="question-text" id="questionText">
+                            <!-- Question will be inserted here -->
+                        </div>
+                        
+                        <div class="question-options" id="questionOptions">
+                            <!-- Options will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-controls">
+                        <button class="btn btn-outline" id="prevQuestionBtn" disabled>
+                            <i class="ri-arrow-left-line"></i> Previous
+                        </button>
+                        <button class="btn btn-primary" id="nextQuestionBtn">
+                           <i class="ri-arrow-right-line"></i>  Next
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="quiz-end hidden" id="quizEnd">
+                    <div class="results-card">
+                        <div class="results-icon">
+                            <i class="ri-trophy-line"></i>
+                        </div>
+                        <h2>Quiz Complete!</h2>
+                        
+                        <div class="results-stats">
+                            <div class="result-stat">
+                                <span class="stat-label">Your Score</span>
+                                <span class="stat-value" id="finalScore">0</span>
+                            </div>
+                            <div class="result-stat">
+                                <span class="stat-label">Correct Answers</span>
+                                <span class="stat-value" id="correctAnswers">0</span>
+                            </div>
+                            <div class="result-stat">
+                                <span class="stat-label">XP Earned</span>
+                                <span class="stat-value" id="xpEarned">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="results-feedback" id="resultsFeedback">
+                            <!-- Feedback will be inserted here -->
+                        </div>
+                        
+                        <div class="results-actions">
+                            <button class="btn btn-primary" id="reviewQuizBtn">
+                                <i class="ri-eye-line"></i> Review Answers
+                            </button>
+                            <button class="btn btn-outline" id="retryQuizBtn">
+                                <i class="ri-restart-line"></i> Try Again
+                            </button>
+                            <a href="/chapter1-games.html" class="btn btn-outline">
+                                <i class="ri-arrow-left-line"></i> Back to Games
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Quiz questions for Class 6 Chapter 1: Knowing Our Numbers
+        const quizQuestions = [
+            {
+                question: "Which of the following is the correct expanded form of 45,678?",
+                options: [
+                    "40,000 + 5,000 + 600 + 70 + 8",
+                    "40,000 + 5,000 + 60 + 70 + 8",
+                    "40,000 + 5,000 + 600 + 7 + 8",
+                    "4,000 + 500 + 60 + 70 + 8"
+                ],
+                correctIndex: 0,
+                explanation: "45,678 = 40,000 (4 ten thousands) + 5,000 (5 thousands) + 600 (6 hundreds) + 70 (7 tens) + 8 (8 ones)"
+            },
+            {
+                question: "What is the place value of 7 in the number 87,654?",
+                options: [
+                    "Thousands",
+                    "Hundreds",
+                    "Tens",
+                    "Ones"
+                ],
+                correctIndex: 0,
+                explanation: "In 87,654, the digit 7 is in the thousands place (7,000)."
+            },
+            {
+                question: "Which symbol correctly completes the statement: 45,672 __ 45,762?",
+                options: [
+                    ">",
+                    "<",
+                    "=",
+                    "≥"
+                ],
+                correctIndex: 1,
+                explanation: "45,672 is less than 45,762 because at the hundreds place, 6 < 7."
+            },
+            {
+                question: "What is the Roman numeral for 49?",
+                options: [
+                    "IL",
+                    "XLIX",
+                    "XXXXIX",
+                    "VLIV"
+                ],
+                correctIndex: 1,
+                explanation: "49 = XLIX (50-10 = 40, and 10-1 = 9). IL is not a standard representation."
+            },
+            {
+                question: "Estimate 4,567 + 3,421 to the nearest hundred.",
+                options: [
+                    "7,900",
+                    "8,000",
+                    "8,100",
+                    "7,990"
+                ],
+                correctIndex: 1,
+                explanation: "4,567 ≈ 4,600 and 3,421 ≈ 3,400. 4,600 + 3,400 = 8,000."
+            },
+            {
+                question: "Which of these numbers is the greatest?",
+                options: [
+                    "45,678",
+                    "45,768",
+                    "45,687",
+                    "45,876"
+                ],
+                correctIndex: 3,
+                explanation: "45,876 is the greatest because it has the highest hundreds digit (8) compared to others."
+            },
+            {
+                question: "What is the correct number name for 12,045?",
+                options: [
+                    "Twelve thousand forty-five",
+                    "Twelve thousand four hundred five",
+                    "One thousand two hundred forty-five",
+                    "Twelve hundred forty-five"
+                ],
+                correctIndex: 0,
+                explanation: "12,045 is read as 'Twelve thousand forty-five'."
+            },
+            {
+                question: "Which of these is the smallest 6-digit number?",
+                options: [
+                    "100,000",
+                    "99,999",
+                    "1,00,000",
+                    "0,99,999"
+                ],
+                correctIndex: 0,
+                explanation: "100,000 is the smallest 6-digit number. 99,999 is a 5-digit number."
+            },
+            {
+                question: "How would you write 'Seventy-eight thousand four hundred twenty' in numerals?",
+                options: [
+                    "78,420",
+                    "7,84,20",
+                    "78,402",
+                    "78,240"
+                ],
+                correctIndex: 0,
+                explanation: "Seventy-eight thousand = 78,000, four hundred = 400, twenty = 20. So 78,000 + 400 + 20 = 78,420."
+            },
+            {
+                question: "What is the difference between the place values of two 5s in the number 45,457?",
+                options: [
+                    "4,995",
+                    "5,000",
+                    "495",
+                    "500"
+                ],
+                correctIndex: 0,
+                explanation: "First 5 is in thousands place (5,000), second 5 is in tens place (50). Difference = 5,000 - 50 = 4,950."
+            }
+        ];
+        
+        // Quiz state
+        let quizState = {
+            currentQuestion: 0,
+            score: 0,
+            userAnswers: new Array(quizQuestions.length).fill(null),
+            quizStarted: false,
+            reviewMode: false
+        };
+        
+        // DOM elements
+        const quizIntro = document.getElementById('quizIntro');
+        const quizPlay = document.getElementById('quizPlay');
+        const quizEnd = document.getElementById('quizEnd');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const prevQuestionBtn = document.getElementById('prevQuestionBtn');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+        const reviewQuizBtn = document.getElementById('reviewQuizBtn');
+        const retryQuizBtn = document.getElementById('retryQuizBtn');
+        
+        // Initialize the quiz
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners
+            startQuizBtn.addEventListener('click', startQuiz);
+            prevQuestionBtn.addEventListener('click', showPreviousQuestion);
+            nextQuestionBtn.addEventListener('click', showNextQuestion);
+            reviewQuizBtn.addEventListener('click', reviewQuiz);
+            retryQuizBtn.addEventListener('click', retryQuiz);
+        });
+        
+        function startQuiz() {
+            quizState.quizStarted = true;
+            
+            // Enter full-screen mode
+            enterFullscreen();
+            
+            updateProgressBar();
+            displayQuestion(0);
+        }
+        
+        function displayQuestion(questionIndex) {
+            quizState.currentQuestion = questionIndex;
+            const question = quizQuestions[questionIndex];
+            
+            // Update question counter
+            document.getElementById('currentQuestion').textContent = questionIndex + 1;
+            document.getElementById('totalQuestions').textContent = quizQuestions.length;
+            
+            // Display question text
+            document.getElementById('questionText').textContent = question.question;
+            
+            // Display options
+            const optionsContainer = document.getElementById('questionOptions');
+            optionsContainer.innerHTML = '';
+            
+            const optionPrefixes = ['A', 'B', 'C', 'D'];
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                
+                // If in review mode, show correct/incorrect status
+                if (quizState.reviewMode) {
+                    if (index === question.correctIndex) {
+                        optionElement.classList.add('correct');
+                    } else if (index === quizState.userAnswers[questionIndex]) {
+                        optionElement.classList.add('incorrect');
+                    }
+                } else if (quizState.userAnswers[questionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <span class="option-prefix">${optionPrefixes[index]}</span>
+                    <span class="option-text">${option}</span>
+                `;
+                
+                // Only add click event if not in review mode
+                if (!quizState.reviewMode) {
+                    optionElement.addEventListener('click', () => selectOption(index));
+                }
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            prevQuestionBtn.disabled = questionIndex === 0;
+            
+            if (questionIndex === quizQuestions.length - 1) {
+                nextQuestionBtn.innerHTML = 'Finish Quiz <i class="ri-arrow-right-line"></i>';
+                nextQuestionBtn.removeEventListener('click', showNextQuestion);
+                nextQuestionBtn.addEventListener('click', finishQuiz);
+            } else {
+                nextQuestionBtn.innerHTML = 'Next <i class="ri-arrow-right-line"></i>';
+                nextQuestionBtn.removeEventListener('click', finishQuiz);
+                nextQuestionBtn.addEventListener('click', showNextQuestion);
+            }
+            
+            updateProgressBar();
+        }
+        
+        function selectOption(optionIndex) {
+            quizState.userAnswers[quizState.currentQuestion] = optionIndex;
+            
+            // Update UI to show selected option
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+            
+            // Check if answer is correct and update score
+            const currentQuestion = quizQuestions[quizState.currentQuestion];
+            if (optionIndex === currentQuestion.correctIndex) {
+                // Only add to score if not already scored for this question
+                if (quizState.userAnswers[quizState.currentQuestion] !== currentQuestion.correctIndex) {
+                    quizState.score += 10;
+                    document.getElementById('currentScore').textContent = quizState.score;
+                }
+            } else {
+                // If changing from correct to incorrect answer, subtract points
+                if (quizState.userAnswers[quizState.currentQuestion] === currentQuestion.correctIndex) {
+                    quizState.score -= 10;
+                    document.getElementById('currentScore').textContent = quizState.score;
+                }
+            }
+        }
+        
+        function showPreviousQuestion() {
+            if (quizState.currentQuestion > 0) {
+                displayQuestion(quizState.currentQuestion - 1);
+            }
+        }
+        
+        function showNextQuestion() {
+            if (quizState.currentQuestion < quizQuestions.length - 1) {
+                displayQuestion(quizState.currentQuestion + 1);
+            }
+        }
+        
+        function finishQuiz() {
+            // Exit full-screen mode first
+            exitFullscreen();
+            
+            quizPlay.classList.add('hidden');
+            quizEnd.classList.remove('hidden');
+            
+            // Calculate final score and results
+            const correctAnswers = calculateCorrectAnswers();
+            const xpEarned = calculateXPEarned(correctAnswers);
+            
+            // Update results display
+            document.getElementById('finalScore').textContent = quizState.score;
+            document.getElementById('correctAnswers').textContent = `${correctAnswers}/${quizQuestions.length}`;
+            document.getElementById('xpEarned').textContent = xpEarned;
+            
+            // Display feedback based on performance
+            const feedbackElement = document.getElementById('resultsFeedback');
+            let feedbackText = '';
+            
+            if (correctAnswers === quizQuestions.length) {
+                feedbackText = '<p>Perfect score! You have mastered Knowing Our Numbers! 🌟</p>';
+            } else if (correctAnswers >= quizQuestions.length * 0.7) {
+                feedbackText = '<p>Great job! You have a good understanding of this chapter. 👍</p>';
+            } else if (correctAnswers >= quizQuestions.length * 0.5) {
+                feedbackText = '<p>Good effort! Review the chapter and try again to improve your score. 💪</p>';
+            } else {
+                feedbackText = '<p>Keep practicing! Review the chapter materials and try the quiz again. 📚</p>';
+            }
+            
+            feedbackElement.innerHTML = feedbackText;
+        }
+        
+        function calculateCorrectAnswers() {
+            let correctCount = 0;
+            quizQuestions.forEach((question, index) => {
+                if (quizState.userAnswers[index] === question.correctIndex) {
+                    correctCount++;
+                }
+            });
+            return correctCount;
+        }
+        
+        function calculateXPEarned(correctAnswers) {
+            // Base XP is 30, plus 2 XP for each correct answer
+            return 30 + (correctAnswers * 2);
+        }
+        
+        function reviewQuiz() {
+            quizState.reviewMode = true;
+            quizEnd.classList.add('hidden');
+            quizPlay.classList.remove('hidden');
+            
+            // Add review class to body for special styling
+            document.body.classList.add('review-mode');
+            
+            // Display first question
+            displayQuestion(0);
+            
+            // Change next button text
+            nextQuestionBtn.innerHTML = 'Next <i class="ri-arrow-right-line"></i>';
+            nextQuestionBtn.addEventListener('click', showNextQuestion);
+            
+            // Add a back to results button
+            if (!document.getElementById('backToResultsBtn')) {
+                const backToResultsBtn = document.createElement('button');
+                backToResultsBtn.id = 'backToResultsBtn';
+                backToResultsBtn.className = 'btn btn-outline';
+                backToResultsBtn.innerHTML = '<i class="ri-arrow-left-line"></i> Back to Results';
+                backToResultsBtn.addEventListener('click', backToResults);
+                
+                document.querySelector('.quiz-controls').appendChild(backToResultsBtn);
+            }
+        }
+        
+        function backToResults() {
+            quizState.reviewMode = false;
+            quizPlay.classList.add('hidden');
+            quizEnd.classList.remove('hidden');
+            document.body.classList.remove('review-mode');
+            
+            // Remove back to results button
+            const backToResultsBtn = document.getElementById('backToResultsBtn');
+            if (backToResultsBtn) {
+                backToResultsBtn.remove();
+            }
+        }
+        
+        function retryQuiz() {
+            // Reset quiz state
+            quizState = {
+                currentQuestion: 0,
+                score: 0,
+                userAnswers: new Array(quizQuestions.length).fill(null),
+                quizStarted: false,
+                reviewMode: false
+            };
+            
+            // Reset UI
+            quizEnd.classList.add('hidden');
+            quizIntro.classList.remove('hidden');
+            document.body.classList.remove('review-mode');
+            
+            // Update score display
+            document.getElementById('currentScore').textContent = '0';
+            
+            // Remove back to results button if it exists
+            const backToResultsBtn = document.getElementById('backToResultsBtn');
+            if (backToResultsBtn) {
+                backToResultsBtn.remove();
+            }
+        }
+        
+        function updateProgressBar() {
+            const progress = ((quizState.currentQuestion + 1) / quizQuestions.length) * 100;
+            document.getElementById('quizProgress').textContent = `${Math.round(progress)}%`;
+            document.getElementById('quizProgressBar').style.width = `${progress}%`;
+        }
+        
+        // Full-screen functionality
+        function enterFullscreen() {
+            const body = document.body;
+            
+            // Create full-screen container
+            const fullscreenContainer = document.createElement('div');
+            fullscreenContainer.className = 'fullscreen-mode';
+            fullscreenContainer.id = 'fullscreenQuizContainer';
+            
+            // Create header with exit button
+            const fullscreenHeader = document.createElement('div');
+            fullscreenHeader.className = 'fullscreen-header';
+            fullscreenHeader.innerHTML = `
+                <div class="quiz-title">Knowing Our Numbers Quiz</div>
+                <div class="exit-fullscreen-btn" id="exitFullscreenBtn">
+                    <i class="ri-close-line"></i>
+                </div>
+            `;
+            
+            // Create content container
+            const fullscreenContent = document.createElement('div');
+            fullscreenContent.className = 'fullscreen-quiz-container';
+            
+            // Move quiz content to full-screen container
+            const quizPlay = document.getElementById('quizPlay');
+            if (quizPlay) {
+                fullscreenContent.appendChild(quizPlay.cloneNode(true));
+                quizPlay.classList.remove('hidden');
+            }
+            
+            // Add elements to full-screen container
+            fullscreenContainer.appendChild(fullscreenHeader);
+            fullscreenContainer.appendChild(fullscreenContent);
+            
+            // Add to body
+            body.appendChild(fullscreenContainer);
+            
+            // Hide the intro section
+            document.getElementById('quizIntro').classList.add('hidden');
+            
+            // Add event listener for exit button
+            document.getElementById('exitFullscreenBtn').addEventListener('click', exitFullscreen);
+            
+            // Reattach event listeners to the new elements in fullscreen mode
+            const fullscreenPrevBtn = fullscreenContent.querySelector('#prevQuestionBtn');
+            const fullscreenNextBtn = fullscreenContent.querySelector('#nextQuestionBtn');
+            const fullscreenOptions = fullscreenContent.querySelectorAll('.option');
+            
+            if (fullscreenPrevBtn) {
+                fullscreenPrevBtn.addEventListener('click', showPreviousQuestion);
+            }
+            
+            if (fullscreenNextBtn) {
+                fullscreenNextBtn.addEventListener('click', function() {
+                    if (quizState.currentQuestion === quizQuestions.length - 1) {
+                        finishQuiz();
+                    } else {
+                        showNextQuestion();
+                    }
+                });
+            }
+            
+            if (fullscreenOptions.length > 0 && !quizState.reviewMode) {
+                fullscreenOptions.forEach((option, index) => {
+                    option.addEventListener('click', () => selectOption(index));
+                });
+            }
+            
+            // Update the display for the current question in fullscreen mode
+            displayQuestion(quizState.currentQuestion);
+        }
+        
+        function exitFullscreen() {
+            const fullscreenContainer = document.getElementById('fullscreenQuizContainer');
+            if (fullscreenContainer) {
+                fullscreenContainer.remove();
+            }
+            
+            // Show the quiz intro again
+            document.getElementById('quizIntro').classList.remove('hidden');
+            document.getElementById('quizPlay').classList.add('hidden');
+            
+            // Reset quiz if it was in progress
+            if (quizState.quizStarted && !quizState.reviewMode) {
+                retryQuiz();
+            }
+        }
+    </script>
+</body>
+</html>

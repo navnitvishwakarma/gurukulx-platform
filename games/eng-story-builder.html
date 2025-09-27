@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Story Builder • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+    <style>
+      .container {
+        max-width: 100% !important;
+        padding: 1rem !important;
+      }
+      .card {
+        margin: 0 !important;
+        padding: 1rem !important;
+      }
+      .story-container {
+        max-width: 100%;
+        margin: 1rem;
+        padding: 1rem;
+      }
+      
+      .story-prompt {
+        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+        border: 1px solid var(--color-primary);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin: 2rem 0;
+      }
+      
+      .story-prompt h3 {
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+      }
+      
+      .word-bank {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.75rem;
+        margin: 1.5rem 0;
+      }
+      
+      .word-item {
+        padding: 0.75rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        background: var(--color-bg);
+      }
+      
+      .word-item:hover {
+        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+        border-color: var(--color-primary);
+      }
+      
+      .word-item.used {
+        background: color-mix(in srgb, var(--color-muted) 30%, transparent);
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      
+      .story-textarea {
+        width: 100%;
+        min-height: 300px;
+        padding: 1rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.75rem;
+        font-size: 1rem;
+        line-height: 1.6;
+        resize: vertical;
+        background: var(--color-bg);
+        font-family: inherit;
+      }
+      
+      .story-textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+      }
+      
+      .story-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .story-stats {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      
+      .stat-item {
+        padding: 0.5rem 1rem;
+        background: color-mix(in srgb, var(--color-muted) 20%, transparent);
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+      }
+      
+      .story-templates {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+      
+      .template-card {
+        padding: 1.5rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: var(--color-bg);
+      }
+      
+      .template-card:hover {
+        border-color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+      }
+      
+      .template-card.selected {
+        border-color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      }
+      
+      .template-title {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: var(--color-primary);
+      }
+      
+      .template-description {
+        font-size: 0.9rem;
+        color: var(--color-fg);
+        opacity: 0.8;
+      }
+      
+      .story-preview {
+        background: var(--color-bg);
+        border: 1px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        min-height: 200px;
+        white-space: pre-wrap;
+        line-height: 1.6;
+      }
+      
+      .story-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+      }
+      
+      @media (max-width: 768px) {
+        .story-controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .story-stats {
+          justify-content: center;
+        }
+        
+        .story-actions {
+          flex-direction: column;
+        }
+        
+        .story-actions .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body data-game="eng-story-builder">
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="card">
+        <div class="breadcrumb">
+          <a href="/student-home.html"><i class="ri-home-line"></i> Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/subjects/english.html">English</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>Story Builder</span>
+        </div>
+        
+        <div class="quiz-header">
+          <h1><i class="ri-quill-pen-line"></i> Story Builder</h1>
+          <p class="muted">Create amazing stories using the provided words and templates!</p>
+        </div>
+
+        <div id="storyRoot">
+          <div id="storyIntro" class="quiz-intro">
+            <div class="intro-card">
+              <div class="intro-icon">
+                <i class="ri-book-2-line"></i>
+              </div>
+              <h2>Ready to Build Your Story?</h2>
+              <p>Choose a template and use the provided words to create your own creative story!</p>
+              
+              <div class="quiz-details">
+                <div class="detail-item">
+                  <i class="ri-file-text-line"></i>
+                  <span>Multiple Templates</span>
+                </div>
+                <div class="detail-item">
+                  <i class="ri-time-line"></i>
+                  <span>No Time Limit</span>
+                </div>
+                <div class="detail-item">
+                  <i class="ri-trophy-line"></i>
+                  <span>Earn XP for creativity</span>
+                </div>
+              </div>
+              
+              <button class="btn btn-primary btn-lg" id="startStory">Start Story Builder</button>
+            </div>
+          </div>
+
+          <div id="storyPlay" class="story-container hidden">
+            <div class="story-templates">
+              <div class="template-card" data-template="adventure">
+                <div class="template-title">Adventure Story</div>
+                <div class="template-description">Create an exciting adventure with heroes, quests, and magical creatures!</div>
+              </div>
+              <div class="template-card" data-template="mystery">
+                <div class="template-title">Mystery Story</div>
+                <div class="template-description">Write a thrilling mystery with clues, suspects, and unexpected twists!</div>
+              </div>
+              <div class="template-card" data-template="fantasy">
+                <div class="template-title">Fantasy Story</div>
+                <div class="template-description">Craft a magical fantasy world with wizards, dragons, and enchanted forests!</div>
+              </div>
+              <div class="template-card" data-template="scifi">
+                <div class="template-title">Sci-Fi Story</div>
+                <div class="template-description">Build a futuristic tale with robots, space travel, and advanced technology!</div>
+              </div>
+            </div>
+            
+            <div class="story-prompt hidden" id="storyPrompt">
+              <h3>Story Prompt</h3>
+              <p id="promptText"></p>
+            </div>
+            
+            <div class="word-bank hidden" id="wordBank">
+              <h3>Word Bank - Use these words in your story:</h3>
+              <div id="wordList"></div>
+            </div>
+            
+            <div class="story-controls">
+              <div class="story-stats">
+                <div class="stat-item">
+                  <strong>Words Used:</strong> <span id="wordsUsed">0</span>/<span id="totalWords">0</span>
+                </div>
+                <div class="stat-item">
+                  <strong>Story Length:</strong> <span id="storyLength">0</span> words
+                </div>
+                <div class="stat-item">
+                  <strong>XP Earned:</strong> <span id="xpEarned">0</span>
+                </div>
+              </div>
+              <button class="btn" id="clearStory">Clear Story</button>
+            </div>
+            
+            <textarea 
+              class="story-textarea" 
+              id="storyTextarea" 
+              placeholder="Start writing your story here... Use the words from the word bank to make it more interesting!"
+            ></textarea>
+            
+            <div class="story-preview hidden" id="storyPreview">
+              <h3>Your Story Preview:</h3>
+              <div id="previewContent"></div>
+            </div>
+            
+            <div class="story-actions">
+              <button class="btn" id="previewStory">Preview Story</button>
+              <button class="btn btn-primary" id="saveStory">Save Story</button>
+              <button class="btn btn-accent" id="newStory">New Story</button>
+            </div>
+          </div>
+
+          <div id="storyEnd" class="quiz-end hidden">
+            <div class="results-card">
+              <div class="results-icon">
+                <i class="ri-trophy-line"></i>
+              </div>
+              <h2>Story Complete!</h2>
+              <p>Congratulations! You've created an amazing story!</p>
+              
+              <div class="results-stats">
+                <div class="result-stat">
+                  <span class="stat-label">Words Used</span>
+                  <span class="stat-value" id="finalWordsUsed">0</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">Story Length</span>
+                  <span class="stat-value" id="finalStoryLength">0</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">XP Earned</span>
+                  <span class="stat-value" id="finalXpEarned">0</span>
+                </div>
+              </div>
+              
+              <div class="results-feedback" id="feedbackMessage">
+                <p>Great storytelling! Your creativity shines through!</p>
+              </div>
+              
+              <div class="results-actions">
+                <a class="btn btn-accent" href="/leaderboard.html">View Leaderboard</a>
+                <a class="btn" href="/subjects/english.html">Back to English</a>
+                <button class="btn btn-primary" id="createAnother">Create Another Story</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+      // Story Builder Game Logic
+      class StoryBuilder {
+        constructor() {
+          this.templates = {
+            adventure: {
+              prompt: "Write an adventure story about a brave hero who must journey through dangerous lands to find a magical treasure. Include exciting challenges, helpful companions, and a thrilling climax!",
+              words: ["hero", "journey", "treasure", "dragon", "sword", "castle", "forest", "mountain", "magic", "quest", "brave", "dangerous", "companion", "challenge", "victory"]
+            },
+            mystery: {
+              prompt: "Create a mystery story where a detective must solve a puzzling case. Include suspicious characters, hidden clues, red herrings, and an unexpected solution!",
+              words: ["detective", "mystery", "clue", "suspect", "evidence", "investigation", "secret", "puzzle", "solution", "crime", "witness", "alibi", "fingerprint", "discovery", "truth"]
+            },
+            fantasy: {
+              prompt: "Write a fantasy story set in a magical world with wizards, mythical creatures, and enchanted places. Include magical spells, ancient prophecies, and epic battles!",
+              words: ["wizard", "magic", "dragon", "spell", "enchanted", "prophecy", "kingdom", "forest", "crystal", "wand", "potion", "fairy", "goblin", "castle", "battle"]
+            },
+            scifi: {
+              prompt: "Craft a science fiction story about space exploration, advanced technology, and alien encounters. Include futuristic gadgets, space travel, and intergalactic adventures!",
+              words: ["robot", "spaceship", "alien", "planet", "technology", "laser", "computer", "space", "future", "invention", "galaxy", "exploration", "energy", "cyborg", "mission"]
+            }
+          };
+          
+          this.selectedTemplate = null;
+          this.usedWords = new Set();
+          this.storyText = '';
+          this.startTime = null;
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('startStory').addEventListener('click', () => this.startStory());
+          document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', () => this.selectTemplate(card.dataset.template));
+          });
+          document.getElementById('storyTextarea').addEventListener('input', () => this.updateStory());
+          document.getElementById('clearStory').addEventListener('click', () => this.clearStory());
+          document.getElementById('previewStory').addEventListener('click', () => this.previewStory());
+          document.getElementById('saveStory').addEventListener('click', () => this.saveStory());
+          document.getElementById('newStory').addEventListener('click', () => this.newStory());
+          document.getElementById('createAnother').addEventListener('click', () => this.createAnother());
+        }
+        
+        startStory() {
+          document.getElementById('storyIntro').classList.add('hidden');
+          document.getElementById('storyPlay').classList.remove('hidden');
+          this.startTime = Date.now();
+        }
+        
+        selectTemplate(templateName) {
+          // Remove previous selection
+          document.querySelectorAll('.template-card').forEach(card => {
+            card.classList.remove('selected');
+          });
+          
+          // Select current template
+          document.querySelector(`[data-template="${templateName}"]`).classList.add('selected');
+          
+          this.selectedTemplate = templateName;
+          const template = this.templates[templateName];
+          
+          // Show prompt and word bank
+          document.getElementById('promptText').textContent = template.prompt;
+          document.getElementById('storyPrompt').classList.remove('hidden');
+          document.getElementById('wordBank').classList.remove('hidden');
+          
+          // Create word bank
+          this.createWordBank(template.words);
+          
+          // Update stats
+          document.getElementById('totalWords').textContent = template.words.length;
+        }
+        
+        createWordBank(words) {
+          const wordList = document.getElementById('wordList');
+          wordList.innerHTML = '';
+          
+          words.forEach(word => {
+            const wordElement = document.createElement('div');
+            wordElement.className = 'word-item';
+            wordElement.textContent = word;
+            wordElement.dataset.word = word;
+            wordElement.addEventListener('click', () => this.useWord(word, wordElement));
+            wordList.appendChild(wordElement);
+          });
+        }
+        
+        useWord(word, element) {
+          if (element.classList.contains('used')) return;
+          
+          element.classList.add('used');
+          this.usedWords.add(word);
+          
+          // Insert word into textarea
+          const textarea = document.getElementById('storyTextarea');
+          const cursorPos = textarea.selectionStart;
+          const textBefore = textarea.value.substring(0, cursorPos);
+          const textAfter = textarea.value.substring(textarea.selectionEnd);
+          
+          textarea.value = textBefore + word + textAfter;
+          textarea.focus();
+          textarea.setSelectionRange(cursorPos + word.length, cursorPos + word.length);
+          
+          this.updateStory();
+        }
+        
+        updateStory() {
+          this.storyText = document.getElementById('storyTextarea').value;
+          const wordCount = this.storyText.trim().split(/\s+/).filter(word => word.length > 0).length;
+          
+          document.getElementById('wordsUsed').textContent = this.usedWords.size;
+          document.getElementById('storyLength').textContent = wordCount;
+          document.getElementById('xpEarned').textContent = (this.usedWords.size * 5) + (wordCount * 2);
+        }
+        
+        clearStory() {
+          document.getElementById('storyTextarea').value = '';
+          this.storyText = '';
+          this.usedWords.clear();
+          
+          // Reset word bank
+          document.querySelectorAll('.word-item').forEach(item => {
+            item.classList.remove('used');
+          });
+          
+          this.updateStory();
+        }
+        
+        previewStory() {
+          const previewContent = document.getElementById('previewContent');
+          const storyPreview = document.getElementById('storyPreview');
+          
+          if (this.storyText.trim()) {
+            previewContent.textContent = this.storyText;
+            storyPreview.classList.remove('hidden');
+          } else {
+            alert('Please write a story first!');
+          }
+        }
+        
+        saveStory() {
+          if (!this.storyText.trim()) {
+            alert('Please write a story first!');
+            return;
+          }
+          
+          if (!this.selectedTemplate) {
+            alert('Please select a template first!');
+            return;
+          }
+          
+          // Save story to localStorage
+          const stories = JSON.parse(localStorage.getItem('savedStories') || '[]');
+          const newStory = {
+            id: Date.now(),
+            template: this.selectedTemplate,
+            content: this.storyText,
+            wordsUsed: Array.from(this.usedWords),
+            wordCount: this.storyText.trim().split(/\s+/).filter(word => word.length > 0).length,
+            createdAt: new Date().toISOString()
+          };
+          
+          stories.push(newStory);
+          localStorage.setItem('savedStories', JSON.stringify(stories));
+          
+          alert('Story saved successfully!');
+        }
+        
+        newStory() {
+          if (confirm('Are you sure you want to start a new story? Your current story will be lost.')) {
+            this.clearStory();
+            document.querySelectorAll('.template-card').forEach(card => {
+              card.classList.remove('selected');
+            });
+            document.getElementById('storyPrompt').classList.add('hidden');
+            document.getElementById('wordBank').classList.add('hidden');
+            document.getElementById('storyPreview').classList.add('hidden');
+            this.selectedTemplate = null;
+          }
+        }
+        
+        createAnother() {
+          document.getElementById('storyEnd').classList.add('hidden');
+          document.getElementById('storyIntro').classList.remove('hidden');
+          this.clearStory();
+          this.selectedTemplate = null;
+        }
+      }
+      
+      // Initialize the story builder when the page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new StoryBuilder();
+      });
+    </script>
+  </body>
+</html>

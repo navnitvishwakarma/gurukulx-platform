@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Contact & Help • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="grid grid-3">
+        <div class="card">
+          <h2>Feedback</h2>
+          <form id="feedbackForm" class="form">
+            <div class="form-row"><label for="fb-name">Name</label><input id="fb-name" required /></div>
+            <div class="form-row"><label for="fb-email">Email</label><input id="fb-email" type="email" required /></div>
+            <div class="form-row"><label for="fb-msg">Message</label><textarea id="fb-msg" required></textarea></div>
+            <button class="btn btn-primary" type="submit">Send Feedback</button>
+          </form>
+        </div>
+        <div class="card">
+          <h2>Help / FAQ</h2>
+          <ul class="list">
+            <li><strong>How to start?</strong> Log in and open your subject page to pick a game.</li>
+            <li><strong>Save progress?</strong> Automatically saved on your device.</li>
+            <li><strong>Need support?</strong> Use Ask a Doubt to contact a teacher.</li>
+          </ul>
+        </div>
+        <div class="card" id="ask-doubt">
+          <h2>Ask a Doubt</h2>
+          <form id="doubtForm" class="form">
+            <div class="form-row"><label for="doubt-subject">Subject</label>
+              <select id="doubt-subject"><option>Math</option><option>Science</option><option>Environment</option><option>Social Science</option><option>English</option><option>Computer Science</option><option>GK</option></select>
+            </div>
+            <div class="form-row"><label for="doubt-msg">Your Doubt</label><textarea id="doubt-msg" required></textarea></div>
+            <button class="btn btn-accent" type="submit">Submit Doubt</button>
+          </form>
+          <div id="aiAnswer" style="margin-top:1rem; display:none;">
+            <div class="card" style="border:1px solid var(--color-muted);">
+              <h3 style="margin:0 0 .5rem;">AI Suggestion</h3>
+              <div id="aiAnswerContent" class="text-pretty"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="ai-tutor">
+          <h2>AI Tutor</h2>
+          <form id="aiTutorForm" class="form">
+            <div class="form-row"><label for="ai-subject">Subject</label>
+              <select id="ai-subject"><option>Math</option><option>Science</option><option>Environment</option><option>Social Science</option><option>English</option><option>Computer Science</option><option>GK</option></select>
+            </div>
+            <div class="form-row"><label for="ai-question">Ask your question</label><textarea id="ai-question" required placeholder="Type your question here..."></textarea></div>
+            <button class="btn btn-primary" type="submit">Ask AI</button>
+          </form>
+          <div id="aiTutorAnswer" style="margin-top:1rem; display:none;">
+            <div class="card" style="border:1px solid var(--color-muted);">
+              <h3 style="margin:0 0 .5rem;">AI Answer</h3>
+              <div id="aiTutorContent" class="text-pretty"></div>
+            </div>
+          </div>
+          <div id="aiTutorLoading" class="muted" style="display:none; margin-top:.5rem;">Thinking…</div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+  </body>
+</html>

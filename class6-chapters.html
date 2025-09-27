@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 6 Chapters - GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/chapter-selection.css">
+    <link rel="icon" href="/assets/images/logo.png" type="image/png">
+    <script src="/js/main.js" defer></script>
+    <script src="/js/chapter-selection.js" defer></script>
+</head>
+<body data-page="chapter-selection">
+    <header id="site-header"></header>
+    
+    <main class="container">
+        <div class="chapter-selection-container card">
+            <div class="breadcrumb">
+                <a href="/class-selection.html">Classes</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Class 6</span>
+            </div>
+            
+            <div class="page-header">
+                <h1 class="text-balance">Class 6 Chapters</h1>
+                <p class="muted text-pretty">Select a chapter to explore learning materials, activities, and games.</p>
+                
+                <div class="subject-filter">
+                    <label for="subjectSelect">Filter by Subject:</label>
+                    <select id="subjectSelect">
+                        <option value="all">All Subjects</option>
+                        <option value="math">Mathematics</option>
+                        <option value="science">Science</option>
+                        <option value="english">English</option>
+                        <option value="social">Social Studies</option>
+                        <option value="environment">Environmental Studies</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="chapters-grid" id="chaptersGrid">
+                <!-- Chapters will be dynamically loaded here -->
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-header">
+                    <h3>Your Progress</h3>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="overallProgress"></div>
+                </div>
+                <p class="muted">Complete chapters to increase your progress and earn badges!</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer id="site-footer"></footer>
+</body>
+</html>

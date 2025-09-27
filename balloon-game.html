@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balloon Pop Numbers - GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/balloon-game.css">
+    <link rel="icon" href="/assets/images/logo.png" type="image/png">
+    <script src="/js/main.js" defer></script>
+    <script src="/js/balloon-game.js" defer></script>
+</head>
+<body data-page="balloon-game">
+    <header id="site-header"></header>
+    
+    <main class="container">
+        <div class="balloon-game-container">
+            <div class="game-header">
+                <div class="breadcrumb">
+                    <a href="/class-selection.html">Classes</a>
+                    <i class="ri-arrow-right-s-line"></i>
+                    <a href="/class6-chapters.html">Class 6</a>
+                    <i class="ri-arrow-right-s-line"></i>
+                    <a href="/chapter1-games.html">Knowing Our Numbers</a>
+                    <i class="ri-arrow-right-s-line"></i>
+                    <span>Balloon Pop</span>
+                </div>
+                
+                <div class="game-controls">
+                    <button class="btn btn-outline" id="backButton">
+                        <i class="ri-arrow-left-line"></i> Back
+                    </button>
+                    <button class="btn btn-outline" id="helpButton">
+                        <i class="ri-question-line"></i> Help
+                    </button>
+                </div>
+            </div>
+            
+            <div class="game-content">
+                <h1 class="text-balance">Balloon Pop Numbers</h1>
+                <p class="game-description">Pop the balloons in the correct numerical order! Practice your number sequencing skills.</p>
+                
+                <div class="game-info">
+                    <div class="info-card">
+                        <i class="ri-target-line"></i>
+                        <div>
+                            <h3>Objective</h3>
+                            <p>Pop balloons from smallest to largest number</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <i class="ri-medal-line"></i>
+                        <div>
+                            <h3>Reward</h3>
+                            <p>Earn 30 XP for completing the game</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-area">
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value" id="levelValue">1</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Score</span>
+                            <span class="stat-value" id="scoreValue">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Balloons Left</span>
+                            <span class="stat-value" id="balloonsLeft">10</span>
+                        </div>
+                    </div>
+                    
+                    <div class="balloons-container" id="balloonsContainer">
+                        <!-- Balloons will be generated here -->
+                    </div>
+                    
+                    <div class="game-instruction" id="gameInstruction">
+                        <p>Click the balloons in order from <strong>smallest to largest</strong> number!</p>
+                    </div>
+                    
+                    <div class="game-feedback" id="gameFeedback">
+                        <!-- Feedback messages will appear here -->
+                    </div>
+                </div>
+                
+                <div class="game-actions">
+                    <button class="btn btn-primary" id="startButton">Start Game</button>
+                    <button class="btn btn-outline" id="restartButton" style="display: none;">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer id="site-footer"></footer>
+    
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>How to Play</h3>
+                <button class="modal-close" id="closeHelpModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ol>
+                    <li>Click the Start Game button to begin</li>
+                    <li>Balloons with numbers will appear on screen</li>
+                    <li>Pop the balloons in order from <strong>smallest to largest</strong> number</li>
+                    <li>You earn points for each correct balloon popped</li>
+                    <li>If you pop a balloon out of order, you'll lose a life</li>
+                    <li>Complete all levels to earn maximum XP!</li>
+                </ol>
+                <div class="tip">
+                    <strong>Tip:</strong> Read numbers carefully. Larger numbers have more digits!
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

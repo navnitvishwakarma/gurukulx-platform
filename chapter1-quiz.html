@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numbers Quiz - GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/quiz.css">
+    <!-- Add Remix Icon CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="icon" href="/assets/images/logo.png" type="image/png">
+    <script src="/js/main.js" defer></script>
+    <script src="/js/quiz.js" defer></script>
+</head>
+<body data-page="quiz">
+    <header id="site-header"></header>
+    
+    <main class="container">
+        <div class="quiz-container card">
+            <div class="breadcrumb">
+                <a href="/class-selection.html">Classes</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <a href="/class6-chapters.html">Class 6</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <a href="/chapter1-games.html">Knowing Our Numbers</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Numbers Quiz</span>
+            </div>
+            
+            <div class="quiz-header">
+                <h1 class="text-balance">Knowing Our Numbers Quiz</h1>
+                <p class="muted text-pretty">Test your knowledge of large numbers, comparisons, estimation, and Roman numerals.</p>
+                
+                <div class="quiz-progress">
+                    <div class="progress-label">
+                        <span>Quiz Progress</span>
+                        <span id="quizProgress">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="quizProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quiz-content" id="quizContent">
+                <div class="quiz-intro" id="quizIntro">
+                    <div class="intro-card">
+                        <div class="intro-icon">
+                            <i class="ri-questionnaire-line"></i>
+                        </div>
+                        <h2>Ready to Test Your Knowledge?</h2>
+                        <p>This quiz contains 10 questions about Knowing Our Numbers. You'll have unlimited time to complete it, but try to answer as accurately as possible!</p>
+                        
+                        <div class="quiz-details">
+                            <div class="detail-item">
+                                <i class="ri-question-answer-line"></i>
+                                <span>10 Multiple Choice Questions</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="ri-time-line"></i>
+                                <span>Approx. 10-15 minutes</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="ri-medal-line"></i>
+                                <span>Earn up to 50 XP</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-lg" id="startQuizBtn">Start Quiz</button>
+                    </div>
+                </div>
+                
+                <div class="quiz-play hidden" id="quizPlay">
+                    <div class="question-header">
+                        <div class="question-counter">
+                            Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span>
+                        </div>
+                        <div class="question-score">
+                            Score: <span id="currentScore">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-card">
+                        <div class="question-text" id="questionText">
+                            <!-- Question will be inserted here -->
+                        </div>
+                        
+                        <div class="question-options" id="questionOptions">
+                            <!-- Options will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-controls">
+                        <button class="btn btn-outline" id="prevQuestionBtn" disabled>
+                            <i class="ri-arrow-left-line"></i> Previous
+                        </button>
+                        <button class="btn btn-primary" id="nextQuestionBtn">
+                           <i class="ri-arrow-right-line"></i>  Next
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="quiz-end hidden" id="quizEnd">
+                    <div class="results-card">
+                        <div class="results-icon">
+                            <i class="ri-trophy-line"></i>
+                        </div>
+                        <h2>Quiz Complete!</h2>
+                        
+                        <div class="results-stats">
+                            <div class="result-stat">
+                                <span class="stat-label">Your Score</span>
+                                <span class="stat-value" id="finalScore">0</span>
+                            </div>
+                            <div class="result-stat">
+                                <span class="stat-label">Correct Answers</span>
+                                <span class="stat-value" id="correctAnswers">0</span>
+                            </div>
+                            <div class="result-stat">
+                                <span class="stat-label">XP Earned</span>
+                                <span class="stat-value" id="xpEarned">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="results-feedback" id="resultsFeedback">
+                            <!-- Feedback will be inserted here -->
+                        </div>
+                        
+                        <div class="results-actions">
+                            <button class="btn btn-primary" id="reviewQuizBtn">
+                                <i class="ri-eye-line"></i> Review Answers
+                            </button>
+                            <button class="btn btn-outline" id="retryQuizBtn">
+                                <i class="ri-restart-line"></i> Try Again
+                            </button>
+                            <a href="/chapter1-games.html" class="btn btn-outline">
+                                <i class="ri-arrow-left-line"></i> Back to Games
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer id="site-footer"></footer>
+</body>
+</html>

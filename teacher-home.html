@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Teacher Dashboard • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/teacher-dashboard.css" />
+    <script defer src="/js/main.js"></script>
+    <script defer src="/js/teacher-dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.min.js"></script>
+  </head>
+
+  <body data-page="teacher-home">
+    <header id="site-header"></header>
+    <main class="container">
+      <!-- Dashboard Header -->
+      <section class="dashboard-header">
+        <div class="welcome-card card">
+          <div class="welcome-content">
+            <div>
+              <h1>Welcome back, <span id="teacherName">Teacher</span>!</h1>
+              <p class="muted" id="dashboardDate">Here's your classroom overview and performance analytics</p>
+            </div>
+            <div class="welcome-stats">
+              <div class="stat-badge">
+                <i class="ri-group-line"></i>
+                <span id="studentCount">0</span> Students
+              </div>
+              <div class="stat-badge">
+                <i class="ri-book-line"></i>
+                <span id="classCount">0</span> Classes
+              </div>
+              <div class="stat-badge">
+                <i class="ri-trophy-line"></i>
+                <span id="assignmentCount">0</span> Assignments
+              </div>
+              <div class="stat-badge">
+                <i class="ri-time-line"></i>
+                <span id="activeSessions">0</span> Active
+              </div>
+            </div>
+          </div>
+          <div class="profile-mini">
+            <img class="avatar lg" src="/assets/images/avatar-teacher.png" alt="Teacher avatar"/>
+            <div class="profile-info">
+              <div id="teacherRole">Science Teacher</div>
+              <div class="muted">Last login: <span id="lastLogin">Today</span></div>
+            </div>
+            <button class="btn btn-small" id="refreshDashboard" aria-label="Refresh dashboard data">
+              <i class="ri-refresh-line"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Stats Section -->
+      <section class="quick-stats grid grid-4">
+        <div class="stat-card primary">
+          <div class="stat-icon">
+            <i class="ri-user-star-line"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" id="topStudentScore">0</div>
+            <div class="stat-label">Top Student Score</div>
+            <div class="stat-change positive" id="topScoreChange">
+              <i class="ri-arrow-up-line"></i> <span>0%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stat-card accent">
+          <div class="stat-icon">
+            <i class="ri-line-chart-line"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" id="avgScore">0</div>
+            <div class="stat-label">Average Score</div>
+            <div class="stat-change positive" id="avgScoreChange">
+              <i class="ri-arrow-up-line"></i> <span>0%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stat-card success">
+          <div class="stat-icon">
+            <i class="ri-medal-line"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" id="totalBadges">0</div>
+            <div class="stat-label">Badges Earned</div>
+            <div class="stat-change positive" id="badgesChange">
+              <i class="ri-arrow-up-line"></i> <span>0</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="stat-card warning">
+          <div class="stat-icon">
+            <i class="ri-time-line"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" id="completionRate">0%</div>
+            <div class="stat-label">Completion Rate</div>
+            <div class="stat-change positive" id="completionChange">
+              <i class="ri-arrow-up-line"></i> <span>0%</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Content Grid -->
+      <section class="grid grid-2-1 gap-lg">
+        <!-- Left Column - Classes & Students -->
+        <div class="content-column">
+          <div class="card">
+            <div class="card-header">
+              <h2>Class Overview</h2>
+              <div class="header-controls">
+                <select id="classFilter" class="filter-select" aria-label="Filter classes">
+                  <option value="all">All Classes</option>
+                  <option value="6">Grade 6</option>
+                  <option value="7">Grade 7</option>
+                  <option value="8">Grade 8</option>
+                  <option value="9">Grade 9</option>
+                  <option value="10">Grade 10</option>
+                  <option value="11">Grade 11</option>
+                  <option value="12">Grade 12</option>
+                </select>
+                <button class="btn btn-small btn-icon" id="exportClassData" aria-label="Export class data">
+                  <i class="ri-download-line"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-tabs">
+              <button class="tab-btn active" data-tab="classes">Classes</button>
+              <button class="tab-btn" data-tab="subjects">Subjects</button>
+            </div>
+            <div class="tab-content active" id="classesTab">
+              <div id="classList" class="class-list"></div>
+            </div>
+            <div class="tab-content" id="subjectsTab">
+              <div id="subjectList" class="subject-list"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Student Performance</h2>
+              <div class="header-controls">
+                <input type="text" id="studentSearch" placeholder="Search students..." class="search-input" aria-label="Search students">
+                <button class="btn btn-small btn-icon" id="refreshStudents" aria-label="Refresh student data">
+                  <i class="ri-refresh-line"></i>
+                </button>
+              </div>
+            </div>
+            <div class="performance-filters">
+              <div class="filter-group">
+                <label for="performanceFilter">Sort by:</label>
+                <select id="performanceFilter" aria-label="Sort students by">
+                  <option value="score">Highest Score</option>
+                  <option value="progress">Progress</option>
+                  <option value="name">Name</option>
+                  <option value="class">Class</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="rowsFilter">Show:</label>
+                <select id="rowsFilter" aria-label="Number of students to show">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+            </div>
+            <div id="studentList" class="student-list"></div>
+            <div class="card-footer">
+              <button class="btn btn-link" id="viewAllStudents">View All Students</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Scoreboard & Quick Actions -->
+        <div class="content-column">
+          <div class="card">
+            <div class="card-header">
+              <h2>Top Performers</h2>
+              <div class="header-controls">
+                <span class="badge" id="topCount">5</span>
+                <button class="btn btn-small btn-icon" id="expandLeaderboard" aria-label="Expand leaderboard">
+                  <i class="ri-fullscreen-line"></i>
+                </button>
+              </div>
+            </div>
+            <div id="teacherScoreboard" class="scoreboard"></div>
+            <div class="card-footer">
+              <div class="progress-wrap">
+                <div class="progress-label">
+                  <span>Class Average</span>
+                  <span id="classAverageScore">0%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress" id="classAverageProgress" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Quick Actions</h2>
+              <button class="btn btn-small btn-icon" id="customizeActions" aria-label="Customize quick actions">
+                <i class="ri-settings-3-line"></i>
+              </button>
+            </div>
+            <div class="quick-actions grid grid-2">
+              <a href="/teacher-assignments.html" class="action-btn">
+                <i class="ri-task-line"></i>
+                <span>Create Assignment</span>
+              </a>
+              <a href="/teacher-reports.html" class="action-btn">
+                <i class="ri-file-chart-line"></i>
+                <span>Generate Report</span>
+              </a>
+              <a href="#" class="action-btn" id="sendAnnouncement">
+                <i class="ri-megaphone-line"></i>
+                <span>Send Announcement</span>
+              </a>
+              <a href="/teacher-schedule.html" class="action-btn">
+                <i class="ri-calendar-event-line"></i>
+                <span>Schedule Class</span>
+              </a>
+              <a href="/contact.html" class="action-btn">
+                <i class="ri-feedback-line"></i>
+                <span>Send Feedback</span>
+              </a>
+              <a href="/teacher-groups.html" class="action-btn">
+                <i class="ri-team-line"></i>
+                <span>Manage Groups</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Upcoming Deadlines</h2>
+              <button class="btn btn-small btn-icon" id="viewAllDeadlines" aria-label="View all deadlines">
+                <i class="ri-arrow-right-line"></i>
+              </button>
+            </div>
+            <div id="upcomingDeadlines" class="deadlines-list">
+              <div class="empty-state">
+                <i class="ri-calendar-check-line"></i>
+                <p>No upcoming deadlines</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Performance Analytics</h2>
+          <div class="header-controls">
+            <div class="view-options">
+              <button class="view-option active" data-view="weekly">Weekly</button>
+              <button class="view-option" data-view="monthly">Monthly</button>
+              <button class="view-option" data-view="quarterly">Quarterly</button>
+              <button class="view-option" data-view="all">All Time</button>
+            </div>
+            <button class="btn btn-small" id="exportAnalytics" aria-label="Export analytics data">
+              <i class="ri-download-line"></i> Export
+            </button>
+          </div>
+        </div>
+        
+        <div class="analytics-grid grid grid-2">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>Class Performance Comparison</h3>
+              <div class="chart-actions">
+                <button class="chart-action-btn" data-chart="classPerformanceChart" data-type="bar">
+                  <i class="ri-bar-chart-line"></i>
+                </button>
+                <button class="chart-action-btn active" data-chart="classPerformanceChart" data-type="line">
+                  <i class="ri-line-chart-line"></i>
+                </button>
+                <button class="chart-action-btn" data-chart="classPerformanceChart" data-type="polarArea">
+                  <i class="ri-radar-line"></i>
+                </button>
+              </div>
+            </div>
+            <canvas id="classPerformanceChart" height="250" aria-label="Class performance comparison chart" role="img"></canvas>
+            <div class="chart-summary" id="classPerformanceSummary"></div>
+          </div>
+          
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>Subject-wise Performance</h3>
+              <div class="chart-actions">
+                <button class="chart-action-btn active" data-chart="subjectPerformanceChart" data-type="doughnut">
+                  <i class="ri-donut-chart-line"></i>
+                </button>
+                <button class="chart-action-btn" data-chart="subjectPerformanceChart" data-type="pie">
+                  <i class="ri-pie-chart-line"></i>
+                </button>
+                <button class="chart-action-btn" data-chart="subjectPerformanceChart" data-type="bar">
+                  <i class="ri-bar-chart-line"></i>
+                </button>
+              </div>
+            </div>
+            <canvas id="subjectPerformanceChart" height="250" aria-label="Subject performance chart" role="img"></canvas>
+            <div class="chart-summary" id="subjectPerformanceSummary"></div>
+          </div>
+          
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>Progress Over Time</h3>
+              <div class="chart-actions">
+                <button class="chart-action-btn active" data-chart="progressOverTimeChart" data-type="line">
+                  <i class="ri-line-chart-line"></i>
+                </button>
+                <button class="chart-action-btn" data-chart="progressOverTimeChart" data-type="bar">
+                  <i class="ri-bar-chart-line"></i>
+                </button>
+              </div>
+            </div>
+            <canvas id="progressOverTimeChart" height="250" aria-label="Progress over time chart" role="img"></canvas>
+            <div class="chart-summary" id="progressOverTimeSummary"></div>
+          </div>
+          
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>Activity Completion Rate</h3>
+              <div class="chart-actions">
+                <button class="chart-action-btn active" data-chart="completionChart" data-type="doughnut">
+                  <i class="ri-donut-chart-line"></i>
+                </button>
+                <button class="chart-action-btn" data-chart="completionChart" data-type="pie">
+                  <i class="ri-pie-chart-line"></i>
+                </button>
+              </div>
+            </div>
+            <canvas id="completionChart" height="250" aria-label="Activity completion chart" role="img"></canvas>
+            <div class="chart-summary" id="completionChartSummary"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Activity -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Recent Activity</h2>
+          <div class="header-controls">
+            <select id="activityFilter" aria-label="Filter activities">
+              <option value="all">All Activities</option>
+              <option value="assignments">Assignments</option>
+              <option value="submissions">Submissions</option>
+              <option value="announcements">Announcements</option>
+              <option value="achievements">Achievements</option>
+            </select>
+            <button class="btn btn-small" id="viewAllActivity">
+              View All
+            </button>
+          </div>
+        </div>
+        <div id="recentActivity" class="activity-feed">
+          <div class="empty-activity">
+            <i class="ri-history-line"></i>
+            <p>No recent activity yet</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications Section -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Notifications</h2>
+          <div class="header-controls">
+            <button class="btn btn-small btn-icon" id="markAllRead" aria-label="Mark all notifications as read">
+              <i class="ri-check-double-line"></i>
+            </button>
+            <button class="btn btn-small btn-icon" id="notificationSettings" aria-label="Notification settings">
+              <i class="ri-settings-3-line"></i>
+            </button>
+          </div>
+        </div>
+        <div id="notificationsList" class="notifications-list">
+          <div class="empty-state">
+            <i class="ri-notification-off-line"></i>
+            <p>No new notifications</p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <!-- Modals -->
+    <div id="announcementModal" class="modal" aria-hidden="true" role="dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Send Announcement</h3>
+          <button class="modal-close" aria-label="Close announcement modal">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="announcementForm">
+            <div class="form-group">
+              <label for="announcementTitle">Title</label>
+              <input type="text" id="announcementTitle" placeholder="Enter announcement title" required>
+            </div>
+            <div class="form-group">
+              <label for="announcementMessage">Message</label>
+              <textarea id="announcementMessage" rows="4" placeholder="Write your announcement here..." required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="announcementRecipients">Recipients</label>
+              <select id="announcementRecipients" multiple>
+                <option value="all">All Students</option>
+                <option value="grade6">Grade 6</option>
+                <option value="grade7">Grade 7</option>
+                <option value="grade8">Grade 8</option>
+                <option value="grade9">Grade 9</option>
+                <option value="grade10">Grade 10</option>
+                <option value="grade11">Grade 11</option>
+                <option value="grade12">Grade 12</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" id="cancelAnnouncement">Cancel</button>
+              <button type="submit" class="btn btn-primary">Send Announcement</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+      <div class="loading-spinner"></div>
+      <p>Loading dashboard data...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+  </body>
+</html>

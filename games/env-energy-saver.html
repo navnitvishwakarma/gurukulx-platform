@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Energy Saver • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="energy-saver">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-flashlight-line"></i> Energy Saver</h1>
+        <div id="gameRoot">
+          <div id="gameIntro" class="game-intro">
+            <p>Help reduce energy consumption! Turn off unnecessary appliances and make energy-efficient choices to save power.</p>
+            <div class="game-stats">
+              <div class="stat">
+                <span class="stat-label">Energy Saved:</span>
+                <span class="stat-value" id="energySaved">0</span> kWh
+              </div>
+              <div class="stat">
+                <span class="stat-label">Efficiency:</span>
+                <span class="stat-value" id="efficiency">0</span>%
+              </div>
+              <div class="stat">
+                <span class="stat-label">Score:</span>
+                <span class="stat-value" id="totalScore">0</span>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="startGame">Start Saving</button>
+          </div>
+          <div id="gamePlay" class="game-play hidden">
+            <div class="game-header">
+              <div class="game-info">
+                <span>Time: <strong id="gameTimer">120</strong>s</span>
+                <span>Score: <strong id="currentScore">0</strong></span>
+                <span>Power Usage: <strong id="powerUsage">100</strong>%</span>
+              </div>
+              <button class="btn btn-outline btn-sm" id="pauseGame">Pause</button>
+            </div>
+            <div class="game-area">
+              <div id="house" class="house">
+                <div class="room" id="living-room">
+                  <h3>Living Room</h3>
+                  <div class="appliance" data-appliance="tv" data-power="200">
+                    <div class="appliance-icon">📺</div>
+                    <span>TV</span>
+                    <div class="power-indicator">200W</div>
+                  </div>
+                  <div class="appliance" data-appliance="lights" data-power="100">
+                    <div class="appliance-icon">💡</div>
+                    <span>Lights</span>
+                    <div class="power-indicator">100W</div>
+                  </div>
+                  <div class="appliance" data-appliance="ac" data-power="3000">
+                    <div class="appliance-icon">❄️</div>
+                    <span>AC</span>
+                    <div class="power-indicator">3000W</div>
+                  </div>
+                </div>
+                <div class="room" id="kitchen">
+                  <h3>Kitchen</h3>
+                  <div class="appliance" data-appliance="fridge" data-power="150">
+                    <div class="appliance-icon">🧊</div>
+                    <span>Fridge</span>
+                    <div class="power-indicator">150W</div>
+                  </div>
+                  <div class="appliance" data-appliance="microwave" data-power="1200">
+                    <div class="appliance-icon">📱</div>
+                    <span>Microwave</span>
+                    <div class="power-indicator">1200W</div>
+                  </div>
+                  <div class="appliance" data-appliance="dishwasher" data-power="1800">
+                    <div class="appliance-icon">🍽️</div>
+                    <span>Dishwasher</span>
+                    <div class="power-indicator">1800W</div>
+                  </div>
+                </div>
+                <div class="room" id="bedroom">
+                  <h3>Bedroom</h3>
+                  <div class="appliance" data-appliance="computer" data-power="300">
+                    <div class="appliance-icon">💻</div>
+                    <span>Computer</span>
+                    <div class="power-indicator">300W</div>
+                  </div>
+                  <div class="appliance" data-appliance="charger" data-power="50">
+                    <div class="appliance-icon">🔌</div>
+                    <span>Charger</span>
+                    <div class="power-indicator">50W</div>
+                  </div>
+                  <div class="appliance" data-appliance="fan" data-power="75">
+                    <div class="appliance-icon">🌀</div>
+                    <span>Fan</span>
+                    <div class="power-indicator">75W</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="game-controls">
+              <button class="btn btn-accent" id="turnOffSelected">Turn Off Selected</button>
+              <button class="btn btn-outline" id="useSolar">Use Solar Power</button>
+              <button class="btn btn-outline" id="upgradeEfficient">Upgrade to Efficient</button>
+            </div>
+            <div class="energy-tips">
+              <h3>Energy Saving Tips:</h3>
+              <div class="tips-list">
+                <div class="tip">💡 Turn off lights when not needed</div>
+                <div class="tip">❄️ Set AC temperature higher</div>
+                <div class="tip">📺 Unplug devices when not in use</div>
+                <div class="tip">🌞 Use natural light during day</div>
+              </div>
+            </div>
+          </div>
+          <div id="gameEnd" class="game-end hidden">
+            <h2>Energy Saving Complete!</h2>
+            <div class="final-stats">
+              <div class="stat">
+                <span class="stat-label">Energy Saved:</span>
+                <span class="stat-value" id="finalEnergy">0</span> kWh
+              </div>
+              <div class="stat">
+                <span class="stat-label">Final Efficiency:</span>
+                <span class="stat-value" id="finalEfficiency">0</span>%
+              </div>
+              <div class="stat">
+                <span class="stat-label">Final Score:</span>
+                <span class="stat-value" id="finalScore">0</span>
+              </div>
+            </div>
+            <div id="performanceMessage"></div>
+            <div class="cta-group">
+              <button class="btn btn-accent" id="playAgain">Play Again</button>
+              <a class="btn" href="/subjects/environment.html">Back to Environment</a>
+              <a class="btn" href="/leaderboard.html">View Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      class EnergySaverGame {
+        constructor() {
+          this.gameTime = 120;
+          this.timeLeft = 120;
+          this.score = 0;
+          this.energySaved = 0;
+          this.totalPowerUsage = 0;
+          this.maxPowerUsage = 0;
+          this.selectedAppliance = null;
+          this.gameTimer = null;
+          this.isPaused = false;
+          this.solarActive = false;
+          this.efficiencyUpgrades = 0;
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('startGame').addEventListener('click', () => {
+            this.startGame();
+          });
+          
+          document.getElementById('playAgain').addEventListener('click', () => {
+            this.resetGame();
+            this.startGame();
+          });
+          
+          document.getElementById('pauseGame').addEventListener('click', () => {
+            this.togglePause();
+          });
+          
+          document.getElementById('turnOffSelected').addEventListener('click', () => {
+            this.turnOffAppliance();
+          });
+          
+          document.getElementById('useSolar').addEventListener('click', () => {
+            this.useSolarPower();
+          });
+          
+          document.getElementById('upgradeEfficient').addEventListener('click', () => {
+            this.upgradeEfficiency();
+          });
+          
+          // Appliance selection
+          document.querySelectorAll('.appliance').forEach(appliance => {
+            appliance.addEventListener('click', () => {
+              document.querySelectorAll('.appliance').forEach(a => a.classList.remove('selected'));
+              appliance.classList.add('selected');
+              this.selectedAppliance = appliance;
+            });
+          });
+          
+          this.calculateMaxPowerUsage();
+        }
+        
+        calculateMaxPowerUsage() {
+          const appliances = document.querySelectorAll('.appliance');
+          this.maxPowerUsage = 0;
+          appliances.forEach(appliance => {
+            this.maxPowerUsage += parseInt(appliance.dataset.power);
+          });
+        }
+        
+        startGame() {
+          document.getElementById('gameIntro').classList.add('hidden');
+          document.getElementById('gamePlay').classList.remove('hidden');
+          document.getElementById('gameEnd').classList.add('hidden');
+          
+          this.timeLeft = this.gameTime;
+          this.score = 0;
+          this.energySaved = 0;
+          this.totalPowerUsage = this.maxPowerUsage;
+          this.isPaused = false;
+          this.solarActive = false;
+          this.efficiencyUpgrades = 0;
+          
+          // Reset all appliances to on state
+          document.querySelectorAll('.appliance').forEach(appliance => {
+            appliance.classList.remove('off', 'selected');
+            appliance.classList.add('on');
+          });
+          
+          this.updateDisplay();
+          this.startTimer();
+        }
+        
+        startTimer() {
+          this.gameTimer = setInterval(() => {
+            if (!this.isPaused) {
+              this.timeLeft--;
+              this.updatePowerUsage();
+              this.updateDisplay();
+              
+              if (this.timeLeft <= 0) {
+                this.endGame();
+              }
+            }
+          }, 1000);
+        }
+        
+        updatePowerUsage() {
+          const appliances = document.querySelectorAll('.appliance.on');
+          this.totalPowerUsage = 0;
+          
+          appliances.forEach(appliance => {
+            let power = parseInt(appliance.dataset.power);
+            
+            // Apply efficiency upgrades
+            if (this.efficiencyUpgrades > 0) {
+              power = Math.floor(power * (1 - this.efficiencyUpgrades * 0.1));
+            }
+            
+            this.totalPowerUsage += power;
+          });
+          
+          // Apply solar power reduction
+          if (this.solarActive) {
+            this.totalPowerUsage = Math.floor(this.totalPowerUsage * 0.7);
+          }
+        }
+        
+        turnOffAppliance() {
+          if (this.selectedAppliance && this.selectedAppliance.classList.contains('on')) {
+            const power = parseInt(this.selectedAppliance.dataset.power);
+            
+            this.selectedAppliance.classList.remove('on');
+            this.selectedAppliance.classList.add('off');
+            
+            this.energySaved += power / 1000; // Convert to kWh
+            this.score += power / 10;
+            
+            this.updateDisplay();
+            this.showFloatingScore(power / 10, this.selectedAppliance);
+          }
+        }
+        
+        useSolarPower() {
+          if (!this.solarActive) {
+            this.solarActive = true;
+            this.score += 50;
+            
+            // Add solar panel visual
+            const house = document.getElementById('house');
+            const solarPanel = document.createElement('div');
+            solarPanel.className = 'solar-panel';
+            solarPanel.innerHTML = '☀️';
+            solarPanel.style.position = 'absolute';
+            solarPanel.style.top = '10px';
+            solarPanel.style.right = '10px';
+            solarPanel.style.fontSize = '2rem';
+            solarPanel.style.zIndex = '10';
+            
+            house.appendChild(solarPanel);
+            
+            // Remove solar panel after 30 seconds
+            setTimeout(() => {
+              if (solarPanel.parentNode) {
+                solarPanel.remove();
+                this.solarActive = false;
+              }
+            }, 30000);
+            
+            this.updateDisplay();
+          }
+        }
+        
+        upgradeEfficiency() {
+          if (this.efficiencyUpgrades < 3) {
+            this.efficiencyUpgrades++;
+            this.score += 100;
+            
+            // Add upgrade visual effect
+            const house = document.getElementById('house');
+            house.style.boxShadow = '0 0 20px #10b981';
+            setTimeout(() => {
+              house.style.boxShadow = '';
+            }, 2000);
+            
+            this.updateDisplay();
+          }
+        }
+        
+        showFloatingScore(points, element) {
+          const floatingScore = document.createElement('div');
+          floatingScore.className = 'floating-score';
+          floatingScore.textContent = '+' + Math.floor(points);
+          floatingScore.style.position = 'absolute';
+          floatingScore.style.left = element.style.left || '50%';
+          floatingScore.style.top = element.style.top || '50%';
+          floatingScore.style.color = '#10b981';
+          floatingScore.style.fontWeight = 'bold';
+          floatingScore.style.pointerEvents = 'none';
+          floatingScore.style.zIndex = '1000';
+          
+          document.getElementById('house').appendChild(floatingScore);
+          
+          setTimeout(() => {
+            floatingScore.style.transform = 'translateY(-50px)';
+            floatingScore.style.opacity = '0';
+            setTimeout(() => {
+              floatingScore.remove();
+            }, 1000);
+          }, 100);
+        }
+        
+        updateDisplay() {
+          const efficiency = Math.floor(((this.maxPowerUsage - this.totalPowerUsage) / this.maxPowerUsage) * 100);
+          
+          document.getElementById('gameTimer').textContent = this.timeLeft;
+          document.getElementById('currentScore').textContent = this.score;
+          document.getElementById('powerUsage').textContent = Math.floor(this.totalPowerUsage);
+          document.getElementById('energySaved').textContent = this.energySaved.toFixed(2);
+          document.getElementById('efficiency').textContent = efficiency;
+          document.getElementById('totalScore').textContent = this.score;
+        }
+        
+        togglePause() {
+          this.isPaused = !this.isPaused;
+          const pauseBtn = document.getElementById('pauseGame');
+          pauseBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+        }
+        
+        endGame() {
+          clearInterval(this.gameTimer);
+          document.getElementById('gamePlay').classList.add('hidden');
+          document.getElementById('gameEnd').classList.remove('hidden');
+          
+          const finalEfficiency = Math.floor(((this.maxPowerUsage - this.totalPowerUsage) / this.maxPowerUsage) * 100);
+          
+          document.getElementById('finalEnergy').textContent = this.energySaved.toFixed(2);
+          document.getElementById('finalEfficiency').textContent = finalEfficiency;
+          document.getElementById('finalScore').textContent = this.score;
+          
+          const performanceMessage = document.getElementById('performanceMessage');
+          if (finalEfficiency >= 70) {
+            performanceMessage.innerHTML = '<p class="success">⚡ Excellent! You\'re an energy saving champion!</p>';
+          } else if (finalEfficiency >= 50) {
+            performanceMessage.innerHTML = '<p class="warning">💡 Good job! Keep making energy-efficient choices!</p>';
+          } else {
+            performanceMessage.innerHTML = '<p class="error">🔋 Keep trying! Every energy-saving action helps!</p>';
+          }
+        }
+        
+        resetGame() {
+          clearInterval(this.gameTimer);
+          document.querySelectorAll('.solar-panel').forEach(panel => panel.remove());
+          this.timeLeft = this.gameTime;
+          this.score = 0;
+          this.energySaved = 0;
+          this.totalPowerUsage = this.maxPowerUsage;
+          this.isPaused = false;
+          this.solarActive = false;
+          this.efficiencyUpgrades = 0;
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', () => {
+        new EnergySaverGame();
+      });
+    </script>
+    
+    <style>
+      .game-intro {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .game-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+      }
+      
+      .stat {
+        text-align: center;
+      }
+      
+      .stat-label {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--color-muted-fg);
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--color-primary);
+      }
+      
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .game-info {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .game-area {
+        position: relative;
+        min-height: 500px;
+        background: linear-gradient(to bottom, #87CEEB 0%, #f0f8ff 100%);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+      
+      .house {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
+        padding: 1rem;
+      }
+      
+      .room {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        border: 2px solid var(--color-muted);
+      }
+      
+      .room h3 {
+        margin: 0 0 1rem 0;
+        font-size: 1rem;
+        color: var(--color-primary);
+      }
+      
+      #living-room {
+        top: 20px;
+        left: 20px;
+        width: 200px;
+        height: 150px;
+      }
+      
+      #kitchen {
+        top: 20px;
+        right: 20px;
+        width: 200px;
+        height: 150px;
+      }
+      
+      #bedroom {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 150px;
+      }
+      
+      .appliance {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        margin: 0.25rem 0;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+      
+      .appliance:hover {
+        background: var(--color-primary-alpha);
+        border-color: var(--color-primary);
+      }
+      
+      .appliance.selected {
+        border-color: var(--color-primary);
+        background: var(--color-primary-alpha);
+      }
+      
+      .appliance.on {
+        background: #ffeb3b;
+      }
+      
+      .appliance.off {
+        background: #e0e0e0;
+        opacity: 0.6;
+      }
+      
+      .appliance-icon {
+        font-size: 1.5rem;
+      }
+      
+      .appliance span {
+        flex: 1;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      
+      .power-indicator {
+        font-size: 0.8rem;
+        color: var(--color-muted-fg);
+        font-weight: bold;
+      }
+      
+      .game-controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      
+      .energy-tips {
+        background: var(--color-muted);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .tips-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+      
+      .tip {
+        padding: 0.5rem;
+        background: var(--color-bg);
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+      }
+      
+      .solar-panel {
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+      
+      .floating-score {
+        animation: floatUp 1s ease-out forwards;
+      }
+      
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+      }
+      
+      .game-end {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .final-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+      }
+      
+      .success {
+        color: #10b981;
+        font-weight: 600;
+      }
+      
+      .warning {
+        color: #f59e0b;
+        font-weight: 600;
+      }
+      
+      .error {
+        color: #ef4444;
+        font-weight: 600;
+      }
+      
+      .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      @media (max-width: 768px) {
+        .game-header {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        
+        .game-info {
+          flex-direction: column;
+          text-align: center;
+        }
+        
+        .game-controls {
+          flex-direction: column;
+        }
+        
+        .room {
+          position: relative;
+          width: 100%;
+          height: auto;
+          margin-bottom: 1rem;
+        }
+        
+        #living-room, #kitchen, #bedroom {
+          position: relative;
+          top: auto;
+          left: auto;
+          right: auto;
+          bottom: auto;
+          transform: none;
+        }
+        
+        .tips-list {
+          grid-template-columns: 1fr;
+        }
+        
+        .cta-group {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </body>
+</html>

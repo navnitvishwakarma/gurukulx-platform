@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Reports • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-page="teacher-reports">
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="grid grid-3">
+        <div class="card">
+          <h2>Overall Performance</h2>
+          <div class="progress-wrap">
+            <div class="progress-label">Average Class Progress <span id="avgProgress">0%</span></div>
+            <div class="progress-bar"><div class="progress" id="avgProgressBar" style="width:0%"></div></div>
+          </div>
+          <div class="stats-row">
+            <div class="stat-card"><i class="ri-user-3-line"></i><div>Students</div><strong id="reportStudents">0</strong></div>
+            <div class="stat-card"><i class="ri-trophy-line"></i><div>Avg Score</div><strong id="reportAvgScore">0</strong></div>
+            <div class="stat-card"><i class="ri-medal-2-line"></i><div>Badges</div><strong id="reportBadges">0</strong></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Top Performers</h2>
+          <div id="reportsTop" class="table-like"></div>
+        </div>
+        <div class="card">
+          <h2>Download</h2>
+          <p>Export performance data as CSV.</p>
+          <button class="btn btn-primary" id="downloadCSV"><i class="ri-download-2-line"></i> Download CSV</button>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+  </body>
+</html>

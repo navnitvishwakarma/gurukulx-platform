@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Science Virtual Lab • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="science-virtuallab">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-flask-fill"></i> Science Virtual Lab</h1>
+        <div id="labRoot">
+          <div id="labIntro" class="lab-intro">
+            <p>Welcome to the Virtual Science Laboratory! Conduct interactive experiments and learn scientific principles through hands-on simulations.</p>
+            <div class="experiment-selector">
+              <label>Choose an Experiment:</label>
+              <select id="experimentSelect">
+                <option value="ph-test">pH Testing</option>
+                <option value="circuit-builder">Circuit Builder</option>
+                <option value="plant-growth">Plant Growth Simulation</option>
+                <option value="chemical-reaction">Chemical Reaction</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="startExperiment">Start Experiment</button>
+          </div>
+          <div id="labPlay" class="lab-play hidden">
+            <div class="lab-header">
+              <h2 id="experimentTitle">Experiment Title</h2>
+              <div class="lab-controls">
+                <button class="btn btn-outline btn-sm" id="fullscreenToggle" title="Toggle Fullscreen">
+                  <i class="ri-fullscreen-line"></i>
+                </button>
+                <button class="btn btn-outline" id="resetExperiment">Reset</button>
+                <button class="btn btn-outline" id="backToMenu">Back to Menu</button>
+              </div>
+            </div>
+            <div id="experimentArea" class="experiment-area"></div>
+            <div id="labInstructions" class="lab-instructions"></div>
+            <div id="labResults" class="lab-results hidden"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      class ScienceVirtualLab {
+        constructor() {
+          this.experiments = {
+            'ph-test': {
+              title: 'pH Testing Laboratory',
+              instructions: 'Test the pH of different solutions by adding pH indicator drops. Click on the dropper to add drops, then observe the color change.',
+              setup: this.setupPHTest.bind(this),
+              handle: this.handlePHTest.bind(this)
+            },
+            'circuit-builder': {
+              title: 'Electric Circuit Builder',
+              instructions: 'Build electrical circuits by connecting components. Drag components to the circuit board and connect them with wires.',
+              setup: this.setupCircuitBuilder.bind(this),
+              handle: this.handleCircuitBuilder.bind(this)
+            },
+            'plant-growth': {
+              title: 'Plant Growth Simulation',
+              instructions: 'Simulate plant growth under different conditions. Adjust light, water, and nutrients to see how they affect growth.',
+              setup: this.setupPlantGrowth.bind(this),
+              handle: this.handlePlantGrowth.bind(this)
+            },
+            'chemical-reaction': {
+              title: 'Chemical Reaction Simulator',
+              instructions: 'Mix different chemicals and observe reactions. Drag chemicals to the reaction chamber and watch the results.',
+              setup: this.setupChemicalReaction.bind(this),
+              handle: this.handleChemicalReaction.bind(this)
+            }
+          };
+          
+          this.currentExperiment = null;
+          this.experimentData = {};
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('experimentSelect').addEventListener('change', (e) => {
+            this.currentExperiment = e.target.value;
+          });
+          
+          document.getElementById('startExperiment').addEventListener('click', () => {
+            this.startExperiment();
+          });
+          
+          document.getElementById('resetExperiment').addEventListener('click', () => {
+            this.resetExperiment();
+          });
+          
+          document.getElementById('backToMenu').addEventListener('click', () => {
+            this.backToMenu();
+          });
+          
+          document.getElementById('fullscreenToggle').addEventListener('click', () => {
+            this.toggleFullscreen();
+          });
+        }
+        
+        startExperiment() {
+          if (!this.currentExperiment) {
+            this.currentExperiment = 'ph-test';
+          }
+          
+          document.getElementById('labIntro').classList.add('hidden');
+          document.getElementById('labPlay').classList.remove('hidden');
+          
+          const experiment = this.experiments[this.currentExperiment];
+          document.getElementById('experimentTitle').textContent = experiment.title;
+          document.getElementById('labInstructions').textContent = experiment.instructions;
+          
+          experiment.setup();
+          
+          // Enter fullscreen
+          this.enterFullscreen();
+        }
+        
+        setupPHTest() {
+          const experimentArea = document.getElementById('experimentArea');
+          experimentArea.innerHTML = `
+            <div class="ph-lab">
+              <div class="test-tubes">
+                <div class="test-tube" data-solution="water">
+                  <div class="tube-label">Water</div>
+                  <div class="liquid" style="background: transparent;"></div>
+                </div>
+                <div class="test-tube" data-solution="lemon">
+                  <div class="tube-label">Lemon Juice</div>
+                  <div class="liquid" style="background: #ffeb3b;"></div>
+                </div>
+                <div class="test-tube" data-solution="vinegar">
+                  <div class="tube-label">Vinegar</div>
+                  <div class="liquid" style="background: #ffeb3b;"></div>
+                </div>
+                <div class="test-tube" data-solution="baking-soda">
+                  <div class="tube-label">Baking Soda</div>
+                  <div class="liquid" style="background: #4caf50;"></div>
+                </div>
+                <div class="test-tube" data-solution="soap">
+                  <div class="tube-label">Soap</div>
+                  <div class="liquid" style="background: #4caf50;"></div>
+                </div>
+              </div>
+              <div class="ph-indicator">
+                <div class="dropper" id="phDropper">pH Indicator Dropper</div>
+                <div class="ph-scale">
+                  <div class="scale-item" style="background: #ff0000;">1-3</div>
+                  <div class="scale-item" style="background: #ff8000;">4-5</div>
+                  <div class="scale-item" style="background: #ffff00;">6</div>
+                  <div class="scale-item" style="background: #80ff00;">7</div>
+                  <div class="scale-item" style="background: #00ff00;">8-9</div>
+                  <div class="scale-item" style="background: #0080ff;">10-14</div>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          // Add click handlers
+          document.getElementById('phDropper').addEventListener('click', () => {
+            this.handlePHTest();
+          });
+          
+          document.querySelectorAll('.test-tube').forEach(tube => {
+            tube.addEventListener('click', (e) => {
+              const solution = e.currentTarget.dataset.solution;
+              this.testSolution(solution);
+            });
+          });
+        }
+        
+        handlePHTest() {
+          // This method is called when dropper is clicked
+          this.showResults('pH indicator drops added! Click on test tubes to test different solutions.');
+        }
+        
+        testSolution(solution) {
+          const phValues = {
+            'water': { ph: 7, color: '#80ff00', description: 'Neutral (pH 7)' },
+            'lemon': { ph: 2, color: '#ff0000', description: 'Very Acidic (pH 2)' },
+            'vinegar': { ph: 3, color: '#ff0000', description: 'Acidic (pH 3)' },
+            'baking-soda': { ph: 9, color: '#00ff00', description: 'Basic (pH 9)' },
+            'soap': { ph: 10, color: '#0080ff', description: 'Very Basic (pH 10)' }
+          };
+          
+          const result = phValues[solution];
+          const tube = document.querySelector(`[data-solution="${solution}"] .liquid`);
+          tube.style.background = result.color;
+          
+          this.showResults(`Testing ${solution}: ${result.description}`);
+        }
+        
+        setupCircuitBuilder() {
+          const experimentArea = document.getElementById('experimentArea');
+          experimentArea.innerHTML = `
+            <div class="circuit-lab">
+              <div class="components-panel">
+                <h3>Components</h3>
+                <div class="component" draggable="true" data-component="battery">
+                  <i class="ri-battery-line"></i> Battery
+                </div>
+                <div class="component" draggable="true" data-component="bulb">
+                  <i class="ri-lightbulb-line"></i> Light Bulb
+                </div>
+                <div class="component" draggable="true" data-component="switch">
+                  <i class="ri-toggle-line"></i> Switch
+                </div>
+                <div class="component" draggable="true" data-component="resistor">
+                  <i class="ri-resistor-line"></i> Resistor
+                </div>
+              </div>
+              <div class="circuit-board" id="circuitBoard">
+                <h3>Circuit Board</h3>
+                <div class="grid-lines"></div>
+              </div>
+            </div>
+          `;
+          
+          // Add drag and drop functionality
+          this.setupDragAndDrop();
+        }
+        
+        setupDragAndDrop() {
+          const components = document.querySelectorAll('.component');
+          const circuitBoard = document.getElementById('circuitBoard');
+          
+          components.forEach(component => {
+            component.addEventListener('dragstart', (e) => {
+              e.dataTransfer.setData('text/plain', e.target.dataset.component);
+            });
+          });
+          
+          circuitBoard.addEventListener('dragover', (e) => {
+            e.preventDefault();
+          });
+          
+          circuitBoard.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const componentType = e.dataTransfer.getData('text/plain');
+            this.addComponentToBoard(componentType, e.clientX, e.clientY);
+          });
+        }
+        
+        addComponentToBoard(componentType, x, y) {
+          const circuitBoard = document.getElementById('circuitBoard');
+          const component = document.createElement('div');
+          component.className = `circuit-component ${componentType}`;
+          component.dataset.component = componentType;
+          
+          const icons = {
+            'battery': 'ri-battery-line',
+            'bulb': 'ri-lightbulb-line',
+            'switch': 'ri-toggle-line',
+            'resistor': 'ri-resistor-line'
+          };
+          
+          component.innerHTML = `<i class="${icons[componentType]}"></i>`;
+          component.style.position = 'absolute';
+          component.style.left = (x - circuitBoard.offsetLeft) + 'px';
+          component.style.top = (y - circuitBoard.offsetTop) + 'px';
+          
+          circuitBoard.appendChild(component);
+          
+          this.checkCircuit();
+        }
+        
+        checkCircuit() {
+          const components = document.querySelectorAll('.circuit-component');
+          const hasBattery = Array.from(components).some(c => c.dataset.component === 'battery');
+          const hasBulb = Array.from(components).some(c => c.dataset.component === 'bulb');
+          
+          if (hasBattery && hasBulb) {
+            this.showResults('Circuit complete! The light bulb should be glowing. You have successfully built a working circuit!');
+          } else {
+            this.showResults('Add more components to complete the circuit. You need at least a battery and a light bulb.');
+          }
+        }
+        
+        handleCircuitBuilder() {
+          // This method handles circuit builder interactions
+        }
+        
+        setupPlantGrowth() {
+          const experimentArea = document.getElementById('experimentArea');
+          experimentArea.innerHTML = `
+            <div class="plant-lab">
+              <div class="plant-container">
+                <div class="plant" id="plant">
+                  <div class="stem"></div>
+                  <div class="leaves"></div>
+                </div>
+                <div class="pot"></div>
+              </div>
+              <div class="controls">
+                <div class="control-group">
+                  <label>Light Level:</label>
+                  <input type="range" id="lightSlider" min="0" max="100" value="50">
+                  <span id="lightValue">50%</span>
+                </div>
+                <div class="control-group">
+                  <label>Water Level:</label>
+                  <input type="range" id="waterSlider" min="0" max="100" value="50">
+                  <span id="waterValue">50%</span>
+                </div>
+                <div class="control-group">
+                  <label>Nutrients:</label>
+                  <input type="range" id="nutrientSlider" min="0" max="100" value="50">
+                  <span id="nutrientValue">50%</span>
+                </div>
+                <button class="btn btn-primary" id="growPlant">Grow Plant</button>
+              </div>
+            </div>
+          `;
+          
+          // Add event listeners
+          document.getElementById('lightSlider').addEventListener('input', (e) => {
+            document.getElementById('lightValue').textContent = e.target.value + '%';
+          });
+          
+          document.getElementById('waterSlider').addEventListener('input', (e) => {
+            document.getElementById('waterValue').textContent = e.target.value + '%';
+          });
+          
+          document.getElementById('nutrientSlider').addEventListener('input', (e) => {
+            document.getElementById('nutrientValue').textContent = e.target.value + '%';
+          });
+          
+          document.getElementById('growPlant').addEventListener('click', () => {
+            this.handlePlantGrowth();
+          });
+        }
+        
+        handlePlantGrowth() {
+          const light = parseInt(document.getElementById('lightSlider').value);
+          const water = parseInt(document.getElementById('waterSlider').value);
+          const nutrients = parseInt(document.getElementById('nutrientSlider').value);
+          
+          const plant = document.getElementById('plant');
+          const average = (light + water + nutrients) / 3;
+          
+          // Calculate growth based on conditions
+          let growthRate = 0;
+          let healthStatus = '';
+          
+          if (average >= 80) {
+            growthRate = 100;
+            healthStatus = 'Excellent growth! The plant is thriving with optimal conditions.';
+            plant.style.transform = 'scale(1.2)';
+            plant.style.filter = 'brightness(1.2)';
+          } else if (average >= 60) {
+            growthRate = 75;
+            healthStatus = 'Good growth! The plant is growing well with adequate conditions.';
+            plant.style.transform = 'scale(1.1)';
+            plant.style.filter = 'brightness(1.1)';
+          } else if (average >= 40) {
+            growthRate = 50;
+            healthStatus = 'Moderate growth. The plant needs better conditions to thrive.';
+            plant.style.transform = 'scale(1.0)';
+            plant.style.filter = 'brightness(1.0)';
+          } else {
+            growthRate = 25;
+            healthStatus = 'Poor growth. The plant is struggling due to inadequate conditions.';
+            plant.style.transform = 'scale(0.8)';
+            plant.style.filter = 'brightness(0.8)';
+          }
+          
+          this.showResults(`Plant Growth Simulation Results:
+          Light: ${light}%, Water: ${water}%, Nutrients: ${nutrients}%
+          Growth Rate: ${growthRate}%
+          ${healthStatus}`);
+        }
+        
+        setupChemicalReaction() {
+          const experimentArea = document.getElementById('experimentArea');
+          experimentArea.innerHTML = `
+            <div class="chemistry-lab">
+              <div class="chemicals">
+                <div class="chemical" draggable="true" data-chemical="acid">
+                  <div class="chemical-bottle" style="background: #ff6b6b;">HCl</div>
+                  <div class="chemical-label">Hydrochloric Acid</div>
+                </div>
+                <div class="chemical" draggable="true" data-chemical="base">
+                  <div class="chemical-bottle" style="background: #4ecdc4;">NaOH</div>
+                  <div class="chemical-label">Sodium Hydroxide</div>
+                </div>
+                <div class="chemical" draggable="true" data-chemical="salt">
+                  <div class="chemical-bottle" style="background: #ffe66d;">NaCl</div>
+                  <div class="chemical-label">Sodium Chloride</div>
+                </div>
+                <div class="chemical" draggable="true" data-chemical="water">
+                  <div class="chemical-bottle" style="background: #87ceeb;">H2O</div>
+                  <div class="chemical-label">Water</div>
+                </div>
+              </div>
+              <div class="reaction-chamber" id="reactionChamber">
+                <h3>Reaction Chamber</h3>
+                <div class="chamber-content"></div>
+                <button class="btn btn-primary" id="mixChemicals">Mix Chemicals</button>
+              </div>
+            </div>
+          `;
+          
+          // Add drag and drop for chemicals
+          this.setupChemicalDragAndDrop();
+          
+          document.getElementById('mixChemicals').addEventListener('click', () => {
+            this.handleChemicalReaction();
+          });
+        }
+        
+        setupChemicalDragAndDrop() {
+          const chemicals = document.querySelectorAll('.chemical');
+          const reactionChamber = document.getElementById('reactionChamber');
+          
+          chemicals.forEach(chemical => {
+            chemical.addEventListener('dragstart', (e) => {
+              e.dataTransfer.setData('text/plain', e.target.dataset.chemical);
+            });
+          });
+          
+          reactionChamber.addEventListener('dragover', (e) => {
+            e.preventDefault();
+          });
+          
+          reactionChamber.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const chemicalType = e.dataTransfer.getData('text/plain');
+            this.addChemicalToChamber(chemicalType);
+          });
+        }
+        
+        addChemicalToChamber(chemicalType) {
+          const chamberContent = document.querySelector('.chamber-content');
+          const chemical = document.createElement('div');
+          chemical.className = `chamber-chemical ${chemicalType}`;
+          chemical.dataset.chemical = chemicalType;
+          
+          const colors = {
+            'acid': '#ff6b6b',
+            'base': '#4ecdc4',
+            'salt': '#ffe66d',
+            'water': '#87ceeb'
+          };
+          
+          chemical.style.background = colors[chemicalType];
+          chemical.style.width = '30px';
+          chemical.style.height = '30px';
+          chemical.style.borderRadius = '50%';
+          chemical.style.display = 'inline-block';
+          chemical.style.margin = '5px';
+          
+          chamberContent.appendChild(chemical);
+        }
+        
+        handleChemicalReaction() {
+          const chemicals = document.querySelectorAll('.chamber-chemical');
+          const chemicalTypes = Array.from(chemicals).map(c => c.dataset.chemical);
+          
+          let reactionResult = '';
+          
+          if (chemicalTypes.includes('acid') && chemicalTypes.includes('base')) {
+            reactionResult = 'Neutralization Reaction! Acid + Base → Salt + Water. The pH becomes neutral.';
+          } else if (chemicalTypes.includes('acid') && chemicalTypes.includes('salt')) {
+            reactionResult = 'No significant reaction. The acid dissolves the salt.';
+          } else if (chemicalTypes.includes('base') && chemicalTypes.includes('salt')) {
+            reactionResult = 'No significant reaction. The base dissolves the salt.';
+          } else if (chemicalTypes.includes('water') && chemicalTypes.length > 1) {
+            reactionResult = 'Dissolution reaction! The substances dissolve in water.';
+          } else if (chemicalTypes.length === 1) {
+            reactionResult = 'Only one chemical present. No reaction occurs.';
+          } else {
+            reactionResult = 'No reaction observed with these chemicals.';
+          }
+          
+          this.showResults(`Chemical Reaction Results:
+          Chemicals mixed: ${chemicalTypes.join(', ')}
+          ${reactionResult}`);
+        }
+        
+        showResults(message) {
+          const resultsDiv = document.getElementById('labResults');
+          resultsDiv.textContent = message;
+          resultsDiv.classList.remove('hidden');
+        }
+        
+        resetExperiment() {
+          if (this.currentExperiment && this.experiments[this.currentExperiment]) {
+            this.experiments[this.currentExperiment].setup();
+            document.getElementById('labResults').classList.add('hidden');
+          }
+        }
+        
+        backToMenu() {
+          document.getElementById('labPlay').classList.add('hidden');
+          document.getElementById('labIntro').classList.remove('hidden');
+          document.getElementById('labResults').classList.add('hidden');
+          
+          // Exit fullscreen when returning to menu
+          this.exitFullscreen();
+        }
+        
+        enterFullscreen() {
+          const element = document.documentElement;
+          if (element.requestFullscreen) {
+            element.requestFullscreen().catch(err => {
+              console.log('Fullscreen not supported or denied:', err);
+            });
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }
+        
+        exitFullscreen() {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+        
+        toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            this.enterFullscreen();
+          } else {
+            this.exitFullscreen();
+          }
+        }
+      }
+      
+      // Initialize lab when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new ScienceVirtualLab();
+      });
+    </script>
+    
+    <style>
+      .lab-intro {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .experiment-selector {
+        margin: 1rem 0;
+      }
+      
+      .experiment-selector label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      
+      .experiment-selector select {
+        padding: 0.5rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.5rem;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        font-size: 1rem;
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .lab-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--color-muted);
+      }
+      
+      .lab-controls {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      .experiment-area {
+        min-height: 400px;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .lab-instructions {
+        padding: 1rem;
+        background: #f0f9ff;
+        border-left: 4px solid var(--color-accent);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        font-style: italic;
+      }
+      
+      .lab-results {
+        padding: 1rem;
+        background: #f0fdf4;
+        border-left: 4px solid var(--color-primary);
+        border-radius: 0.5rem;
+        white-space: pre-line;
+        font-weight: 500;
+      }
+      
+      /* pH Testing Lab Styles */
+      .ph-lab {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+      
+      .test-tubes {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      
+      .test-tube {
+        width: 60px;
+        height: 120px;
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 0 0 8px 8px;
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      
+      .test-tube:hover {
+        transform: scale(1.05);
+      }
+      
+      .tube-label {
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.7rem;
+        text-align: center;
+        white-space: nowrap;
+      }
+      
+      .liquid {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        border-radius: 0 0 6px 6px;
+        transition: background-color 0.5s ease;
+      }
+      
+      .ph-indicator {
+        text-align: center;
+      }
+      
+      .dropper {
+        padding: 1rem;
+        background: var(--color-primary);
+        color: white;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+      }
+      
+      .dropper:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+      }
+      
+      .ph-scale {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      
+      .scale-item {
+        padding: 0.5rem;
+        color: white;
+        font-weight: 600;
+        border-radius: 0.25rem;
+        text-align: center;
+      }
+      
+      /* Circuit Builder Styles */
+      .circuit-lab {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+      }
+      
+      .components-panel {
+        background: var(--color-bg);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 2px solid var(--color-muted);
+      }
+      
+      .component {
+        padding: 1rem;
+        margin: 0.5rem 0;
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 0.5rem;
+        cursor: grab;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .component:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
+      }
+      
+      .circuit-board {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        position: relative;
+        min-height: 300px;
+      }
+      
+      .circuit-component {
+        position: absolute;
+        padding: 0.5rem;
+        background: var(--color-primary);
+        color: white;
+        border-radius: 0.25rem;
+        cursor: move;
+        font-size: 1.5rem;
+      }
+      
+      /* Plant Growth Styles */
+      .plant-lab {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: center;
+      }
+      
+      .plant-container {
+        text-align: center;
+      }
+      
+      .plant {
+        width: 100px;
+        height: 150px;
+        margin: 0 auto 1rem;
+        transition: all 0.5s ease;
+      }
+      
+      .stem {
+        width: 8px;
+        height: 100px;
+        background: #8b4513;
+        margin: 0 auto;
+        border-radius: 4px;
+      }
+      
+      .leaves {
+        width: 60px;
+        height: 40px;
+        background: #228b22;
+        border-radius: 50%;
+        margin: -20px auto 0;
+        position: relative;
+      }
+      
+      .leaves::before,
+      .leaves::after {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: #228b22;
+        border-radius: 50%;
+      }
+      
+      .leaves::before {
+        top: -10px;
+        left: -15px;
+      }
+      
+      .leaves::after {
+        top: -10px;
+        right: -15px;
+      }
+      
+      .pot {
+        width: 80px;
+        height: 40px;
+        background: #8b4513;
+        margin: 0 auto;
+        border-radius: 0 0 8px 8px;
+      }
+      
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .control-group label {
+        font-weight: 500;
+      }
+      
+      .control-group input[type="range"] {
+        width: 100%;
+      }
+      
+      /* Chemical Reaction Styles */
+      .chemistry-lab {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+      
+      .chemicals {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      
+      .chemical {
+        cursor: grab;
+        transition: transform 0.3s ease;
+      }
+      
+      .chemical:hover {
+        transform: scale(1.05);
+      }
+      
+      .chemical-bottle {
+        width: 60px;
+        height: 80px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        margin: 0 auto 0.5rem;
+        border: 2px solid rgba(255,255,255,0.3);
+      }
+      
+      .chemical-label {
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+      
+      .reaction-chamber {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+      }
+      
+      .chamber-content {
+        min-height: 100px;
+        background: #f8f9fa;
+        border: 2px dashed var(--color-muted);
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+        padding: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      @media (max-width: 768px) {
+        .ph-lab,
+        .circuit-lab,
+        .plant-lab,
+        .chemistry-lab {
+          grid-template-columns: 1fr;
+        }
+        
+        .lab-header {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: stretch;
+        }
+        
+        .lab-controls {
+          justify-content: center;
+        }
+        
+        .test-tubes {
+          justify-content: center;
+        }
+        
+        .chemicals {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </body>
+</html>

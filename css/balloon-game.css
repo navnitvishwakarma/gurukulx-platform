@@ -1,0 +1,266 @@
+/* Balloon Game Styles */
+.balloon-game-container {
+    max-width: 900px;
+    margin: 2rem auto;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.game-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.game-content {
+    background: var(--color-bg);
+    border: 1px solid var(--color-muted);
+    border-radius: 1rem;
+    padding: 2rem;
+}
+
+.game-description {
+    margin-bottom: 1.5rem;
+    color: var(--color-fg);
+    opacity: 0.8;
+}
+
+.game-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--color-muted);
+    border-radius: 0.75rem;
+    background: var(--color-bg);
+}
+
+.info-card i {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.info-card h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+}
+
+.info-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.game-area {
+    margin: 2rem 0;
+}
+
+.game-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat {
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid var(--color-muted);
+    border-radius: 0.75rem;
+    background: var(--color-bg);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-fg);
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.balloons-container {
+    min-height: 300px;
+    border: 2px dashed var(--color-muted);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.balloon {
+    width: 60px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 700;
+    color: white;
+    position: relative;
+    transition: transform 0.3s ease;
+    animation: float 3s ease-in-out infinite;
+}
+
+.balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, #ccc, #eee);
+}
+
+.balloon:hover {
+    transform: scale(1.1);
+}
+
+.balloon.popped {
+    opacity: 0.3;
+    transform: scale(0.5);
+    pointer-events: none;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.balloon:nth-child(1) { animation-delay: 0s; background: #ff6b6b; }
+.balloon:nth-child(2) { animation-delay: 0.2s; background: #4ecdc4; }
+.balloon:nth-child(3) { animation-delay: 0.4s; background: #ffd166; }
+.balloon:nth-child(4) { animation-delay: 0.6s; background: #6a0572; }
+.balloon:nth-child(5) { animation-delay: 0.8s; background: #06d6a0; }
+.balloon:nth-child(6) { animation-delay: 1s; background: #118ab2; }
+.balloon:nth-child(7) { animation-delay: 1.2s; background: #ef476f; }
+.balloon:nth-child(8) { animation-delay: 1.4s; background: #073b4c; }
+.balloon:nth-child(9) { animation-delay: 1.6s; background: #7209b7; }
+.balloon:nth-child(10) { animation-delay: 1.8s; background: #3a86ff; }
+
+.game-instruction {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--color-primary);
+}
+
+.game-feedback {
+    text-align: center;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.feedback-correct {
+    color: #16a34a;
+}
+
+.feedback-incorrect {
+    color: #dc2626;
+}
+
+.feedback-levelup {
+    color: #0ea5e9;
+    font-size: 1.1rem;
+}
+
+.game-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Pop animation */
+@keyframes pop {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+.balloon.pop-animation {
+    animation: pop 0.5s ease-out forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .game-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .game-content {
+        padding: 1.5rem;
+    }
+    
+    .game-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .balloons-container {
+        min-height: 250px;
+        padding: 1rem;
+    }
+    
+    .balloon {
+        width: 50px;
+        height: 70px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .balloons-container {
+        min-height: 200px;
+    }
+    
+    .balloon {
+        width: 45px;
+        height: 65px;
+        font-size: 0.8rem;
+    }
+    
+    .game-actions {
+        flex-direction: column;
+    }
+    
+    .game-actions .btn {
+        width: 100%;
+    }
+}

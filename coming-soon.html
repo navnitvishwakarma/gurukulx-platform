@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Coming Soon • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+    <style>
+      .coming { max-width: 760px; margin: 2rem auto; text-align:center; }
+      .coming .giant { font-size: 3rem; margin: .5rem 0; }
+      .coming p { color: #64748b; }
+    </style>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="card coming">
+        <div class="giant">🚧</div>
+        <h1 class="text-balance">Content Coming Soon</h1>
+        <p id="comingText">We are preparing engaging content for this class. Please check back later.</p>
+        <div class="cta-group" style="justify-content:center; margin-top:1rem;">
+          <a class="btn" href="/class-selection.html"><i class="ri-arrow-left-line"></i> Back to Classes</a>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    <script>
+      document.addEventListener('DOMContentLoaded', ()=>{
+        setTimeout(()=>{
+          const params = new URLSearchParams(location.search);
+          const cls = params.get('class');
+          if (cls) {
+            document.getElementById('comingText').textContent = `We are preparing engaging content for Grade ${cls}. Please check back later.`;
+          }
+        },100);
+      });
+    </script>
+  </body>
+  </html>
+
+

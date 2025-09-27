@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pollution Challenge • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="pollution-challenge">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-windy-line"></i> Pollution Challenge</h1>
+        <div id="gameRoot">
+          <div id="gameIntro" class="game-intro">
+            <p>Help clean up the environment! Identify and remove different types of pollution to restore the ecosystem.</p>
+            <div class="game-stats">
+              <div class="stat">
+                <span class="stat-label">Pollution Cleaned:</span>
+                <span class="stat-value" id="pollutionCleaned">0</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Environment Health:</span>
+                <span class="stat-value" id="environmentHealth">100</span>%
+              </div>
+              <div class="stat">
+                <span class="stat-label">Score:</span>
+                <span class="stat-value" id="totalScore">0</span>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="startGame">Start Challenge</button>
+          </div>
+          <div id="gamePlay" class="game-play hidden">
+            <div class="game-header">
+              <div class="game-info">
+                <span>Time: <strong id="gameTimer">90</strong>s</span>
+                <span>Score: <strong id="currentScore">0</strong></span>
+                <span>Health: <strong id="currentHealth">100</strong>%</span>
+              </div>
+              <button class="btn btn-outline btn-sm" id="pauseGame">Pause</button>
+            </div>
+            <div class="game-area">
+              <div id="environment" class="environment"></div>
+              <div class="pollution-types">
+                <h3>Pollution Types:</h3>
+                <div class="pollution-info">
+                  <div class="pollution-type" data-type="plastic">
+                    <div class="pollution-icon">🥤</div>
+                    <span>Plastic Waste</span>
+                    <small>-5 Health</small>
+                  </div>
+                  <div class="pollution-type" data-type="smoke">
+                    <div class="pollution-icon">💨</div>
+                    <span>Air Pollution</span>
+                    <small>-8 Health</small>
+                  </div>
+                  <div class="pollution-type" data-type="oil">
+                    <div class="pollution-icon">🛢️</div>
+                    <span>Oil Spill</span>
+                    <small>-10 Health</small>
+                  </div>
+                  <div class="pollution-type" data-type="chemical">
+                    <div class="pollution-icon">🧪</div>
+                    <span>Chemical Waste</span>
+                    <small>-12 Health</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="game-controls">
+              <button class="btn btn-accent" id="cleanPollution">Clean Selected</button>
+              <button class="btn btn-outline" id="useFilter">Use Air Filter</button>
+              <button class="btn btn-outline" id="plantCleaner">Plant Cleaner</button>
+            </div>
+          </div>
+          <div id="gameEnd" class="game-end hidden">
+            <h2>Challenge Complete!</h2>
+            <div class="final-stats">
+              <div class="stat">
+                <span class="stat-label">Pollution Cleaned:</span>
+                <span class="stat-value" id="finalPollution">0</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Final Health:</span>
+                <span class="stat-value" id="finalHealth">100</span>%
+              </div>
+              <div class="stat">
+                <span class="stat-label">Final Score:</span>
+                <span class="stat-value" id="finalScore">0</span>
+              </div>
+            </div>
+            <div id="performanceMessage"></div>
+            <div class="cta-group">
+              <button class="btn btn-accent" id="playAgain">Play Again</button>
+              <a class="btn" href="/subjects/environment.html">Back to Environment</a>
+              <a class="btn" href="/leaderboard.html">View Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      class PollutionChallenge {
+        constructor() {
+          this.gameTime = 90;
+          this.timeLeft = 90;
+          this.score = 0;
+          this.pollutionCleaned = 0;
+          this.environmentHealth = 100;
+          this.selectedPollution = null;
+          this.gameTimer = null;
+          this.pollutionTimer = null;
+          this.isPaused = false;
+          this.pollutionTypes = {
+            plastic: { emoji: '🥤', healthDamage: 5, points: 10, color: '#ff6b6b' },
+            smoke: { emoji: '💨', healthDamage: 8, points: 15, color: '#666' },
+            oil: { emoji: '🛢️', healthDamage: 10, points: 20, color: '#333' },
+            chemical: { emoji: '🧪', healthDamage: 12, points: 25, color: '#8b4513' }
+          };
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('startGame').addEventListener('click', () => {
+            this.startGame();
+          });
+          
+          document.getElementById('playAgain').addEventListener('click', () => {
+            this.resetGame();
+            this.startGame();
+          });
+          
+          document.getElementById('pauseGame').addEventListener('click', () => {
+            this.togglePause();
+          });
+          
+          document.getElementById('cleanPollution').addEventListener('click', () => {
+            this.cleanPollution();
+          });
+          
+          document.getElementById('useFilter').addEventListener('click', () => {
+            this.useAirFilter();
+          });
+          
+          document.getElementById('plantCleaner').addEventListener('click', () => {
+            this.plantCleaner();
+          });
+          
+          // Pollution type selection
+          document.querySelectorAll('.pollution-type').forEach(type => {
+            type.addEventListener('click', () => {
+              document.querySelectorAll('.pollution-type').forEach(t => t.classList.remove('selected'));
+              type.classList.add('selected');
+              this.selectedPollution = type.dataset.type;
+            });
+          });
+        }
+        
+        startGame() {
+          document.getElementById('gameIntro').classList.add('hidden');
+          document.getElementById('gamePlay').classList.remove('hidden');
+          document.getElementById('gameEnd').classList.add('hidden');
+          
+          this.timeLeft = this.gameTime;
+          this.score = 0;
+          this.pollutionCleaned = 0;
+          this.environmentHealth = 100;
+          this.isPaused = false;
+          
+          this.updateDisplay();
+          this.startTimer();
+          this.startPollutionSpawn();
+        }
+        
+        startTimer() {
+          this.gameTimer = setInterval(() => {
+            if (!this.isPaused) {
+              this.timeLeft--;
+              this.updateDisplay();
+              
+              if (this.timeLeft <= 0) {
+                this.endGame();
+              }
+            }
+          }, 1000);
+        }
+        
+        startPollutionSpawn() {
+          this.pollutionTimer = setInterval(() => {
+            if (!this.isPaused) {
+              this.spawnPollution();
+            }
+          }, 2000);
+        }
+        
+        spawnPollution() {
+          const environment = document.getElementById('environment');
+          const pollutionTypes = Object.keys(this.pollutionTypes);
+          const randomType = pollutionTypes[Math.floor(Math.random() * pollutionTypes.length)];
+          const pollution = this.pollutionTypes[randomType];
+          
+          const pollutionElement = document.createElement('div');
+          pollutionElement.className = 'pollution-item';
+          pollutionElement.dataset.type = randomType;
+          pollutionElement.innerHTML = pollution.emoji;
+          pollutionElement.style.left = Math.random() * 80 + 10 + '%';
+          pollutionElement.style.top = Math.random() * 60 + 20 + '%';
+          pollutionElement.style.backgroundColor = pollution.color;
+          pollutionElement.style.fontSize = (Math.random() * 10 + 20) + 'px';
+          
+          // Add click handler
+          pollutionElement.addEventListener('click', () => {
+            this.selectPollution(pollutionElement, randomType);
+          });
+          
+          environment.appendChild(pollutionElement);
+          
+          // Damage environment health
+          this.environmentHealth = Math.max(0, this.environmentHealth - pollution.healthDamage);
+          this.updateDisplay();
+          
+          // Remove pollution after 10 seconds if not cleaned
+          setTimeout(() => {
+            if (pollutionElement.parentNode) {
+              pollutionElement.remove();
+            }
+          }, 10000);
+        }
+        
+        selectPollution(element, type) {
+          // Remove previous selection
+          document.querySelectorAll('.pollution-item').forEach(item => {
+            item.classList.remove('selected');
+          });
+          
+          // Select current pollution
+          element.classList.add('selected');
+          this.selectedPollution = type;
+          
+          // Highlight pollution type in info panel
+          document.querySelectorAll('.pollution-type').forEach(t => t.classList.remove('selected'));
+          document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+        }
+        
+        cleanPollution() {
+          const selectedPollution = document.querySelector('.pollution-item.selected');
+          if (selectedPollution) {
+            const type = selectedPollution.dataset.type;
+            const pollution = this.pollutionTypes[type];
+            
+            // Add cleaning animation
+            selectedPollution.style.transform = 'scale(0)';
+            selectedPollution.style.transition = 'transform 0.5s ease';
+            
+            setTimeout(() => {
+              selectedPollution.remove();
+            }, 500);
+            
+            // Update stats
+            this.pollutionCleaned++;
+            this.score += pollution.points;
+            this.environmentHealth = Math.min(100, this.environmentHealth + 5);
+            
+            this.updateDisplay();
+            this.showFloatingScore(pollution.points, selectedPollution);
+          }
+        }
+        
+        useAirFilter() {
+          const smokePollution = document.querySelectorAll('.pollution-item[data-type="smoke"]');
+          smokePollution.forEach(pollution => {
+            pollution.style.transform = 'scale(0)';
+            pollution.style.transition = 'transform 0.5s ease';
+            setTimeout(() => pollution.remove(), 500);
+          });
+          
+          this.score += smokePollution.length * 10;
+          this.environmentHealth = Math.min(100, this.environmentHealth + smokePollution.length * 3);
+          this.updateDisplay();
+        }
+        
+        plantCleaner() {
+          const environment = document.getElementById('environment');
+          
+          // Add cleaner plants
+          for (let i = 0; i < 3; i++) {
+            const plant = document.createElement('div');
+            plant.className = 'cleaner-plant';
+            plant.innerHTML = '🌿';
+            plant.style.left = Math.random() * 80 + 10 + '%';
+            plant.style.top = Math.random() * 60 + 20 + '%';
+            plant.style.fontSize = '20px';
+            plant.style.position = 'absolute';
+            plant.style.zIndex = '10';
+            
+            environment.appendChild(plant);
+            
+            // Remove plant after 5 seconds
+            setTimeout(() => {
+              if (plant.parentNode) {
+                plant.remove();
+              }
+            }, 5000);
+          }
+          
+          this.score += 30;
+          this.environmentHealth = Math.min(100, this.environmentHealth + 10);
+          this.updateDisplay();
+        }
+        
+        showFloatingScore(points, element) {
+          const floatingScore = document.createElement('div');
+          floatingScore.className = 'floating-score';
+          floatingScore.textContent = '+' + points;
+          floatingScore.style.position = 'absolute';
+          floatingScore.style.left = element.style.left;
+          floatingScore.style.top = element.style.top;
+          floatingScore.style.color = '#10b981';
+          floatingScore.style.fontWeight = 'bold';
+          floatingScore.style.pointerEvents = 'none';
+          floatingScore.style.zIndex = '1000';
+          
+          document.getElementById('environment').appendChild(floatingScore);
+          
+          setTimeout(() => {
+            floatingScore.style.transform = 'translateY(-50px)';
+            floatingScore.style.opacity = '0';
+            setTimeout(() => {
+              floatingScore.remove();
+            }, 1000);
+          }, 100);
+        }
+        
+        updateDisplay() {
+          document.getElementById('gameTimer').textContent = this.timeLeft;
+          document.getElementById('currentScore').textContent = this.score;
+          document.getElementById('currentHealth').textContent = this.environmentHealth;
+          document.getElementById('pollutionCleaned').textContent = this.pollutionCleaned;
+          document.getElementById('environmentHealth').textContent = this.environmentHealth;
+          document.getElementById('totalScore').textContent = this.score;
+        }
+        
+        togglePause() {
+          this.isPaused = !this.isPaused;
+          const pauseBtn = document.getElementById('pauseGame');
+          pauseBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+        }
+        
+        endGame() {
+          clearInterval(this.gameTimer);
+          clearInterval(this.pollutionTimer);
+          document.getElementById('gamePlay').classList.add('hidden');
+          document.getElementById('gameEnd').classList.remove('hidden');
+          
+          document.getElementById('finalPollution').textContent = this.pollutionCleaned;
+          document.getElementById('finalHealth').textContent = this.environmentHealth;
+          document.getElementById('finalScore').textContent = this.score;
+          
+          const performanceMessage = document.getElementById('performanceMessage');
+          if (this.environmentHealth >= 80) {
+            performanceMessage.innerHTML = '<p class="success">🌍 Excellent! You\'ve restored the environment!</p>';
+          } else if (this.environmentHealth >= 60) {
+            performanceMessage.innerHTML = '<p class="warning">🌱 Good job! The environment is recovering!</p>';
+          } else {
+            performanceMessage.innerHTML = '<p class="error">🌫️ Keep trying! Every cleanup effort helps!</p>';
+          }
+        }
+        
+        resetGame() {
+          clearInterval(this.gameTimer);
+          clearInterval(this.pollutionTimer);
+          document.getElementById('environment').innerHTML = '';
+          this.timeLeft = this.gameTime;
+          this.score = 0;
+          this.pollutionCleaned = 0;
+          this.environmentHealth = 100;
+          this.isPaused = false;
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', () => {
+        new PollutionChallenge();
+      });
+    </script>
+    
+    <style>
+      .game-intro {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .game-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+      }
+      
+      .stat {
+        text-align: center;
+      }
+      
+      .stat-label {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--color-muted-fg);
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--color-primary);
+      }
+      
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .game-info {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .game-area {
+        position: relative;
+        min-height: 400px;
+        background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+      
+      .environment {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+      }
+      
+      .pollution-item {
+        position: absolute;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        user-select: none;
+        border: 2px solid transparent;
+      }
+      
+      .pollution-item:hover {
+        transform: scale(1.1);
+        border-color: var(--color-primary);
+      }
+      
+      .pollution-item.selected {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 10px var(--color-primary);
+      }
+      
+      .pollution-types {
+        background: var(--color-muted);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .pollution-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      
+      .pollution-type {
+        text-align: center;
+        padding: 1rem;
+        border: 2px solid transparent;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .pollution-type:hover {
+        border-color: var(--color-primary);
+        background: var(--color-primary-alpha);
+      }
+      
+      .pollution-type.selected {
+        border-color: var(--color-primary);
+        background: var(--color-primary-alpha);
+      }
+      
+      .pollution-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .pollution-type span {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+      }
+      
+      .pollution-type small {
+        color: var(--color-muted-fg);
+        font-size: 0.8rem;
+      }
+      
+      .cleaner-plant {
+        animation: grow 0.5s ease-out;
+      }
+      
+      @keyframes grow {
+        0% {
+          transform: scale(0);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      
+      .floating-score {
+        animation: floatUp 1s ease-out forwards;
+      }
+      
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+      }
+      
+      .game-controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      
+      .game-end {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .final-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+      }
+      
+      .success {
+        color: #10b981;
+        font-weight: 600;
+      }
+      
+      .warning {
+        color: #f59e0b;
+        font-weight: 600;
+      }
+      
+      .error {
+        color: #ef4444;
+        font-weight: 600;
+      }
+      
+      .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      @media (max-width: 768px) {
+        .game-header {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        
+        .game-info {
+          flex-direction: column;
+          text-align: center;
+        }
+        
+        .game-controls {
+          flex-direction: column;
+        }
+        
+        .pollution-info {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .cta-group {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </body>
+</html>

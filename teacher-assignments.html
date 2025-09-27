@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Assignments • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-page="teacher-assignments">
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="card">
+        <h1>Assign Quizzes/Games</h1>
+        <form id="assignForm" class="grid grid-3 gap-md">
+          <div class="form-row">
+            <label for="assign-class">Class</label>
+            <select id="assign-class"></select>
+          </div>
+          <div class="form-row">
+            <label for="assign-subject">Subject</label>
+            <select id="assign-subject">
+              <option>Math</option><option>Science</option><option>Environment</option>
+              <option>Social Science</option><option>English</option><option>Computer Science</option><option>GK</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="assign-game">Game</label>
+            <select id="assign-game"></select>
+          </div>
+          <div class="form-row">
+            <label for="assign-due">Due Date</label>
+            <input type="date" id="assign-due" />
+          </div>
+          <div class="form-row">
+            <label for="assign-notes">Notes</label>
+            <input id="assign-notes" placeholder="Optional instructions" />
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" type="submit">Create Assignment</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Upcoming Assignments</h2>
+        <div id="assignmentsList" class="table-like"></div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+  </body>
+</html>

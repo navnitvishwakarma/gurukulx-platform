@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Light and Sound Quiz – Science Chapter 2 – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="quiz-hero">
+        <div class="breadcrumb">
+          <a href="/index.html">Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-learning-path.html">Science</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-chapters.html">Chapters</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-chapter-2.html">Chapter 2</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>Quiz</span>
+        </div>
+        
+        <div class="hero-content">
+          <div class="quiz-icon">
+            <i class="ri-sun-line"></i>
+          </div>
+          <h1 class="text-balance">Light and Sound Quiz</h1>
+          <p class="lead text-pretty">
+            Test your understanding of light properties, sound waves, and their applications in daily life.
+          </p>
+          <div class="quiz-info">
+            <div class="info-item">
+              <i class="ri-question-line"></i>
+              <span>20 Questions</span>
+            </div>
+            <div class="info-item">
+              <i class="ri-time-line"></i>
+              <span>15 Minutes</span>
+            </div>
+            <div class="info-item">
+              <i class="ri-star-line"></i>
+              <span>Intermediate Level</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="quiz-container">
+        <div class="quiz-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text">
+            <span id="currentQuestion">1</span> of <span id="totalQuestions">20</span>
+          </div>
+        </div>
+
+        <div class="quiz-content">
+          <div class="question-card" id="questionCard">
+            <div class="question-header">
+              <h3 id="questionText">Loading question...</h3>
+              <div class="question-number" id="questionNumber">Question 1</div>
+            </div>
+            
+            <div class="question-options" id="questionOptions">
+              <!-- Options will be populated by JavaScript -->
+            </div>
+            
+            <div class="question-actions">
+              <button class="btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>
+                <i class="ri-arrow-left-line"></i>
+                Previous
+              </button>
+              <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">
+                Next
+                <i class="ri-arrow-right-line"></i>
+              </button>
+              <button class="btn-success" id="submitBtn" onclick="submitQuiz()" style="display: none;">
+                <i class="ri-check-line"></i>
+                Submit Quiz
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-results" id="quizResults" style="display: none;">
+          <div class="results-header">
+            <div class="score-icon">
+              <i class="ri-trophy-line"></i>
+            </div>
+            <h2>Quiz Completed!</h2>
+            <p>Here are your results:</p>
+          </div>
+          
+          <div class="score-display">
+            <div class="score-circle">
+              <span class="score-number" id="finalScore">0</span>
+              <span class="score-total">/ 20</span>
+            </div>
+            <div class="score-percentage" id="scorePercentage">0%</div>
+          </div>
+          
+          <div class="score-details">
+            <div class="detail-item">
+              <span class="detail-label">Correct Answers:</span>
+              <span class="detail-value" id="correctAnswers">0</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Incorrect Answers:</span>
+              <span class="detail-value" id="incorrectAnswers">0</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Time Taken:</span>
+              <span class="detail-value" id="timeTaken">0:00</span>
+            </div>
+          </div>
+          
+          <div class="performance-message" id="performanceMessage">
+            <!-- Performance message will be populated by JavaScript -->
+          </div>
+          
+          <div class="results-actions">
+            <button class="btn-primary" onclick="retakeQuiz()">
+              <i class="ri-refresh-line"></i>
+              Retake Quiz
+            </button>
+            <a href="/science-chapter-2.html" class="btn-secondary">
+              <i class="ri-book-open-line"></i>
+              Review Chapter
+            </a>
+            <a href="/science-chapters.html" class="btn-outline">
+              <i class="ri-arrow-left-line"></i>
+              Back to Chapters
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+      // Quiz data
+      const quizData = [
+        {
+          question: "What is light?",
+          options: [
+            "A form of energy that enables us to see",
+            "A type of sound wave",
+            "A solid object",
+            "A liquid substance"
+          ],
+          correct: 0,
+          explanation: "Light is a form of energy that enables us to see objects. It travels in straight lines at a very high speed."
+        },
+        {
+          question: "At what speed does light travel in vacuum?",
+          options: [
+            "300,000 km/s",
+            "150,000 km/s",
+            "450,000 km/s",
+            "600,000 km/s"
+          ],
+          correct: 0,
+          explanation: "Light travels at approximately 300,000 km/s (186,000 miles/s) in vacuum."
+        },
+        {
+          question: "Which of the following is a natural source of light?",
+          options: [
+            "Electric bulb",
+            "LED light",
+            "Sun",
+            "Candle"
+          ],
+          correct: 2,
+          explanation: "The sun is a natural source of light, while electric bulbs, LED lights, and candles are artificial sources."
+        },
+        {
+          question: "What happens to light when it hits a smooth surface like a mirror?",
+          options: [
+            "It gets absorbed",
+            "It gets refracted",
+            "It gets reflected regularly",
+            "It disappears"
+          ],
+          correct: 2,
+          explanation: "When light hits a smooth surface like a mirror, it undergoes regular reflection, creating clear images."
+        },
+        {
+          question: "What is the law of reflection?",
+          options: [
+            "Light always travels in circles",
+            "Angle of incidence equals angle of reflection",
+            "Light always gets absorbed",
+            "Light travels faster in mirrors"
+          ],
+          correct: 1,
+          explanation: "The law of reflection states that the angle of incidence equals the angle of reflection."
+        },
+        {
+          question: "What is refraction?",
+          options: [
+            "Light bouncing off surfaces",
+            "Light being absorbed by objects",
+            "Light bending when passing through different materials",
+            "Light traveling in straight lines"
+          ],
+          correct: 2,
+          explanation: "Refraction occurs when light passes from one medium to another and changes direction due to different speeds."
+        },
+        {
+          question: "Why does a pencil appear bent when placed in water?",
+          options: [
+            "Because water is heavy",
+            "Because of refraction of light",
+            "Because the pencil is actually bent",
+            "Because of reflection"
+          ],
+          correct: 1,
+          explanation: "The pencil appears bent due to refraction - light bends when it passes from water to air."
+        },
+        {
+          question: "What is sound?",
+          options: [
+            "A form of light energy",
+            "A form of energy that travels as waves through air or other materials",
+            "A solid object",
+            "A type of heat"
+          ],
+          correct: 1,
+          explanation: "Sound is a form of energy that travels as waves through air, water, or other materials, produced by vibrations."
+        },
+        {
+          question: "What determines the pitch of a sound?",
+          options: [
+            "Amplitude",
+            "Frequency",
+            "Wavelength",
+            "Volume"
+          ],
+          correct: 1,
+          explanation: "The pitch of a sound is determined by its frequency - the number of vibrations per second."
+        },
+        {
+          question: "What determines the volume of a sound?",
+          options: [
+            "Frequency",
+            "Amplitude",
+            "Wavelength",
+            "Speed"
+          ],
+          correct: 1,
+          explanation: "The volume (loudness) of a sound is determined by its amplitude - the height of the sound wave."
+        },
+        {
+          question: "At what speed does sound travel in air at 20°C?",
+          options: [
+            "150 m/s",
+            "343 m/s",
+            "500 m/s",
+            "1000 m/s"
+          ],
+          correct: 1,
+          explanation: "Sound travels at approximately 343 m/s in air at 20°C (68°F)."
+        },
+        {
+          question: "Can sound travel in vacuum?",
+          options: [
+            "Yes, very fast",
+            "Yes, but slowly",
+            "No, sound cannot travel in vacuum",
+            "Only sometimes"
+          ],
+          correct: 2,
+          explanation: "Sound cannot travel in vacuum because it requires a medium (like air, water, or solid) to propagate."
+        },
+        {
+          question: "What is an echo?",
+          options: [
+            "A type of light",
+            "The reflection of sound waves off a surface",
+            "A musical instrument",
+            "A type of vibration"
+          ],
+          correct: 1,
+          explanation: "An echo is the reflection of sound waves off a surface, heard when the reflected sound reaches our ears after the original sound."
+        },
+        {
+          question: "What is the minimum distance required to hear an echo clearly?",
+          options: [
+            "5 meters",
+            "10 meters",
+            "17 meters",
+            "25 meters"
+          ],
+          correct: 2,
+          explanation: "The minimum distance required to hear an echo clearly is about 17 meters, as the sound needs time to travel to the surface and back."
+        },
+        {
+          question: "What is reverberation?",
+          options: [
+            "A single echo",
+            "Multiple reflections of sound creating prolonged sound effect",
+            "The speed of sound",
+            "The frequency of sound"
+          ],
+          correct: 1,
+          explanation: "Reverberation occurs when sound waves reflect multiple times off different surfaces, creating a prolonged sound effect."
+        },
+        {
+          question: "Which material is a good sound absorber?",
+          options: [
+            "Glass",
+            "Metal",
+            "Carpet",
+            "Concrete"
+          ],
+          correct: 2,
+          explanation: "Carpet is a good sound absorber because it has a rough, porous surface that absorbs sound waves instead of reflecting them."
+        },
+        {
+          question: "What causes a rainbow to form?",
+          options: [
+            "Reflection of light",
+            "Refraction and dispersion of sunlight in water droplets",
+            "Absorption of light",
+            "Sound waves"
+          ],
+          correct: 1,
+          explanation: "Rainbows are formed by refraction and dispersion of sunlight in water droplets, separating white light into its component colors."
+        },
+        {
+          question: "Which application uses sound waves for medical imaging?",
+          options: [
+            "X-ray",
+            "MRI",
+            "Ultrasound",
+            "CT scan"
+          ],
+          correct: 2,
+          explanation: "Ultrasound uses high-frequency sound waves to create images of the inside of the body for medical diagnosis."
+        },
+        {
+          question: "What is sonar used for?",
+          options: [
+            "Lighting underwater areas",
+            "Detecting objects underwater using sound waves",
+            "Heating water",
+            "Creating music"
+          ],
+          correct: 1,
+          explanation: "Sonar (Sound Navigation and Ranging) uses sound waves to detect and locate objects underwater."
+        },
+        {
+          question: "Why should we never look directly at the sun?",
+          options: [
+            "Because it's too far away",
+            "Because it can damage our eyes permanently",
+            "Because it's not bright enough",
+            "Because it's not a real light source"
+          ],
+          correct: 1,
+          explanation: "Looking directly at the sun can cause permanent damage to our eyes due to the intense light and harmful radiation."
+        }
+      ];
+
+      let currentQuestionIndex = 0;
+      let userAnswers = new Array(quizData.length).fill(null);
+      let startTime = Date.now();
+      let quizCompleted = false;
+
+      // Initialize quiz
+      function initQuiz() {
+        displayQuestion();
+        updateProgress();
+      }
+
+      // Display current question
+      function displayQuestion() {
+        const question = quizData[currentQuestionIndex];
+        const questionCard = document.getElementById('questionCard');
+        
+        document.getElementById('questionText').textContent = question.question;
+        document.getElementById('questionNumber').textContent = `Question ${currentQuestionIndex + 1}`;
+        
+        const optionsContainer = document.getElementById('questionOptions');
+        optionsContainer.innerHTML = '';
+        
+        question.options.forEach((option, index) => {
+          const optionElement = document.createElement('div');
+          optionElement.className = 'option';
+          if (userAnswers[currentQuestionIndex] === index) {
+            optionElement.classList.add('selected');
+          }
+          
+          optionElement.innerHTML = `
+            <input type="radio" name="question" value="${index}" id="option${index}" ${userAnswers[currentQuestionIndex] === index ? 'checked' : ''}>
+            <label for="option${index}">
+              <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+              <span class="option-text">${option}</span>
+            </label>
+          `;
+          
+          optionElement.addEventListener('click', () => selectOption(index));
+          optionsContainer.appendChild(optionElement);
+        });
+        
+        updateNavigationButtons();
+      }
+
+      // Select an option
+      function selectOption(index) {
+        userAnswers[currentQuestionIndex] = index;
+        displayQuestion(); // Refresh to show selection
+      }
+
+      // Update progress bar
+      function updateProgress() {
+        const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+        document.getElementById('progressFill').style.width = `${progress}%`;
+        document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+        document.getElementById('totalQuestions').textContent = quizData.length;
+      }
+
+      // Update navigation buttons
+      function updateNavigationButtons() {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        prevBtn.disabled = currentQuestionIndex === 0;
+        
+        if (currentQuestionIndex === quizData.length - 1) {
+          nextBtn.style.display = 'none';
+          submitBtn.style.display = 'inline-flex';
+        } else {
+          nextBtn.style.display = 'inline-flex';
+          submitBtn.style.display = 'none';
+        }
+      }
+
+      // Go to next question
+      function nextQuestion() {
+        if (currentQuestionIndex < quizData.length - 1) {
+          currentQuestionIndex++;
+          displayQuestion();
+          updateProgress();
+        }
+      }
+
+      // Go to previous question
+      function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+          currentQuestionIndex--;
+          displayQuestion();
+          updateProgress();
+        }
+      }
+
+      // Submit quiz
+      function submitQuiz() {
+        if (quizCompleted) return;
+        
+        quizCompleted = true;
+        const endTime = Date.now();
+        const timeTaken = Math.floor((endTime - startTime) / 1000);
+        
+        let correctAnswers = 0;
+        const results = [];
+        
+        quizData.forEach((question, index) => {
+          const isCorrect = userAnswers[index] === question.correct;
+          if (isCorrect) correctAnswers++;
+          
+          results.push({
+            question: question.question,
+            userAnswer: userAnswers[index],
+            correctAnswer: question.correct,
+            isCorrect: isCorrect,
+            explanation: question.explanation
+          });
+        });
+        
+        const score = correctAnswers;
+        const percentage = Math.round((score / quizData.length) * 100);
+        
+        // Hide quiz content and show results
+        document.querySelector('.quiz-content').style.display = 'none';
+        document.getElementById('quizResults').style.display = 'block';
+        
+        // Update results display
+        document.getElementById('finalScore').textContent = score;
+        document.getElementById('scorePercentage').textContent = `${percentage}%`;
+        document.getElementById('correctAnswers').textContent = correctAnswers;
+        document.getElementById('incorrectAnswers').textContent = quizData.length - correctAnswers;
+        document.getElementById('timeTaken').textContent = formatTime(timeTaken);
+        
+        // Update performance message
+        const performanceMessage = document.getElementById('performanceMessage');
+        if (percentage >= 90) {
+          performanceMessage.innerHTML = '<div class="message excellent">Excellent! You have a great understanding of light and sound!</div>';
+        } else if (percentage >= 70) {
+          performanceMessage.innerHTML = '<div class="message good">Good job! You understand most concepts well. Review the areas you missed.</div>';
+        } else if (percentage >= 50) {
+          performanceMessage.innerHTML = '<div class="message fair">Fair performance. Consider reviewing the chapter content and retaking the quiz.</div>';
+        } else {
+          performanceMessage.innerHTML = '<div class="message poor">You need more practice. Please review the chapter thoroughly before retaking the quiz.</div>';
+        }
+      }
+
+      // Retake quiz
+      function retakeQuiz() {
+        currentQuestionIndex = 0;
+        userAnswers = new Array(quizData.length).fill(null);
+        startTime = Date.now();
+        quizCompleted = false;
+        
+        document.querySelector('.quiz-content').style.display = 'block';
+        document.getElementById('quizResults').style.display = 'none';
+        
+        initQuiz();
+      }
+
+      // Format time
+      function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+      }
+
+      // Initialize quiz when page loads
+      document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+
+    <style>
+      .quiz-hero {
+        text-align: center;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-radius: 1rem;
+      }
+
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #64748b;
+        flex-wrap: wrap;
+      }
+
+      .breadcrumb a {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .quiz-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-icon:hover {
+        transform: scale(1.1);
+      }
+
+      .quiz-icon i {
+        font-size: 3rem;
+      }
+
+      .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .hero-content .lead {
+        font-size: 1.125rem;
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
+
+      .quiz-info {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border-radius: 0.75rem;
+        color: var(--color-fg);
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .info-item i {
+        color: var(--color-primary);
+        font-size: 1.25rem;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .quiz-progress {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: var(--color-muted);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #f59e0b, #f97316);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+        width: 0%;
+      }
+
+      .progress-text {
+        text-align: center;
+        font-weight: 600;
+        color: var(--color-fg);
+      }
+
+      .quiz-content {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .question-card {
+        max-width: 100%;
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-muted);
+      }
+
+      .question-header h3 {
+        font-size: 1.5rem;
+        color: var(--color-fg);
+        flex: 1;
+        margin-right: 1rem;
+      }
+
+      .question-number {
+        background: #f59e0b;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .question-options {
+        margin-bottom: 2rem;
+      }
+
+      .option {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .option:hover {
+        border-color: #f59e0b;
+        background: #fef3c7;
+      }
+
+      .option.selected {
+        border-color: #f59e0b;
+        background: #fef3c7;
+      }
+
+      .option input[type="radio"] {
+        display: none;
+      }
+
+      .option label {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .option-letter {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--color-muted);
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .option.selected .option-letter {
+        background: #f59e0b;
+        color: white;
+      }
+
+      .option-text {
+        flex: 1;
+        color: var(--color-fg);
+        font-size: 1rem;
+      }
+
+      .question-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .btn-primary, .btn-secondary, .btn-success, .btn-outline {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        background: #f59e0b;
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #d97706;
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: #f59e0b;
+        border: 2px solid #f59e0b;
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: #f59e0b;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: #16a34a;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--color-fg);
+        border: 2px solid var(--color-muted);
+      }
+
+      .btn-outline:hover {
+        background: var(--color-muted);
+        transform: translateY(-2px);
+      }
+
+      .btn-primary:disabled, .btn-secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .quiz-results {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .results-header {
+        margin-bottom: 2rem;
+      }
+
+      .score-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+      }
+
+      .score-icon i {
+        font-size: 2.5rem;
+      }
+
+      .results-header h2 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-fg);
+      }
+
+      .results-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+      }
+
+      .score-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .score-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .score-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .score-total {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+
+      .score-percentage {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #f59e0b;
+      }
+
+      .score-details {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .detail-item {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .detail-label {
+        display: block;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .detail-value {
+        display: block;
+        color: var(--color-fg);
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .performance-message {
+        margin-bottom: 2rem;
+      }
+
+      .message {
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .message.excellent {
+        background: #f0fdf4;
+        color: #14532d;
+        border: 2px solid #16a34a;
+      }
+
+      .message.good {
+        background: #fefce8;
+        color: #a16207;
+        border: 2px solid #eab308;
+      }
+
+      .message.fair {
+        background: #fef3c7;
+        color: #92400e;
+        border: 2px solid #f59e0b;
+      }
+
+      .message.poor {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 2px solid #ef4444;
+      }
+
+      .results-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .hero-content h1 {
+          font-size: 2rem;
+        }
+
+        .quiz-icon {
+          width: 80px;
+          height: 80px;
+        }
+
+        .quiz-icon i {
+          font-size: 2rem;
+        }
+
+        .quiz-info {
+          gap: 1rem;
+        }
+
+        .info-item {
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+        }
+
+        .question-header {
+          flex-direction: column;
+          gap: 1rem;
+          text-align: center;
+        }
+
+        .question-header h3 {
+          margin-right: 0;
+        }
+
+        .question-actions {
+          flex-direction: column;
+        }
+
+        .btn-primary, .btn-secondary, .btn-success, .btn-outline {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .score-display {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .score-details {
+          grid-template-columns: 1fr;
+        }
+
+        .results-actions {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .quiz-content {
+          padding: 1.5rem;
+        }
+
+        .quiz-results {
+          padding: 1.5rem;
+        }
+
+        .option {
+          padding: 0.75rem;
+        }
+
+        .option label {
+          gap: 0.75rem;
+        }
+      }
+    </style>
+  </body>
+</html>

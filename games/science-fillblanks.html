@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Science Fill in the Blanks • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="science-fillblanks">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-edit-2-line"></i> Science Fill in the Blanks</h1>
+        <div id="fillBlanksRoot">
+          <div id="gameIntro" class="game-intro">
+            <p>Complete the science sentences by filling in the missing words. Test your knowledge of scientific concepts!</p>
+            <div class="difficulty-selector">
+              <label>Select Difficulty:</label>
+              <select id="difficultySelect">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="startGame">Start Game</button>
+          </div>
+          <div id="gamePlay" class="game-play hidden">
+            <div class="game-status">
+              <span>Question <span id="qIndex">1</span>/<span id="qTotal">8</span></span>
+              <span>Score: <strong id="qScore">0</strong></span>
+              <span>Time: <strong id="qTimer">60</strong>s</span>
+              <button class="btn btn-outline btn-sm" id="fullscreenToggle" title="Toggle Fullscreen">
+                <i class="ri-fullscreen-line"></i>
+              </button>
+            </div>
+            <div id="questionText" class="question-text"></div>
+            <div id="answerInputs" class="answer-inputs"></div>
+            <div id="feedback" class="feedback hidden"></div>
+            <button class="btn btn-primary" id="checkAnswer">Check Answer</button>
+          </div>
+          <div id="gameEnd" class="game-end hidden">
+            <h2>Game Complete!</h2>
+            <p>You scored <strong id="finalScore">0</strong> out of <strong id="totalQuestions">8</strong> points.</p>
+            <div id="performanceMessage"></div>
+            <div class="cta-group">
+              <button class="btn btn-accent" id="retryGame">Try Again</button>
+              <a class="btn" href="/subjects/science.html">Back to Science</a>
+              <a class="btn" href="/leaderboard.html">View Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      class ScienceFillBlanks {
+        constructor() {
+          this.questions = {
+            easy: [
+              {
+                text: "Water boils at ___ degrees Celsius at sea level.",
+                blanks: [100],
+                answers: ["100"]
+              },
+              {
+                text: "The process by which plants make food is called ___.",
+                blanks: [1],
+                answers: ["photosynthesis"]
+              },
+              {
+                text: "The chemical symbol for gold is ___.",
+                blanks: [1],
+                answers: ["Au"]
+              },
+              {
+                text: "The Earth revolves around the ___.",
+                blanks: [1],
+                answers: ["Sun"]
+              },
+              {
+                text: "The largest planet in our solar system is ___.",
+                blanks: [1],
+                answers: ["Jupiter"]
+              }
+            ],
+            medium: [
+              {
+                text: "The ___ is the powerhouse of the cell and produces ATP.",
+                blanks: [1],
+                answers: ["mitochondria"]
+              },
+              {
+                text: "The pH scale ranges from 0 to ___, with 7 being neutral.",
+                blanks: [14],
+                answers: ["14"]
+              },
+              {
+                text: "The speed of light in vacuum is approximately ___ km/s.",
+                blanks: [300000],
+                answers: ["300000", "300,000"]
+              },
+              {
+                text: "The chemical formula for carbon dioxide is ___.",
+                blanks: [1],
+                answers: ["CO2"]
+              },
+              {
+                text: "The ___ layer protects Earth from harmful UV radiation.",
+                blanks: [1],
+                answers: ["ozone"]
+              },
+              {
+                text: "The process of converting light energy into chemical energy is called ___.",
+                blanks: [1],
+                answers: ["photosynthesis"]
+              },
+              {
+                text: "The atomic number of hydrogen is ___.",
+                blanks: [1],
+                answers: ["1"]
+              },
+              {
+                text: "The ___ system is responsible for transporting nutrients and oxygen throughout the body.",
+                blanks: [1],
+                answers: ["circulatory"]
+              }
+            ],
+            hard: [
+              {
+                text: "The ___ effect describes the bending of light as it passes through different media.",
+                blanks: [1],
+                answers: ["refraction"]
+              },
+              {
+                text: "The enzyme ___ catalyzes the breakdown of hydrogen peroxide into water and oxygen.",
+                blanks: [1],
+                answers: ["catalase"]
+              },
+              {
+                text: "The ___ principle states that energy cannot be created or destroyed, only transformed.",
+                blanks: [1],
+                answers: ["conservation of energy"]
+              },
+              {
+                text: "The ___ number represents the number of protons in an atom's nucleus.",
+                blanks: [1],
+                answers: ["atomic"]
+              },
+              {
+                text: "The ___ cycle describes the movement of carbon through Earth's systems.",
+                blanks: [1],
+                answers: ["carbon"]
+              },
+              {
+                text: "The ___ equation describes the relationship between mass and energy: E = ___.",
+                blanks: [1, 1],
+                answers: ["Einstein", "mc²"]
+              },
+              {
+                text: "The ___ effect causes the apparent shift in frequency of waves due to relative motion.",
+                blanks: [1],
+                answers: ["Doppler"]
+              },
+              {
+                text: "The ___ theory explains the behavior of matter and energy at the atomic and subatomic level.",
+                blanks: [1],
+                answers: ["quantum"]
+              }
+            ]
+          };
+          
+          this.currentDifficulty = 'medium';
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.timeLeft = 60;
+          this.timer = null;
+          this.userAnswers = [];
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('difficultySelect').addEventListener('change', (e) => {
+            this.currentDifficulty = e.target.value;
+          });
+          
+          document.getElementById('startGame').addEventListener('click', () => {
+            this.startGame();
+          });
+          
+          document.getElementById('checkAnswer').addEventListener('click', () => {
+            this.checkAnswer();
+          });
+          
+          document.getElementById('retryGame').addEventListener('click', () => {
+            this.resetGame();
+            this.startGame();
+          });
+          
+          document.getElementById('fullscreenToggle').addEventListener('click', () => {
+            this.toggleFullscreen();
+          });
+        }
+        
+        startGame() {
+          document.getElementById('gameIntro').classList.add('hidden');
+          document.getElementById('gamePlay').classList.remove('hidden');
+          document.getElementById('gameEnd').classList.add('hidden');
+          
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.userAnswers = [];
+          this.showQuestion();
+          
+          // Enter fullscreen
+          this.enterFullscreen();
+        }
+        
+        showQuestion() {
+          const questions = this.questions[this.currentDifficulty];
+          const question = questions[this.currentQuestion];
+          
+          document.getElementById('qIndex').textContent = this.currentQuestion + 1;
+          document.getElementById('qTotal').textContent = questions.length;
+          document.getElementById('qScore').textContent = this.score;
+          
+          // Create question text with input fields
+          const questionText = document.getElementById('questionText');
+          const answerInputs = document.getElementById('answerInputs');
+          
+          let displayText = question.text;
+          const inputs = [];
+          
+          question.blanks.forEach((blankIndex, i) => {
+            const inputId = `answer${i}`;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = inputId;
+            input.className = 'answer-input';
+            input.placeholder = 'Your answer...';
+            inputs.push(input);
+            
+            displayText = displayText.replace('___', `<input type="text" id="${inputId}" class="answer-input" placeholder="Your answer...">`);
+          });
+          
+          questionText.innerHTML = displayText;
+          document.getElementById('feedback').classList.add('hidden');
+          
+          this.startTimer();
+        }
+        
+        checkAnswer() {
+          const questions = this.questions[this.currentDifficulty];
+          const question = questions[this.currentQuestion];
+          
+          const inputs = document.querySelectorAll('.answer-input');
+          const userAnswers = Array.from(inputs).map(input => input.value.trim().toLowerCase());
+          
+          let correct = true;
+          let feedbackText = '';
+          
+          question.answers.forEach((answerSet, i) => {
+            const userAnswer = userAnswers[i];
+            const correctAnswers = Array.isArray(answerSet) ? answerSet : [answerSet];
+            const isCorrect = correctAnswers.some(ans => 
+              userAnswer === ans.toLowerCase() || 
+              userAnswer === ans.toString().toLowerCase()
+            );
+            
+            if (!isCorrect) {
+              correct = false;
+            }
+            
+            // Style the input
+            const input = inputs[i];
+            if (isCorrect) {
+              input.classList.add('correct');
+              input.classList.remove('incorrect');
+            } else {
+              input.classList.add('incorrect');
+              input.classList.remove('correct');
+            }
+          });
+          
+          if (correct) {
+            this.score += 10;
+            document.getElementById('qScore').textContent = this.score;
+            feedbackText = 'Correct! Well done!';
+          } else {
+            feedbackText = `Incorrect. The correct answers are: ${question.answers.map(ans => Array.isArray(ans) ? ans[0] : ans).join(', ')}`;
+          }
+          
+          const feedback = document.getElementById('feedback');
+          feedback.textContent = feedbackText;
+          feedback.classList.remove('hidden');
+          feedback.className = `feedback ${correct ? 'correct' : 'incorrect'}`;
+          
+          // Disable inputs
+          inputs.forEach(input => input.disabled = true);
+          document.getElementById('checkAnswer').disabled = true;
+          
+          clearInterval(this.timer);
+          
+          setTimeout(() => {
+            this.nextQuestion();
+          }, 2000);
+        }
+        
+        startTimer() {
+          this.timeLeft = 60;
+          document.getElementById('qTimer').textContent = this.timeLeft;
+          
+          this.timer = setInterval(() => {
+            this.timeLeft--;
+            document.getElementById('qTimer').textContent = this.timeLeft;
+            
+            if (this.timeLeft <= 0) {
+              clearInterval(this.timer);
+              this.nextQuestion();
+            }
+          }, 1000);
+        }
+        
+        nextQuestion() {
+          const questions = this.questions[this.currentDifficulty];
+          
+          if (this.currentQuestion < questions.length - 1) {
+            this.currentQuestion++;
+            this.showQuestion();
+          } else {
+            this.endGame();
+          }
+        }
+        
+        endGame() {
+          document.getElementById('gamePlay').classList.add('hidden');
+          document.getElementById('gameEnd').classList.remove('hidden');
+          
+          const questions = this.questions[this.currentDifficulty];
+          const percentage = (this.score / (questions.length * 10)) * 100;
+          
+          document.getElementById('finalScore').textContent = this.score;
+          document.getElementById('totalQuestions').textContent = questions.length * 10;
+          
+          const performanceMessage = document.getElementById('performanceMessage');
+          if (percentage >= 80) {
+            performanceMessage.innerHTML = '<p class="success">Excellent! You have a strong grasp of science vocabulary!</p>';
+          } else if (percentage >= 60) {
+            performanceMessage.innerHTML = '<p class="warning">Good job! Keep studying to improve your science knowledge!</p>';
+          } else {
+            performanceMessage.innerHTML = '<p class="error">Keep practicing! Science vocabulary takes time to master!</p>';
+          }
+          
+          // Exit fullscreen when game ends
+          this.exitFullscreen();
+        }
+        
+        resetGame() {
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.userAnswers = [];
+          clearInterval(this.timer);
+        }
+        
+        enterFullscreen() {
+          const element = document.documentElement;
+          if (element.requestFullscreen) {
+            element.requestFullscreen().catch(err => {
+              console.log('Fullscreen not supported or denied:', err);
+            });
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }
+        
+        exitFullscreen() {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+        
+        toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            this.enterFullscreen();
+          } else {
+            this.exitFullscreen();
+          }
+        }
+      }
+      
+      // Initialize game when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new ScienceFillBlanks();
+      });
+    </script>
+    
+    <style>
+      .game-intro {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .difficulty-selector {
+        margin: 1rem 0;
+      }
+      
+      .difficulty-selector label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      
+      .difficulty-selector select {
+        padding: 0.5rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.5rem;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        font-size: 1rem;
+      }
+      
+      .game-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .question-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        line-height: 1.8;
+      }
+      
+      .answer-input {
+        padding: 0.5rem;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.5rem;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        font-size: 1rem;
+        margin: 0 0.25rem;
+        min-width: 120px;
+        transition: all 0.3s ease;
+      }
+      
+      .answer-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+      }
+      
+      .answer-input.correct {
+        border-color: #10b981;
+        background: #f0fdf4;
+      }
+      
+      .answer-input.incorrect {
+        border-color: #ef4444;
+        background: #fef2f2;
+      }
+      
+      .feedback {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+        font-weight: 500;
+      }
+      
+      .feedback.correct {
+        background: #f0fdf4;
+        color: #10b981;
+        border-left: 4px solid #10b981;
+      }
+      
+      .feedback.incorrect {
+        background: #fef2f2;
+        color: #ef4444;
+        border-left: 4px solid #ef4444;
+      }
+      
+      .game-end {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .success {
+        color: #10b981;
+        font-weight: 600;
+      }
+      
+      .warning {
+        color: #f59e0b;
+        font-weight: 600;
+      }
+      
+      .error {
+        color: #ef4444;
+        font-weight: 600;
+      }
+      
+      .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      @media (max-width: 768px) {
+        .game-status {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        
+        .cta-group {
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        .answer-input {
+          min-width: 100px;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </body>
+</html>

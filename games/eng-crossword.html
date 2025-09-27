@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Crossword • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+    <style>
+      .container {
+        max-width: 100% !important;
+        padding: 1rem !important;
+      }
+      .card {
+        margin: 0 !important;
+        padding: 1rem !important;
+      }
+      .crossword-container {
+        max-width: 100%;
+        margin: 1rem;
+        padding: 1rem;
+      }
+      
+      .crossword-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 2px;
+        margin: 2rem 0;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .crossword-cell {
+        aspect-ratio: 1;
+        border: 2px solid var(--color-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        background: var(--color-bg);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .crossword-cell:hover {
+        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      }
+      
+      .crossword-cell.selected {
+        background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+        border-color: var(--color-primary);
+      }
+      
+      .crossword-cell.black {
+        background: var(--color-fg);
+        cursor: default;
+      }
+      
+      .crossword-cell.black:hover {
+        background: var(--color-fg);
+      }
+      
+      .crossword-cell.filled {
+        background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+        border-color: var(--color-accent);
+      }
+      
+      .crossword-clues {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+      
+      .clue-section h3 {
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+      }
+      
+      .clue-item {
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .clue-item:hover {
+        background: color-mix(in srgb, var(--color-muted) 20%, transparent);
+      }
+      
+      .clue-item.selected {
+        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+        border: 1px solid var(--color-primary);
+      }
+      
+      .clue-item.completed {
+        background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+        text-decoration: line-through;
+        opacity: 0.7;
+      }
+      
+      .crossword-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+      
+      .crossword-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+      
+      .stat-card {
+        padding: 1rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.75rem;
+        text-align: center;
+        background: var(--color-bg);
+      }
+      
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--color-primary);
+      }
+      
+      .stat-label {
+        font-size: 0.9rem;
+        color: var(--color-fg);
+        opacity: 0.7;
+      }
+      
+      @media (max-width: 768px) {
+        .crossword-clues {
+          grid-template-columns: 1fr;
+        }
+        
+        .crossword-stats {
+          grid-template-columns: 1fr;
+        }
+        
+        .crossword-grid {
+          max-width: 400px;
+        }
+      }
+    </style>
+  </head>
+  <body data-game="eng-crossword">
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="card">
+        <div class="breadcrumb">
+          <a href="/student-home.html"><i class="ri-home-line"></i> Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/subjects/english.html">English</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>Crossword</span>
+        </div>
+        
+        <div class="quiz-header">
+          <h1><i class="ri-grid-line"></i> Crossword Puzzle</h1>
+          <p class="muted">Solve the crossword puzzle using the clues provided!</p>
+        </div>
+
+        <div id="crosswordRoot">
+          <div id="crosswordIntro" class="quiz-intro">
+            <div class="intro-card">
+              <div class="intro-icon">
+                <i class="ri-puzzle-line"></i>
+              </div>
+              <h2>Ready for the Crossword Challenge?</h2>
+              <p>Fill in the crossword puzzle using the clues. Click on cells to start typing!</p>
+              
+              <div class="quiz-details">
+                <div class="detail-item">
+                  <i class="ri-question-line"></i>
+                  <span>12 Words to Find</span>
+                </div>
+                <div class="detail-item">
+                  <i class="ri-time-line"></i>
+                  <span>No Time Limit</span>
+                </div>
+                <div class="detail-item">
+                  <i class="ri-trophy-line"></i>
+                  <span>Earn XP for completion</span>
+                </div>
+              </div>
+              
+              <button class="btn btn-primary btn-lg" id="startCrossword">Start Crossword</button>
+            </div>
+          </div>
+
+          <div id="crosswordPlay" class="crossword-container hidden">
+            <div class="crossword-stats">
+              <div class="stat-card">
+                <div class="stat-value" id="wordsFound">0</div>
+                <div class="stat-label">Words Found</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="totalWords">12</div>
+                <div class="stat-label">Total Words</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="xpEarned">0</div>
+                <div class="stat-label">XP Earned</div>
+              </div>
+            </div>
+            
+            <div class="crossword-grid" id="crosswordGrid"></div>
+            
+            <div class="crossword-clues">
+              <div class="clue-section">
+                <h3><i class="ri-arrow-right-line"></i> Across</h3>
+                <div id="acrossClues"></div>
+              </div>
+              <div class="clue-section">
+                <h3><i class="ri-arrow-down-line"></i> Down</h3>
+                <div id="downClues"></div>
+              </div>
+            </div>
+            
+            <div class="crossword-controls">
+              <button class="btn" id="checkAnswers">Check Answers</button>
+              <button class="btn" id="revealAnswer">Reveal Answer</button>
+              <button class="btn btn-primary" id="newCrossword">New Puzzle</button>
+            </div>
+          </div>
+
+          <div id="crosswordEnd" class="quiz-end hidden">
+            <div class="results-card">
+              <div class="results-icon">
+                <i class="ri-trophy-line"></i>
+              </div>
+              <h2>Crossword Complete!</h2>
+              <p>Congratulations! You solved the crossword puzzle!</p>
+              
+              <div class="results-stats">
+                <div class="result-stat">
+                  <span class="stat-label">Words Found</span>
+                  <span class="stat-value" id="finalWordsFound">0</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">Completion Time</span>
+                  <span class="stat-value" id="completionTime">0:00</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">XP Earned</span>
+                  <span class="stat-value" id="finalXpEarned">0</span>
+                </div>
+              </div>
+              
+              <div class="results-feedback" id="feedbackMessage">
+                <p>Excellent work! You're a crossword master!</p>
+              </div>
+              
+              <div class="results-actions">
+                <a class="btn btn-accent" href="/leaderboard.html">View Leaderboard</a>
+                <a class="btn" href="/subjects/english.html">Back to English</a>
+                <button class="btn btn-primary" id="playAgain">Play Again</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+      // Crossword Game Logic
+      class CrosswordGame {
+        constructor() {
+          this.grid = [
+            ['B', 'L', 'A', 'C', 'K', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '']
+          ];
+          
+          this.words = [
+            { word: 'BLACK', clue: 'The opposite of white', start: [0, 0], direction: 'across', length: 5 },
+            { word: 'BLUE', clue: 'Color of the sky', start: [0, 0], direction: 'down', length: 4 },
+            { word: 'GREEN', clue: 'Color of grass', start: [2, 2], direction: 'across', length: 5 },
+            { word: 'RED', clue: 'Color of roses', start: [1, 1], direction: 'down', length: 3 },
+            { word: 'YELLOW', clue: 'Color of the sun', start: [3, 3], direction: 'across', length: 6 },
+            { word: 'ORANGE', clue: 'Color of oranges', start: [4, 4], direction: 'down', length: 6 },
+            { word: 'PURPLE', clue: 'Color of grapes', start: [5, 5], direction: 'across', length: 6 },
+            { word: 'PINK', clue: 'Color of cotton candy', start: [6, 6], direction: 'down', length: 4 },
+            { word: 'BROWN', clue: 'Color of chocolate', start: [7, 7], direction: 'across', length: 5 },
+            { word: 'GRAY', clue: 'Color of clouds', start: [8, 8], direction: 'down', length: 4 },
+            { word: 'WHITE', clue: 'The opposite of black', start: [9, 9], direction: 'across', length: 5 },
+            { word: 'GOLD', clue: 'Precious metal color', start: [1, 9], direction: 'down', length: 4 }
+          ];
+          
+          this.userGrid = Array(10).fill().map(() => Array(10).fill(''));
+          this.selectedCell = null;
+          this.selectedWord = null;
+          this.foundWords = 0;
+          this.startTime = null;
+          this.endTime = null;
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('startCrossword').addEventListener('click', () => this.startCrossword());
+          document.getElementById('checkAnswers').addEventListener('click', () => this.checkAnswers());
+          document.getElementById('revealAnswer').addEventListener('click', () => this.revealAnswer());
+          document.getElementById('newCrossword').addEventListener('click', () => this.newCrossword());
+          document.getElementById('playAgain').addEventListener('click', () => this.playAgain());
+          
+          // Keyboard event listener
+          document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+        }
+        
+        startCrossword() {
+          document.getElementById('crosswordIntro').classList.add('hidden');
+          document.getElementById('crosswordPlay').classList.remove('hidden');
+          this.startTime = Date.now();
+          this.createGrid();
+          this.createClues();
+        }
+        
+        createGrid() {
+          const gridElement = document.getElementById('crosswordGrid');
+          gridElement.innerHTML = '';
+          
+          for (let row = 0; row < 10; row++) {
+            for (let col = 0; col < 10; col++) {
+              const cell = document.createElement('div');
+              cell.className = 'crossword-cell';
+              cell.dataset.row = row;
+              cell.dataset.col = col;
+              
+              // Check if this cell should be black (empty)
+              const hasWord = this.words.some(word => {
+                const { start, direction, length } = word;
+                const [startRow, startCol] = start;
+                
+                if (direction === 'across') {
+                  return row === startRow && col >= startCol && col < startCol + length;
+                } else {
+                  return col === startCol && row >= startRow && row < startRow + length;
+                }
+              });
+              
+              if (!hasWord) {
+                cell.classList.add('black');
+              } else {
+                cell.addEventListener('click', () => this.selectCell(row, col));
+              }
+              
+              gridElement.appendChild(cell);
+            }
+          }
+        }
+        
+        createClues() {
+          const acrossClues = document.getElementById('acrossClues');
+          const downClues = document.getElementById('downClues');
+          
+          acrossClues.innerHTML = '';
+          downClues.innerHTML = '';
+          
+          this.words.forEach((word, index) => {
+            const clueElement = document.createElement('div');
+            clueElement.className = 'clue-item';
+            clueElement.dataset.wordIndex = index;
+            clueElement.innerHTML = `
+              <strong>${index + 1}.</strong> ${word.clue}
+            `;
+            clueElement.addEventListener('click', () => this.selectWord(index));
+            
+            if (word.direction === 'across') {
+              acrossClues.appendChild(clueElement);
+            } else {
+              downClues.appendChild(clueElement);
+            }
+          });
+        }
+        
+        selectCell(row, col) {
+          // Remove previous selection
+          document.querySelectorAll('.crossword-cell').forEach(cell => {
+            cell.classList.remove('selected');
+          });
+          document.querySelectorAll('.clue-item').forEach(clue => {
+            clue.classList.remove('selected');
+          });
+          
+          // Select current cell
+          const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+          cell.classList.add('selected');
+          
+          this.selectedCell = [row, col];
+          
+          // Find which word this cell belongs to
+          const wordIndex = this.findWordForCell(row, col);
+          if (wordIndex !== -1) {
+            this.selectedWord = wordIndex;
+            document.querySelector(`[data-word-index="${wordIndex}"]`).classList.add('selected');
+          }
+        }
+        
+        selectWord(wordIndex) {
+          // Remove previous selection
+          document.querySelectorAll('.crossword-cell').forEach(cell => {
+            cell.classList.remove('selected');
+          });
+          document.querySelectorAll('.clue-item').forEach(clue => {
+            clue.classList.remove('selected');
+          });
+          
+          // Select current word
+          document.querySelector(`[data-word-index="${wordIndex}"]`).classList.add('selected');
+          
+          this.selectedWord = wordIndex;
+          const word = this.words[wordIndex];
+          const [startRow, startCol] = word.start;
+          
+          // Select first cell of the word
+          this.selectCell(startRow, startCol);
+        }
+        
+        findWordForCell(row, col) {
+          return this.words.findIndex(word => {
+            const { start, direction, length } = word;
+            const [startRow, startCol] = start;
+            
+            if (direction === 'across') {
+              return row === startRow && col >= startCol && col < startCol + length;
+            } else {
+              return col === startCol && row >= startRow && row < startRow + length;
+            }
+          });
+        }
+        
+        handleKeyPress(e) {
+          if (!this.selectedCell) return;
+          
+          const [row, col] = this.selectedCell;
+          const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+          
+          if (e.key === 'Backspace') {
+            this.userGrid[row][col] = '';
+            cell.textContent = '';
+            this.moveToNextCell(-1);
+          } else if (e.key.match(/[a-zA-Z]/)) {
+            this.userGrid[row][col] = e.key.toUpperCase();
+            cell.textContent = e.key.toUpperCase();
+            cell.classList.add('filled');
+            this.moveToNextCell(1);
+          }
+          
+          this.checkWordCompletion();
+        }
+        
+        moveToNextCell(direction) {
+          if (!this.selectedWord) return;
+          
+          const word = this.words[this.selectedWord];
+          const { start, direction: wordDirection, length } = word;
+          const [startRow, startCol] = start;
+          const [currentRow, currentCol] = this.selectedCell;
+          
+          let nextRow = currentRow;
+          let nextCol = currentCol;
+          
+          if (wordDirection === 'across') {
+            nextCol += direction;
+            if (nextCol < startCol || nextCol >= startCol + length) return;
+          } else {
+            nextRow += direction;
+            if (nextRow < startRow || nextRow >= startRow + length) return;
+          }
+          
+          this.selectCell(nextRow, nextCol);
+        }
+        
+        checkWordCompletion() {
+          this.words.forEach((word, index) => {
+            const { start, direction, length } = word;
+            const [startRow, startCol] = start;
+            let isComplete = true;
+            
+            for (let i = 0; i < length; i++) {
+              let row = startRow;
+              let col = startCol;
+              
+              if (direction === 'across') {
+                col += i;
+              } else {
+                row += i;
+              }
+              
+              if (!this.userGrid[row][col]) {
+                isComplete = false;
+                break;
+              }
+            }
+            
+            if (isComplete) {
+              const clueElement = document.querySelector(`[data-word-index="${index}"]`);
+              if (!clueElement.classList.contains('completed')) {
+                clueElement.classList.add('completed');
+                this.foundWords++;
+                document.getElementById('wordsFound').textContent = this.foundWords;
+                document.getElementById('xpEarned').textContent = this.foundWords * 10;
+              }
+            }
+          });
+          
+          if (this.foundWords === this.words.length) {
+            this.endCrossword();
+          }
+        }
+        
+        checkAnswers() {
+          this.words.forEach((word, index) => {
+            const { start, direction, length } = word;
+            const [startRow, startCol] = start;
+            let isCorrect = true;
+            
+            for (let i = 0; i < length; i++) {
+              let row = startRow;
+              let col = startCol;
+              
+              if (direction === 'across') {
+                col += i;
+              } else {
+                row += i;
+              }
+              
+              const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+              const userLetter = this.userGrid[row][col];
+              const correctLetter = word.word[i];
+              
+              if (userLetter && userLetter !== correctLetter) {
+                cell.style.color = '#dc2626';
+                isCorrect = false;
+              } else if (userLetter === correctLetter) {
+                cell.style.color = '#16a34a';
+              }
+            }
+          });
+        }
+        
+        revealAnswer() {
+          if (!this.selectedWord) return;
+          
+          const word = this.words[this.selectedWord];
+          const { start, direction, length } = word;
+          const [startRow, startCol] = start;
+          
+          for (let i = 0; i < length; i++) {
+            let row = startRow;
+            let col = startCol;
+            
+            if (direction === 'across') {
+              col += i;
+            } else {
+              row += i;
+            }
+            
+            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            this.userGrid[row][col] = word.word[i];
+            cell.textContent = word.word[i];
+            cell.classList.add('filled');
+          }
+          
+          this.checkWordCompletion();
+        }
+        
+        newCrossword() {
+          this.userGrid = Array(10).fill().map(() => Array(10).fill(''));
+          this.foundWords = 0;
+          this.selectedCell = null;
+          this.selectedWord = null;
+          this.startTime = Date.now();
+          
+          document.getElementById('wordsFound').textContent = '0';
+          document.getElementById('xpEarned').textContent = '0';
+          
+          this.createGrid();
+          this.createClues();
+        }
+        
+        endCrossword() {
+          this.endTime = Date.now();
+          const timeSpent = Math.floor((this.endTime - this.startTime) / 1000);
+          const minutes = Math.floor(timeSpent / 60);
+          const seconds = timeSpent % 60;
+          
+          document.getElementById('crosswordPlay').classList.add('hidden');
+          document.getElementById('crosswordEnd').classList.remove('hidden');
+          
+          document.getElementById('finalWordsFound').textContent = this.foundWords;
+          document.getElementById('completionTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+          document.getElementById('finalXpEarned').textContent = this.foundWords * 10;
+        }
+        
+        playAgain() {
+          document.getElementById('crosswordEnd').classList.add('hidden');
+          document.getElementById('crosswordIntro').classList.remove('hidden');
+        }
+      }
+      
+      // Initialize the crossword when the page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new CrosswordGame();
+      });
+    </script>
+  </body>
+</html>

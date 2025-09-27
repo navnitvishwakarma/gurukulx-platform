@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Word Quiz • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/quiz.css"/>
+    <script defer src="/js/main.js"></script>
+    <style>
+      .container {
+        max-width: 100% !important;
+        padding: 1rem !important;
+      }
+      .card {
+        margin: 0 !important;
+        padding: 1rem !important;
+      }
+    </style>
+  </head>
+  <body data-game="eng-word-quiz">
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="card">
+        <div class="breadcrumb">
+          <a href="/student-home.html"><i class="ri-home-line"></i> Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/subjects/english.html">English</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>Word Quiz</span>
+        </div>
+        
+        <div class="quiz-header">
+          <h1><i class="ri-question-line"></i> Word Quiz</h1>
+          <p class="muted">Test your vocabulary knowledge with challenging word questions!</p>
+        </div>
+
+        <div id="quizRoot">
+          <div id="quizIntro" class="quiz-intro">
+            <div class="intro-card">
+              <div class="intro-icon">
+                <i class="ri-book-open-line"></i>
+              </div>
+              <h2>Ready for the Word Challenge?</h2>
+              <p>Answer vocabulary questions to test your English knowledge. Each correct answer earns you points!</p>
+              
+              <div class="quiz-details">
+                <div class="detail-item">
+                  <i class="ri-question-line"></i>
+                  <span>10 Questions</span>
+                </div>
+                <div class="detail-item">
+                  <i class="ri-time-line"></i>
+                  <span>30 seconds per question</span>
+                </div>
+                <div class="detail-item">
+                  <i class="ri-trophy-line"></i>
+                  <span>Earn XP and badges</span>
+                </div>
+              </div>
+              
+              <button class="btn btn-primary btn-lg" id="startQuiz">Start Word Quiz</button>
+            </div>
+          </div>
+
+          <div id="quizPlay" class="quiz-play hidden">
+            <div class="question-header">
+              <span class="question-counter">Question <span id="qIndex">1</span>/<span id="qTotal">10</span></span>
+              <span class="question-score">Score: <strong id="qScore">0</strong></span>
+              <span>Time: <strong id="qTimer">30</strong>s</span>
+            </div>
+            
+            <div class="question-card">
+              <div id="qText" class="question-text"></div>
+              <div id="qOptions" class="question-options"></div>
+            </div>
+            
+            <div class="quiz-controls">
+              <button class="btn" id="skipQuestion">Skip Question</button>
+              <button class="btn btn-primary" id="submitAnswer" disabled>Submit Answer</button>
+            </div>
+          </div>
+
+          <div id="quizEnd" class="quiz-end hidden">
+            <div class="results-card">
+              <div class="results-icon">
+                <i class="ri-trophy-line"></i>
+              </div>
+              <h2>Quiz Complete!</h2>
+              <p>You scored <strong id="finalScore">0</strong> out of <strong id="maxScore">100</strong> points!</p>
+              
+              <div class="results-stats">
+                <div class="result-stat">
+                  <span class="stat-label">Correct</span>
+                  <span class="stat-value" id="correctAnswers">0</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">Accuracy</span>
+                  <span class="stat-value" id="accuracy">0%</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">XP Earned</span>
+                  <span class="stat-value" id="xpEarned">0</span>
+                </div>
+              </div>
+              
+              <div class="results-feedback" id="feedbackMessage">
+                <p>Great job! Keep practicing to improve your vocabulary!</p>
+              </div>
+              
+              <div class="results-actions">
+                <a class="btn btn-accent" href="/leaderboard.html">View Leaderboard</a>
+                <a class="btn" href="/subjects/english.html">Back to English</a>
+                <button class="btn btn-primary" id="retakeQuiz">Retake Quiz</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+      // Word Quiz Game Logic
+      class WordQuiz {
+        constructor() {
+          this.questions = [
+            {
+              question: "What does 'serendipity' mean?",
+              options: ["Good luck", "Bad luck", "A happy accident", "A planned event"],
+              correct: 2,
+              explanation: "Serendipity means a pleasant surprise or happy accident."
+            },
+            {
+              question: "Which word means 'extremely hungry'?",
+              options: ["Ravenous", "Famished", "Starving", "All of the above"],
+              correct: 3,
+              explanation: "All three words mean extremely hungry."
+            },
+            {
+              question: "What is the antonym of 'gregarious'?",
+              options: ["Sociable", "Introverted", "Friendly", "Outgoing"],
+              correct: 1,
+              explanation: "Gregarious means sociable, so its antonym is introverted."
+            },
+            {
+              question: "Which word best describes someone who is 'meticulous'?",
+              options: ["Careless", "Careful", "Rushed", "Lazy"],
+              correct: 1,
+              explanation: "Meticulous means very careful and precise."
+            },
+            {
+              question: "What does 'ubiquitous' mean?",
+              options: ["Rare", "Present everywhere", "Expensive", "Difficult"],
+              correct: 1,
+              explanation: "Ubiquitous means present, appearing, or found everywhere."
+            },
+            {
+              question: "Which word means 'to make something less severe'?",
+              options: ["Exacerbate", "Alleviate", "Aggravate", "Intensify"],
+              correct: 1,
+              explanation: "Alleviate means to make something less severe or painful."
+            },
+            {
+              question: "What is a 'euphemism'?",
+              options: ["A harsh word", "A mild word for something harsh", "A foreign word", "A technical term"],
+              correct: 1,
+              explanation: "A euphemism is a mild or indirect word substituted for one considered harsh."
+            },
+            {
+              question: "Which word means 'to speak or write at length'?",
+              options: ["Condense", "Elaborate", "Summarize", "Abbreviate"],
+              correct: 1,
+              explanation: "Elaborate means to add more detail or speak/write at length."
+            },
+            {
+              question: "What does 'ephemeral' mean?",
+              options: ["Lasting forever", "Lasting for a short time", "Very expensive", "Very large"],
+              correct: 1,
+              explanation: "Ephemeral means lasting for a very short time."
+            },
+            {
+              question: "Which word best describes 'resilient'?",
+              options: ["Fragile", "Able to recover quickly", "Stubborn", "Weak"],
+              correct: 1,
+              explanation: "Resilient means able to withstand or recover quickly from difficult conditions."
+            }
+          ];
+          
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.correctAnswers = 0;
+          this.timeLeft = 30;
+          this.timer = null;
+          this.selectedAnswer = null;
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('startQuiz').addEventListener('click', () => this.startQuiz());
+          document.getElementById('submitAnswer').addEventListener('click', () => this.submitAnswer());
+          document.getElementById('skipQuestion').addEventListener('click', () => this.skipQuestion());
+          document.getElementById('retakeQuiz').addEventListener('click', () => this.retakeQuiz());
+        }
+        
+        startQuiz() {
+          document.getElementById('quizIntro').classList.add('hidden');
+          document.getElementById('quizPlay').classList.remove('hidden');
+          this.showQuestion();
+        }
+        
+        showQuestion() {
+          const question = this.questions[this.currentQuestion];
+          const qText = document.getElementById('qText');
+          const qOptions = document.getElementById('qOptions');
+          const qIndex = document.getElementById('qIndex');
+          const qTotal = document.getElementById('qTotal');
+          
+          qIndex.textContent = this.currentQuestion + 1;
+          qTotal.textContent = this.questions.length;
+          qText.textContent = question.question;
+          
+          qOptions.innerHTML = '';
+          question.options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.className = 'option';
+            optionElement.innerHTML = `
+              <div class="option-prefix">${String.fromCharCode(65 + index)}</div>
+              <div class="option-text">${option}</div>
+            `;
+            optionElement.addEventListener('click', () => this.selectAnswer(index));
+            qOptions.appendChild(optionElement);
+          });
+          
+          this.startTimer();
+          this.selectedAnswer = null;
+          document.getElementById('submitAnswer').disabled = true;
+        }
+        
+        selectAnswer(index) {
+          // Remove previous selection
+          document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+          
+          // Add selection to clicked option
+          document.querySelectorAll('.option')[index].classList.add('selected');
+          this.selectedAnswer = index;
+          document.getElementById('submitAnswer').disabled = false;
+        }
+        
+        startTimer() {
+          this.timeLeft = 30;
+          const timerElement = document.getElementById('qTimer');
+          
+          this.timer = setInterval(() => {
+            this.timeLeft--;
+            timerElement.textContent = this.timeLeft;
+            
+            if (this.timeLeft <= 0) {
+              this.timeUp();
+            }
+          }, 1000);
+        }
+        
+        timeUp() {
+          clearInterval(this.timer);
+          this.submitAnswer();
+        }
+        
+        submitAnswer() {
+          clearInterval(this.timer);
+          
+          const question = this.questions[this.currentQuestion];
+          const options = document.querySelectorAll('.option');
+          const isCorrect = this.selectedAnswer === question.correct;
+          
+          // Show correct/incorrect answers
+          options.forEach((option, index) => {
+            option.classList.remove('selected');
+            if (index === question.correct) {
+              option.classList.add('correct');
+            } else if (index === this.selectedAnswer && !isCorrect) {
+              option.classList.add('incorrect');
+            }
+          });
+          
+          // Update score
+          if (isCorrect) {
+            this.score += 10;
+            this.correctAnswers++;
+          }
+          
+          document.getElementById('qScore').textContent = this.score;
+          
+          // Disable controls
+          document.getElementById('submitAnswer').disabled = true;
+          document.getElementById('skipQuestion').disabled = true;
+          
+          // Move to next question after delay
+          setTimeout(() => {
+            this.nextQuestion();
+          }, 2000);
+        }
+        
+        skipQuestion() {
+          clearInterval(this.timer);
+          this.nextQuestion();
+        }
+        
+        nextQuestion() {
+          this.currentQuestion++;
+          
+          if (this.currentQuestion < this.questions.length) {
+            document.getElementById('skipQuestion').disabled = false;
+            this.showQuestion();
+          } else {
+            this.endQuiz();
+          }
+        }
+        
+        endQuiz() {
+          document.getElementById('quizPlay').classList.add('hidden');
+          document.getElementById('quizEnd').classList.remove('hidden');
+          
+          const accuracy = Math.round((this.correctAnswers / this.questions.length) * 100);
+          const xpEarned = this.score;
+          
+          document.getElementById('finalScore').textContent = this.score;
+          document.getElementById('maxScore').textContent = this.questions.length * 10;
+          document.getElementById('correctAnswers').textContent = this.correctAnswers;
+          document.getElementById('accuracy').textContent = accuracy + '%';
+          document.getElementById('xpEarned').textContent = xpEarned;
+          
+          // Set feedback message
+          const feedbackElement = document.getElementById('feedbackMessage');
+          let feedback = '';
+          if (accuracy >= 90) {
+            feedback = 'Outstanding! You have excellent vocabulary knowledge!';
+          } else if (accuracy >= 70) {
+            feedback = 'Great job! You have good vocabulary skills!';
+          } else if (accuracy >= 50) {
+            feedback = 'Good effort! Keep practicing to improve your vocabulary!';
+          } else {
+            feedback = 'Keep studying! Practice makes perfect!';
+          }
+          feedbackElement.innerHTML = `<p>${feedback}</p>`;
+          
+          // Save game results to leaderboard and dashboards
+          if (typeof saveGameResults === 'function') {
+            const progressEarned = Math.min(20, Math.round(accuracy / 5)); // 0-20% progress based on accuracy
+            saveGameResults(this.score, xpEarned, progressEarned);
+            
+            // Show success message
+            if (typeof showToast === 'function') {
+              showToast('Quiz Completed', `You earned ${xpEarned} XP and ${progressEarned}% progress!`, 'success');
+            }
+          }
+        }
+        
+        retakeQuiz() {
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.correctAnswers = 0;
+          
+          document.getElementById('quizEnd').classList.add('hidden');
+          document.getElementById('quizIntro').classList.remove('hidden');
+        }
+      }
+      
+      // Initialize the quiz when the page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new WordQuiz();
+      });
+    </script>
+  </body>
+</html>

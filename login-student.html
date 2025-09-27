@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Student Login • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="auth card hover-raise">
+        <h1>Student Login</h1>
+        <form id="loginForm" class="form">
+          <div class="form-row">
+            <label for="username">Username</label>
+            <input id="username" name="username" required />
+          </div>
+          <div class="form-row">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required />
+          </div>
+          <div class="form-row">
+            <label for="role">Role</label>
+            <select id="role" name="role">
+              <option value="student" selected>Student</option>
+              <option value="teacher">Teacher</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" type="submit">Login</button>
+          <p class="muted">Tip: choose role to be redirected accordingly.</p>
+        </form>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+  </body>
+</html>

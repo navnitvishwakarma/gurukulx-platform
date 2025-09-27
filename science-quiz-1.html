@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Matter and Its Properties Quiz – Science Chapter 1 – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="quiz-hero">
+        <div class="breadcrumb">
+          <a href="/index.html">Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-learning-path.html">Science</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-chapters.html">Chapters</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-chapter-1.html">Chapter 1</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>Quiz</span>
+        </div>
+        
+        <div class="hero-content">
+          <div class="quiz-icon">
+            <i class="ri-question-line"></i>
+          </div>
+          <h1 class="text-balance">Matter and Its Properties Quiz</h1>
+          <p class="lead text-pretty">
+            Test your understanding of matter, its states, and properties. Answer all questions to complete the quiz!
+          </p>
+          <div class="quiz-info">
+            <div class="info-item">
+              <i class="ri-question-line"></i>
+              <span>15 Questions</span>
+            </div>
+            <div class="info-item">
+              <i class="ri-time-line"></i>
+              <span>10 Minutes</span>
+            </div>
+            <div class="info-item">
+              <i class="ri-star-line"></i>
+              <span>Beginner Level</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="quiz-container">
+        <div class="quiz-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text">
+            <span id="currentQuestion">1</span> of <span id="totalQuestions">15</span>
+          </div>
+        </div>
+
+        <div class="quiz-content">
+          <div class="question-card" id="questionCard">
+            <div class="question-header">
+              <h3 id="questionText">Loading question...</h3>
+              <div class="question-number" id="questionNumber">Question 1</div>
+            </div>
+            
+            <div class="question-options" id="questionOptions">
+              <!-- Options will be populated by JavaScript -->
+            </div>
+            
+            <div class="question-actions">
+              <button class="btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>
+                <i class="ri-arrow-left-line"></i>
+                Previous
+              </button>
+              <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">
+                Next
+                <i class="ri-arrow-right-line"></i>
+              </button>
+              <button class="btn-success" id="submitBtn" onclick="submitQuiz()" style="display: none;">
+                <i class="ri-check-line"></i>
+                Submit Quiz
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-results" id="quizResults" style="display: none;">
+          <div class="results-header">
+            <div class="score-icon">
+              <i class="ri-trophy-line"></i>
+            </div>
+            <h2>Quiz Completed!</h2>
+            <p>Here are your results:</p>
+          </div>
+          
+          <div class="score-display">
+            <div class="score-circle">
+              <span class="score-number" id="finalScore">0</span>
+              <span class="score-total">/ 15</span>
+            </div>
+            <div class="score-percentage" id="scorePercentage">0%</div>
+          </div>
+          
+          <div class="score-details">
+            <div class="detail-item">
+              <span class="detail-label">Correct Answers:</span>
+              <span class="detail-value" id="correctAnswers">0</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Incorrect Answers:</span>
+              <span class="detail-value" id="incorrectAnswers">0</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Time Taken:</span>
+              <span class="detail-value" id="timeTaken">0:00</span>
+            </div>
+          </div>
+          
+          <div class="performance-message" id="performanceMessage">
+            <!-- Performance message will be populated by JavaScript -->
+          </div>
+          
+          <div class="results-actions">
+            <button class="btn-primary" onclick="retakeQuiz()">
+              <i class="ri-refresh-line"></i>
+              Retake Quiz
+            </button>
+            <a href="/science-chapter-1.html" class="btn-secondary">
+              <i class="ri-book-open-line"></i>
+              Review Chapter
+            </a>
+            <a href="/science-chapters.html" class="btn-outline">
+              <i class="ri-arrow-left-line"></i>
+              Back to Chapters
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+      // Quiz data
+      const quizData = [
+        {
+          question: "What is matter?",
+          options: [
+            "Anything that has mass and takes up space",
+            "Only solid objects",
+            "Only liquids and gases",
+            "Only things we can see"
+          ],
+          correct: 0,
+          explanation: "Matter is anything that has mass and takes up space. This includes solids, liquids, and gases."
+        },
+        {
+          question: "Which of the following is NOT a state of matter?",
+          options: [
+            "Solid",
+            "Liquid",
+            "Gas",
+            "Energy"
+          ],
+          correct: 3,
+          explanation: "Energy is not a state of matter. The three main states of matter are solid, liquid, and gas."
+        },
+        {
+          question: "What happens when ice melts?",
+          options: [
+            "It changes from liquid to solid",
+            "It changes from solid to liquid",
+            "It changes from gas to liquid",
+            "It changes from solid to gas"
+          ],
+          correct: 1,
+          explanation: "When ice melts, it changes from solid to liquid state due to the addition of heat energy."
+        },
+        {
+          question: "Which property describes how much space an object takes up?",
+          options: [
+            "Mass",
+            "Volume",
+            "Density",
+            "Weight"
+          ],
+          correct: 1,
+          explanation: "Volume is the amount of space an object occupies, measured in cubic centimeters or liters."
+        },
+        {
+          question: "What is density?",
+          options: [
+            "The weight of an object",
+            "Mass per unit volume",
+            "The size of an object",
+            "The color of an object"
+          ],
+          correct: 1,
+          explanation: "Density is mass per unit volume, calculated as Density = Mass ÷ Volume."
+        },
+        {
+          question: "Which of the following is a physical property?",
+          options: [
+            "Flammability",
+            "Reactivity",
+            "Color",
+            "Oxidation"
+          ],
+          correct: 2,
+          explanation: "Color is a physical property because it can be observed without changing the substance into something else."
+        },
+        {
+          question: "What is the melting point of ice?",
+          options: [
+            "100°C",
+            "0°C",
+            "50°C",
+            "25°C"
+          ],
+          correct: 1,
+          explanation: "Ice melts at 0°C (32°F) at standard atmospheric pressure."
+        },
+        {
+          question: "Which of the following is a chemical property?",
+          options: [
+            "Color",
+            "Hardness",
+            "Flammability",
+            "Density"
+          ],
+          correct: 2,
+          explanation: "Flammability is a chemical property because it describes how a substance reacts with oxygen to form new materials."
+        },
+        {
+          question: "What happens to particles when a liquid becomes a gas?",
+          options: [
+            "They move closer together",
+            "They move farther apart",
+            "They stop moving",
+            "They change color"
+          ],
+          correct: 1,
+          explanation: "When a liquid becomes a gas, particles move farther apart and move more freely."
+        },
+        {
+          question: "Which material is most likely to float in water?",
+          options: [
+            "Iron",
+            "Wood",
+            "Gold",
+            "Steel"
+          ],
+          correct: 1,
+          explanation: "Wood is most likely to float in water because it has a lower density than water."
+        },
+        {
+          question: "What is the process called when a gas becomes a liquid?",
+          options: [
+            "Evaporation",
+            "Condensation",
+            "Melting",
+            "Freezing"
+          ],
+          correct: 1,
+          explanation: "Condensation is the process when a gas becomes a liquid, usually by cooling."
+        },
+        {
+          question: "Which of the following has the highest density?",
+          options: [
+            "Water",
+            "Oil",
+            "Mercury",
+            "Alcohol"
+          ],
+          correct: 2,
+          explanation: "Mercury has the highest density among the given options, which is why it sinks in water."
+        },
+        {
+          question: "What happens to the volume of a gas when it is compressed?",
+          options: [
+            "It increases",
+            "It decreases",
+            "It stays the same",
+            "It becomes zero"
+          ],
+          correct: 1,
+          explanation: "When a gas is compressed, its volume decreases because the particles are forced closer together."
+        },
+        {
+          question: "Which property can be observed without changing the substance?",
+          options: [
+            "Flammability",
+            "Reactivity",
+            "Boiling point",
+            "Oxidation"
+          ],
+          correct: 2,
+          explanation: "Boiling point is a physical property that can be observed by heating the substance without changing its chemical composition."
+        },
+        {
+          question: "What is the main difference between physical and chemical properties?",
+          options: [
+            "Physical properties are visible, chemical properties are not",
+            "Physical properties don't change the substance, chemical properties do",
+            "Physical properties are measured, chemical properties are not",
+            "There is no difference"
+          ],
+          correct: 1,
+          explanation: "Physical properties can be observed without changing the substance, while chemical properties describe how a substance reacts to form new materials."
+        }
+      ];
+
+      let currentQuestionIndex = 0;
+      let userAnswers = new Array(quizData.length).fill(null);
+      let startTime = Date.now();
+      let quizCompleted = false;
+
+      // Initialize quiz
+      function initQuiz() {
+        displayQuestion();
+        updateProgress();
+      }
+
+      // Display current question
+      function displayQuestion() {
+        const question = quizData[currentQuestionIndex];
+        const questionCard = document.getElementById('questionCard');
+        
+        document.getElementById('questionText').textContent = question.question;
+        document.getElementById('questionNumber').textContent = `Question ${currentQuestionIndex + 1}`;
+        
+        const optionsContainer = document.getElementById('questionOptions');
+        optionsContainer.innerHTML = '';
+        
+        question.options.forEach((option, index) => {
+          const optionElement = document.createElement('div');
+          optionElement.className = 'option';
+          if (userAnswers[currentQuestionIndex] === index) {
+            optionElement.classList.add('selected');
+          }
+          
+          optionElement.innerHTML = `
+            <input type="radio" name="question" value="${index}" id="option${index}" ${userAnswers[currentQuestionIndex] === index ? 'checked' : ''}>
+            <label for="option${index}">
+              <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+              <span class="option-text">${option}</span>
+            </label>
+          `;
+          
+          optionElement.addEventListener('click', () => selectOption(index));
+          optionsContainer.appendChild(optionElement);
+        });
+        
+        updateNavigationButtons();
+      }
+
+      // Select an option
+      function selectOption(index) {
+        userAnswers[currentQuestionIndex] = index;
+        displayQuestion(); // Refresh to show selection
+      }
+
+      // Update progress bar
+      function updateProgress() {
+        const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+        document.getElementById('progressFill').style.width = `${progress}%`;
+        document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+        document.getElementById('totalQuestions').textContent = quizData.length;
+      }
+
+      // Update navigation buttons
+      function updateNavigationButtons() {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        prevBtn.disabled = currentQuestionIndex === 0;
+        
+        if (currentQuestionIndex === quizData.length - 1) {
+          nextBtn.style.display = 'none';
+          submitBtn.style.display = 'inline-flex';
+        } else {
+          nextBtn.style.display = 'inline-flex';
+          submitBtn.style.display = 'none';
+        }
+      }
+
+      // Go to next question
+      function nextQuestion() {
+        if (currentQuestionIndex < quizData.length - 1) {
+          currentQuestionIndex++;
+          displayQuestion();
+          updateProgress();
+        }
+      }
+
+      // Go to previous question
+      function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+          currentQuestionIndex--;
+          displayQuestion();
+          updateProgress();
+        }
+      }
+
+      // Submit quiz
+      function submitQuiz() {
+        if (quizCompleted) return;
+        
+        quizCompleted = true;
+        const endTime = Date.now();
+        const timeTaken = Math.floor((endTime - startTime) / 1000);
+        
+        let correctAnswers = 0;
+        const results = [];
+        
+        quizData.forEach((question, index) => {
+          const isCorrect = userAnswers[index] === question.correct;
+          if (isCorrect) correctAnswers++;
+          
+          results.push({
+            question: question.question,
+            userAnswer: userAnswers[index],
+            correctAnswer: question.correct,
+            isCorrect: isCorrect,
+            explanation: question.explanation
+          });
+        });
+        
+        const score = correctAnswers;
+        const percentage = Math.round((score / quizData.length) * 100);
+        
+        // Hide quiz content and show results
+        document.querySelector('.quiz-content').style.display = 'none';
+        document.getElementById('quizResults').style.display = 'block';
+        
+        // Update results display
+        document.getElementById('finalScore').textContent = score;
+        document.getElementById('scorePercentage').textContent = `${percentage}%`;
+        document.getElementById('correctAnswers').textContent = correctAnswers;
+        document.getElementById('incorrectAnswers').textContent = quizData.length - correctAnswers;
+        document.getElementById('timeTaken').textContent = formatTime(timeTaken);
+        
+        // Update performance message
+        const performanceMessage = document.getElementById('performanceMessage');
+        if (percentage >= 90) {
+          performanceMessage.innerHTML = '<div class="message excellent">Excellent! You have a great understanding of matter and its properties!</div>';
+        } else if (percentage >= 70) {
+          performanceMessage.innerHTML = '<div class="message good">Good job! You understand most concepts well. Review the areas you missed.</div>';
+        } else if (percentage >= 50) {
+          performanceMessage.innerHTML = '<div class="message fair">Fair performance. Consider reviewing the chapter content and retaking the quiz.</div>';
+        } else {
+          performanceMessage.innerHTML = '<div class="message poor">You need more practice. Please review the chapter thoroughly before retaking the quiz.</div>';
+        }
+      }
+
+      // Retake quiz
+      function retakeQuiz() {
+        currentQuestionIndex = 0;
+        userAnswers = new Array(quizData.length).fill(null);
+        startTime = Date.now();
+        quizCompleted = false;
+        
+        document.querySelector('.quiz-content').style.display = 'block';
+        document.getElementById('quizResults').style.display = 'none';
+        
+        initQuiz();
+      }
+
+      // Format time
+      function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+      }
+
+      // Initialize quiz when page loads
+      document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+
+    <style>
+      .quiz-hero {
+        text-align: center;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border-radius: 1rem;
+      }
+
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #64748b;
+        flex-wrap: wrap;
+      }
+
+      .breadcrumb a {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .quiz-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-icon:hover {
+        transform: scale(1.1);
+      }
+
+      .quiz-icon i {
+        font-size: 3rem;
+      }
+
+      .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .hero-content .lead {
+        font-size: 1.125rem;
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
+
+      .quiz-info {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border-radius: 0.75rem;
+        color: var(--color-fg);
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .info-item i {
+        color: var(--color-primary);
+        font-size: 1.25rem;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .quiz-progress {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: var(--color-muted);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        border-radius: 4px;
+        transition: width 0.3s ease;
+        width: 0%;
+      }
+
+      .progress-text {
+        text-align: center;
+        font-weight: 600;
+        color: var(--color-fg);
+      }
+
+      .quiz-content {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .question-card {
+        max-width: 100%;
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-muted);
+      }
+
+      .question-header h3 {
+        font-size: 1.5rem;
+        color: var(--color-fg);
+        flex: 1;
+        margin-right: 1rem;
+      }
+
+      .question-number {
+        background: var(--color-primary);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .question-options {
+        margin-bottom: 2rem;
+      }
+
+      .option {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .option:hover {
+        border-color: var(--color-primary);
+        background: #f0f9ff;
+      }
+
+      .option.selected {
+        border-color: var(--color-primary);
+        background: #f0f9ff;
+      }
+
+      .option input[type="radio"] {
+        display: none;
+      }
+
+      .option label {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .option-letter {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--color-muted);
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .option.selected .option-letter {
+        background: var(--color-primary);
+        color: white;
+      }
+
+      .option-text {
+        flex: 1;
+        color: var(--color-fg);
+        font-size: 1rem;
+      }
+
+      .question-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .btn-primary, .btn-secondary, .btn-success, .btn-outline {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        background: var(--color-primary);
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #059669;
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--color-primary);
+        border: 2px solid var(--color-primary);
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: var(--color-primary);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: #16a34a;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--color-fg);
+        border: 2px solid var(--color-muted);
+      }
+
+      .btn-outline:hover {
+        background: var(--color-muted);
+        transform: translateY(-2px);
+      }
+
+      .btn-primary:disabled, .btn-secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .quiz-results {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .results-header {
+        margin-bottom: 2rem;
+      }
+
+      .score-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+      }
+
+      .score-icon i {
+        font-size: 2.5rem;
+      }
+
+      .results-header h2 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-fg);
+      }
+
+      .results-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+      }
+
+      .score-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .score-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .score-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .score-total {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+
+      .score-percentage {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      .score-details {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .detail-item {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .detail-label {
+        display: block;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .detail-value {
+        display: block;
+        color: var(--color-fg);
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .performance-message {
+        margin-bottom: 2rem;
+      }
+
+      .message {
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .message.excellent {
+        background: #f0fdf4;
+        color: #14532d;
+        border: 2px solid #16a34a;
+      }
+
+      .message.good {
+        background: #fefce8;
+        color: #a16207;
+        border: 2px solid #eab308;
+      }
+
+      .message.fair {
+        background: #fef3c7;
+        color: #92400e;
+        border: 2px solid #f59e0b;
+      }
+
+      .message.poor {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 2px solid #ef4444;
+      }
+
+      .results-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .hero-content h1 {
+          font-size: 2rem;
+        }
+
+        .quiz-icon {
+          width: 80px;
+          height: 80px;
+        }
+
+        .quiz-icon i {
+          font-size: 2rem;
+        }
+
+        .quiz-info {
+          gap: 1rem;
+        }
+
+        .info-item {
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+        }
+
+        .question-header {
+          flex-direction: column;
+          gap: 1rem;
+          text-align: center;
+        }
+
+        .question-header h3 {
+          margin-right: 0;
+        }
+
+        .question-actions {
+          flex-direction: column;
+        }
+
+        .btn-primary, .btn-secondary, .btn-success, .btn-outline {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .score-display {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .score-details {
+          grid-template-columns: 1fr;
+        }
+
+        .results-actions {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .quiz-content {
+          padding: 1.5rem;
+        }
+
+        .quiz-results {
+          padding: 1.5rem;
+        }
+
+        .option {
+          padding: 0.75rem;
+        }
+
+        .option label {
+          gap: 0.75rem;
+        }
+      }
+    </style>
+  </body>
+</html>

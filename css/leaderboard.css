@@ -1,0 +1,159 @@
+/* Leaderboard Page Styles */
+
+/* Leaderboard controls */
+.leaderboard-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.leaderboard-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.leaderboard-filter label {
+    font-weight: 500;
+}
+
+.leaderboard-filter select {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-muted);
+    background: var(--color-bg);
+    color: var(--color-fg);
+}
+
+/* Leaderboard stats */
+.leaderboard-stats {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0 2rem;
+    flex-wrap: wrap;
+}
+
+.leaderboard-stat {
+    background: var(--color-muted);
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    min-width: 120px;
+    flex: 1;
+}
+
+.leaderboard-stat .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+}
+
+.leaderboard-stat .label {
+    font-size: 0.85rem;
+    color: var(--color-fg);
+    opacity: 0.8;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #64748b;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    color: #cbd5e1;
+}
+
+.empty-state p {
+    margin: 0.5rem 0;
+}
+
+/* Table enhancements */
+.table-like .row.highlight {
+    background-color: rgba(22, 163, 74, 0.1);
+    font-weight: 600;
+}
+
+.table-like .row.highlight .rank {
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+/* Update table layout for additional class column */
+.table-like .row {
+    grid-template-columns: 48px 1fr 80px 100px 120px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .leaderboard-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .leaderboard-filter {
+        width: 100%;
+    }
+    
+    .leaderboard-filter select {
+        flex-grow: 1;
+    }
+    
+    .leaderboard-stats {
+        flex-direction: column;
+    }
+    
+    .leaderboard-stat {
+        min-width: auto;
+    }
+    
+    /* Adjust table for mobile */
+    .table-like .row {
+        grid-template-columns: 40px 1fr 70px 80px 100px !important;
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+    
+    .table-like .row.header {
+        display: none; /* Hide header on mobile */
+    }
+    
+    .table-like .row:not(.header) {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--color-muted);
+    }
+    
+    .table-like .row .rank {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--color-primary);
+    }
+    
+    .table-like .row .badge {
+        margin-top: 0.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .table-like .row:not(.header) {
+        padding: 0.75rem;
+    }
+    
+    .empty-state {
+        padding: 2rem 1rem;
+    }
+    
+    .empty-state i {
+        font-size: 2.5rem;
+    }
+}

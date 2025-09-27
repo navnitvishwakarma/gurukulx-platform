@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Leaderboard • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/leaderboard.css" />
+    <script defer src="/js/main.js"></script>
+    <script defer src="/js/leaderboard.js"></script>
+  </head>
+  <body data-page="leaderboard">
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="card">
+        <h1>Global Leaderboard</h1>
+        
+        <div class="leaderboard-stats">
+          <div class="leaderboard-stat">
+            <div class="value" id="totalPlayers">0</div>
+            <div class="label">Total Players</div>
+          </div>
+          <div class="leaderboard-stat">
+            <div class="value" id="topScore">0</div>
+            <div class="label">Top Score</div>
+          </div>
+          <div class="leaderboard-stat">
+            <div class="value" id="yourRank">-</div>
+            <div class="label">Your Rank</div>
+          </div>
+        </div>
+        
+        <div class="leaderboard-controls">
+          <div class="leaderboard-filter">
+            <label for="classFilter">Filter by Class:</label>
+            <select id="classFilter">
+              <option value="all">All Classes</option>
+              <option value="6">Grade 6</option>
+              <option value="7">Grade 7</option>
+              <option value="8">Grade 8</option>
+              <option value="9">Grade 9</option>
+              <option value="10">Grade 10</option>
+              <option value="11">Grade 11</option>
+              <option value="12">Grade 12</option>
+            </select>
+          </div>
+          <button id="refreshLeaderboard" class="btn">
+            <i class="ri-refresh-line"></i> Refresh
+          </button>
+        </div>
+        
+        <div id="leaderboardTable" class="table-like">
+          <div class="empty-state">
+            <i class="ri-trophy-line"></i>
+            <p>No leaderboard data available yet.</p>
+            <p>Complete some activities to appear on the leaderboard!</p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+  </body>
+</html>

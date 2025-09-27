@@ -1,0 +1,99 @@
+/* Class Selection Page Styles */
+.class-selection-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.class-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border: 2px solid var(--color-muted);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: var(--color-bg);
+}
+
+.class-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-primary);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.class-card.selected {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.class-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.class-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.continue-btn {
+    margin-top: 2rem;
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.continue-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.continue-btn:disabled:hover {
+    transform: none;
+    background: var(--color-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .class-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem;
+    }
+    
+    .class-card {
+        padding: 1rem;
+    }
+    
+    .class-icon {
+        font-size: 2rem;
+    }
+    
+    .class-name {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .class-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .class-selection-container {
+        padding: 1.5rem;
+    }
+}

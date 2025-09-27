@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Plant a Tree • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="plant-tree">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-seedling-line"></i> Plant a Tree</h1>
+        <div id="gameRoot">
+          <div id="gameIntro" class="game-intro">
+            <p>Help save the planet by planting virtual trees! Each tree you plant helps reduce CO2 and creates a healthier environment.</p>
+            <div class="game-stats">
+              <div class="stat">
+                <span class="stat-label">Trees Planted:</span>
+                <span class="stat-value" id="treesPlanted">0</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">CO2 Reduced:</span>
+                <span class="stat-value" id="co2Reduced">0</span> kg
+              </div>
+              <div class="stat">
+                <span class="stat-label">Score:</span>
+                <span class="stat-value" id="totalScore">0</span>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="startGame">Start Planting</button>
+          </div>
+          <div id="gamePlay" class="game-play hidden">
+            <div class="game-header">
+              <div class="game-info">
+                <span>Time: <strong id="gameTimer">60</strong>s</span>
+                <span>Score: <strong id="currentScore">0</strong></span>
+                <span>Trees: <strong id="currentTrees">0</strong></span>
+              </div>
+              <button class="btn btn-outline btn-sm" id="pauseGame">Pause</button>
+            </div>
+            <div class="game-area">
+              <div id="forest" class="forest"></div>
+              <div class="game-controls">
+                <button class="btn btn-accent" id="plantTree">Plant Tree</button>
+                <button class="btn btn-outline" id="waterTrees">Water Trees</button>
+                <button class="btn btn-outline" id="fertilizeTrees">Fertilize</button>
+              </div>
+            </div>
+            <div class="tree-info">
+              <h3>Tree Types Available:</h3>
+              <div class="tree-types">
+                <div class="tree-type" data-type="oak">
+                  <div class="tree-icon">🌳</div>
+                  <span>Oak Tree</span>
+                  <small>+50 CO2 reduction</small>
+                </div>
+                <div class="tree-type" data-type="pine">
+                  <div class="tree-icon">🌲</div>
+                  <span>Pine Tree</span>
+                  <small>+40 CO2 reduction</small>
+                </div>
+                <div class="tree-type" data-type="maple">
+                  <div class="tree-icon">🍁</div>
+                  <span>Maple Tree</span>
+                  <small>+35 CO2 reduction</small>
+                </div>
+                <div class="tree-type" data-type="fruit">
+                  <div class="tree-icon">🍎</div>
+                  <span>Fruit Tree</span>
+                  <small>+30 CO2 reduction</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="gameEnd" class="game-end hidden">
+            <h2>Great Job!</h2>
+            <div class="final-stats">
+              <div class="stat">
+                <span class="stat-label">Trees Planted:</span>
+                <span class="stat-value" id="finalTrees">0</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Total CO2 Reduced:</span>
+                <span class="stat-value" id="finalCO2">0</span> kg
+              </div>
+              <div class="stat">
+                <span class="stat-label">Final Score:</span>
+                <span class="stat-value" id="finalScore">0</span>
+              </div>
+            </div>
+            <div id="achievementMessage"></div>
+            <div class="cta-group">
+              <button class="btn btn-accent" id="playAgain">Play Again</button>
+              <a class="btn" href="/subjects/environment.html">Back to Environment</a>
+              <a class="btn" href="/leaderboard.html">View Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      class PlantTreeGame {
+        constructor() {
+          this.gameTime = 60;
+          this.timeLeft = 60;
+          this.score = 0;
+          this.treesPlanted = 0;
+          this.co2Reduced = 0;
+          this.selectedTreeType = 'oak';
+          this.gameTimer = null;
+          this.isPaused = false;
+          this.treeTypes = {
+            oak: { emoji: '🌳', co2Reduction: 50, cost: 10 },
+            pine: { emoji: '🌲', co2Reduction: 40, cost: 8 },
+            maple: { emoji: '🍁', co2Reduction: 35, cost: 7 },
+            fruit: { emoji: '🍎', co2Reduction: 30, cost: 6 }
+          };
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('startGame').addEventListener('click', () => {
+            this.startGame();
+          });
+          
+          document.getElementById('playAgain').addEventListener('click', () => {
+            this.resetGame();
+            this.startGame();
+          });
+          
+          document.getElementById('pauseGame').addEventListener('click', () => {
+            this.togglePause();
+          });
+          
+          document.getElementById('plantTree').addEventListener('click', () => {
+            this.plantTree();
+          });
+          
+          document.getElementById('waterTrees').addEventListener('click', () => {
+            this.waterTrees();
+          });
+          
+          document.getElementById('fertilizeTrees').addEventListener('click', () => {
+            this.fertilizeTrees();
+          });
+          
+          // Tree type selection
+          document.querySelectorAll('.tree-type').forEach(type => {
+            type.addEventListener('click', () => {
+              document.querySelectorAll('.tree-type').forEach(t => t.classList.remove('selected'));
+              type.classList.add('selected');
+              this.selectedTreeType = type.dataset.type;
+            });
+          });
+          
+          // Select first tree type by default
+          document.querySelector('.tree-type').classList.add('selected');
+        }
+        
+        startGame() {
+          document.getElementById('gameIntro').classList.add('hidden');
+          document.getElementById('gamePlay').classList.remove('hidden');
+          document.getElementById('gameEnd').classList.add('hidden');
+          
+          this.timeLeft = this.gameTime;
+          this.score = 0;
+          this.treesPlanted = 0;
+          this.co2Reduced = 0;
+          this.isPaused = false;
+          
+          this.updateDisplay();
+          this.startTimer();
+        }
+        
+        startTimer() {
+          this.gameTimer = setInterval(() => {
+            if (!this.isPaused) {
+              this.timeLeft--;
+              this.updateDisplay();
+              
+              if (this.timeLeft <= 0) {
+                this.endGame();
+              }
+            }
+          }, 1000);
+        }
+        
+        plantTree() {
+          const treeType = this.treeTypes[this.selectedTreeType];
+          const forest = document.getElementById('forest');
+          
+          // Create tree element
+          const tree = document.createElement('div');
+          tree.className = 'tree';
+          tree.innerHTML = treeType.emoji;
+          tree.style.left = Math.random() * 80 + 10 + '%';
+          tree.style.top = Math.random() * 60 + 20 + '%';
+          tree.style.fontSize = (Math.random() * 20 + 20) + 'px';
+          
+          // Add animation
+          tree.style.transform = 'scale(0)';
+          tree.style.transition = 'transform 0.5s ease';
+          
+          forest.appendChild(tree);
+          
+          // Animate tree growth
+          setTimeout(() => {
+            tree.style.transform = 'scale(1)';
+          }, 100);
+          
+          // Update stats
+          this.treesPlanted++;
+          this.co2Reduced += treeType.co2Reduction;
+          this.score += treeType.co2Reduction;
+          
+          this.updateDisplay();
+          
+          // Show floating score
+          this.showFloatingScore(treeType.co2Reduction, tree);
+        }
+        
+        waterTrees() {
+          const trees = document.querySelectorAll('.tree');
+          trees.forEach(tree => {
+            tree.style.filter = 'brightness(1.2)';
+            setTimeout(() => {
+              tree.style.filter = 'brightness(1)';
+            }, 1000);
+          });
+          
+          this.score += trees.length * 5;
+          this.updateDisplay();
+        }
+        
+        fertilizeTrees() {
+          const trees = document.querySelectorAll('.tree');
+          trees.forEach(tree => {
+            tree.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+              tree.style.transform = 'scale(1)';
+            }, 500);
+          });
+          
+          this.score += trees.length * 10;
+          this.updateDisplay();
+        }
+        
+        showFloatingScore(points, element) {
+          const floatingScore = document.createElement('div');
+          floatingScore.className = 'floating-score';
+          floatingScore.textContent = '+' + points;
+          floatingScore.style.position = 'absolute';
+          floatingScore.style.left = element.style.left;
+          floatingScore.style.top = element.style.top;
+          floatingScore.style.color = '#10b981';
+          floatingScore.style.fontWeight = 'bold';
+          floatingScore.style.pointerEvents = 'none';
+          floatingScore.style.zIndex = '1000';
+          
+          document.getElementById('forest').appendChild(floatingScore);
+          
+          // Animate floating score
+          setTimeout(() => {
+            floatingScore.style.transform = 'translateY(-50px)';
+            floatingScore.style.opacity = '0';
+            setTimeout(() => {
+              floatingScore.remove();
+            }, 1000);
+          }, 100);
+        }
+        
+        updateDisplay() {
+          document.getElementById('gameTimer').textContent = this.timeLeft;
+          document.getElementById('currentScore').textContent = this.score;
+          document.getElementById('currentTrees').textContent = this.treesPlanted;
+          document.getElementById('treesPlanted').textContent = this.treesPlanted;
+          document.getElementById('co2Reduced').textContent = this.co2Reduced;
+          document.getElementById('totalScore').textContent = this.score;
+        }
+        
+        togglePause() {
+          this.isPaused = !this.isPaused;
+          const pauseBtn = document.getElementById('pauseGame');
+          pauseBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+        }
+        
+        endGame() {
+          clearInterval(this.gameTimer);
+          document.getElementById('gamePlay').classList.add('hidden');
+          document.getElementById('gameEnd').classList.remove('hidden');
+          
+          document.getElementById('finalTrees').textContent = this.treesPlanted;
+          document.getElementById('finalCO2').textContent = this.co2Reduced;
+          document.getElementById('finalScore').textContent = this.score;
+          
+          const achievementMessage = document.getElementById('achievementMessage');
+          if (this.treesPlanted >= 20) {
+            achievementMessage.innerHTML = '<p class="success">🌳 Tree Master! You\'ve planted a whole forest!</p>';
+          } else if (this.treesPlanted >= 10) {
+            achievementMessage.innerHTML = '<p class="warning">🌱 Great job! You\'re making a real difference!</p>';
+          } else {
+            achievementMessage.innerHTML = '<p class="info">🌿 Keep planting! Every tree counts!</p>';
+          }
+        }
+        
+        resetGame() {
+          clearInterval(this.gameTimer);
+          document.getElementById('forest').innerHTML = '';
+          this.timeLeft = this.gameTime;
+          this.score = 0;
+          this.treesPlanted = 0;
+          this.co2Reduced = 0;
+          this.isPaused = false;
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', () => {
+        new PlantTreeGame();
+      });
+    </script>
+    
+    <style>
+      .game-intro {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .game-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+      }
+      
+      .stat {
+        text-align: center;
+      }
+      
+      .stat-label {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--color-muted-fg);
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--color-primary);
+      }
+      
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .game-info {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .game-area {
+        position: relative;
+        min-height: 400px;
+        background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+      
+      .forest {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+      }
+      
+      .tree {
+        position: absolute;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        user-select: none;
+      }
+      
+      .tree:hover {
+        transform: scale(1.1);
+      }
+      
+      .game-controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      
+      .tree-info {
+        background: var(--color-muted);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .tree-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      
+      .tree-type {
+        text-align: center;
+        padding: 1rem;
+        border: 2px solid transparent;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .tree-type:hover {
+        border-color: var(--color-primary);
+        background: var(--color-primary-alpha);
+      }
+      
+      .tree-type.selected {
+        border-color: var(--color-primary);
+        background: var(--color-primary-alpha);
+      }
+      
+      .tree-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .tree-type span {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+      }
+      
+      .tree-type small {
+        color: var(--color-muted-fg);
+        font-size: 0.8rem;
+      }
+      
+      .floating-score {
+        animation: floatUp 1s ease-out forwards;
+      }
+      
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+      }
+      
+      .game-end {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .final-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+      }
+      
+      .success {
+        color: #10b981;
+        font-weight: 600;
+      }
+      
+      .warning {
+        color: #f59e0b;
+        font-weight: 600;
+      }
+      
+      .info {
+        color: var(--color-primary);
+        font-weight: 600;
+      }
+      
+      .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      @media (max-width: 768px) {
+        .game-header {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        
+        .game-info {
+          flex-direction: column;
+          text-align: center;
+        }
+        
+        .game-controls {
+          flex-direction: column;
+        }
+        
+        .tree-types {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .cta-group {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </body>
+</html>

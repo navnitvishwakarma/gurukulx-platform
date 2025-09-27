@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Leaderboard - GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+    <style>
+      /* Additional styles specific to leaderboard */
+      .leaderboard-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .filter-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      
+      .time-filter {
+        display: flex;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.6rem;
+        overflow: hidden;
+      }
+      
+      .time-filter button {
+        background: transparent;
+        border: none;
+        padding: 0.5rem 0.75rem;
+        cursor: pointer;
+        color: var(--color-fg);
+        font-size: 0.9rem;
+      }
+      
+      .time-filter button.active {
+        background: var(--color-primary);
+        color: white;
+      }
+      
+      .search-box {
+        position: relative;
+      }
+      
+      .search-box input {
+        padding-left: 2.25rem;
+        width: 220px;
+      }
+      
+      .search-box i {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+      }
+      
+      .top-three {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+      
+      .podium-card {
+        text-align: center;
+        padding: 1.5rem 1rem;
+        border-radius: 1rem;
+        position: relative;
+      }
+      
+      .podium-card.first {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        order: 2;
+      }
+      
+      .podium-card.second {
+        background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+        order: 1;
+      }
+      
+      .podium-card.third {
+        background: linear-gradient(135deg, #CD7F32, #8C6B46);
+        order: 3;
+      }
+      
+      .podium-card .rank {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      
+      .podium-card .avatar {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+        border: 3px solid white;
+      }
+      
+      .podium-card .name {
+        font-weight: 600;
+        margin: 0.5rem 0;
+      }
+      
+      .podium-card .xp {
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+      }
+      
+      .leaderboard-table {
+        margin-top: 2rem;
+      }
+      
+      .leaderboard-table .row {
+        display: grid;
+        grid-template-columns: 60px 1fr 100px 100px;
+        gap: 1rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--color-muted);
+        align-items: center;
+      }
+      
+      .leaderboard-table .row.header {
+        background: var(--color-muted);
+        font-weight: 600;
+        border-radius: 0.6rem 0.6rem 0 0;
+        border-bottom: none;
+      }
+      
+      .leaderboard-table .row:last-child {
+        border-bottom: none;
+        border-radius: 0 0 0.6rem 0.6rem;
+      }
+      
+      .rank-change {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.85rem;
+        margin-left: 0.5rem;
+      }
+      
+      .rank-change.up {
+        color: #16a34a;
+      }
+      
+      .rank-change.down {
+        color: #dc2626;
+      }
+      
+      .badges-list {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+      }
+      
+      .badge-mini {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        color: white;
+      }
+      
+      @media (max-width: 768px) {
+        .leaderboard-controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .filter-group {
+          justify-content: center;
+        }
+        
+        .search-box {
+          width: 100%;
+        }
+        
+        .search-box input {
+          width: 100%;
+        }
+        
+        .top-three {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+        
+        .podium-card {
+          order: unset !important;
+        }
+        
+        .leaderboard-table .row {
+          grid-template-columns: 40px 1fr 80px;
+          grid-template-rows: auto auto;
+          gap: 0.5rem;
+        }
+        
+        .leaderboard-table .badges {
+          grid-column: 1 / -1;
+          display: flex;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container">
+      <h1>Leaderboard</h1>
+      <p class="muted">See how you rank against other students in your school</p>
+      
+      <div class="leaderboard-controls">
+        <div class="filter-group">
+          <div class="time-filter">
+            <button class="active">All Time</button>
+            <button>Monthly</button>
+            <button>Weekly</button>
+          </div>
+          
+          <select>
+            <option>All Subjects</option>
+            <option>Math</option>
+            <option>Science</option>
+            <option>Environment</option>
+            <option>Social Science</option>
+            <option>English</option>
+            <option>Computer Science</option>
+            <option>GK</option>
+          </select>
+        </div>
+        
+        <div class="search-box">
+          <i class="ri-search-line"></i>
+          <input type="text" placeholder="Search students..." />
+        </div>
+      </div>
+      
+      <div class="top-three">
+        <div class="podium-card second">
+          <div class="rank">2</div>
+          <img src="/assets/images/avatars/avatar2.png" alt="Avatar" class="avatar">
+          <div class="name">Sarah Johnson</div>
+          <div class="xp"><i class="ri-star-fill"></i> 4,820 XP</div>
+        </div>
+        
+        <div class="podium-card first">
+          <div class="rank">1</div>
+          <img src="/assets/avatars/avatar1.png" alt="Avatar" class="avatar">
+          <div class="name">Alex Chen</div>
+          <div class="xp"><i class="ri-star-fill"></i> 5,640 XP</div>
+        </div>
+        
+        <div class="podium-card third">
+          <div class="rank">3</div>
+          <img src="/assets/images/avatars/avatar3.png" alt="Avatar" class="avatar">
+          <div class="name">Miguel Rodriguez</div>
+          <div class="xp"><i class="ri-star-fill"></i> 4,550 XP</div>
+        </div>
+      </div>
+      
+      <div class="leaderboard-table card">
+        <div class="row header">
+          <div>Rank</div>
+          <div>Student</div>
+          <div>XP</div>
+          <div class="badges">Badges</div>
+        </div>
+        
+        <div class="row">
+          <div>4 <span class="rank-change up"><i class="ri-arrow-up-line"></i>2</span></div>
+          <div class="profile-mini">
+            <img src="/assets/images/avatars/avatar4.png" alt="Avatar" class="avatar">
+            <div>Emma Wilson</div>
+          </div>
+          <div>4,210</div>
+          <div class="badges-list">
+            <span class="badge-mini" title="Eco Warrior"><i class="ri-leaf-fill"></i></span>
+            <span class="badge-mini" title="Math Whiz"><i class="ri-calculator-fill"></i></span>
+            <span class="badge-mini" title="Streak Master"><i class="ri-fire-fill"></i></span>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div>5 <span class="rank-change down"><i class="ri-arrow-down-line"></i>1</span></div>
+          <div class="profile-mini">
+            <img src="/assets/images/avatars/avatar5.png" alt="Avatar" class="avatar">
+            <div>James Miller</div>
+          </div>
+          <div>3,980</div>
+          <div class="badges-list">
+            <span class="badge-mini" title="Science Expert"><i class="ri-flask-fill"></i></span>
+            <span class="badge-mini" title="Quiz Champion"><i class="ri-trophy-fill"></i></span>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div>6 <span class="rank-change up"><i class="ri-arrow-up-line"></i>3</span></div>
+          <div class="profile-mini">
+            <img src="/assets/images/avatars/avatar6.png" alt="Avatar" class="avatar">
+            <div>Priya Sharma</div>
+          </div>
+          <div>3,750</div>
+          <div class="badges-list">
+            <span class="badge-mini" title="Eco Warrior"><i class="ri-leaf-fill"></i></span>
+            <span class="badge-mini" title="Grammar Guru"><i class="ri-book-2-fill"></i></span>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div>7</div>
+          <div class="profile-mini">
+            <img src="/assets/images/avatars/avatar7.png" alt="Avatar" class="avatar">
+            <div>David Kim</div>
+          </div>
+          <div>3,420</div>
+          <div class="badges-list">
+            <span class="badge-mini" title>Coder"><i class="ri-code-fill"></i></span>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div>8 <span class="rank-change down"><i class="ri-arrow-down-line"></i>2</span></div>
+          <div class="profile-mini">
+            <img src="/assets/images/avatars/avatar8.png" alt="Avatar" class="avatar">
+            <div>Sophia Williams</div>
+          </div>
+          <div>3,150</div>
+          <div class="badges-list">
+            <span class="badge-mini" title="History Buff"><i class="ri-history-fill"></i></span>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div>9</div>
+          <div class="profile-mini">
+            <img src="/assets/images/avatars/avatar9.png" alt="Avatar" class="avatar">
+            <div>Liam O'Brien</div>
+          </div>
+          <div>2,870</div>
+          <div class="badges-list">
+            <span class="badge-mini" title="Geography Expert"><i class="ri-earth-fill"></i></span>
+            <span class="badge-mini" title="Daily Player"><i class="ri-calendar-check-fill"></i></span>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div>10 <span class="rank-change up"><i class="ri-arrow-up-line"></i>4</span></div>
+          <div class="profile-mini">
+            <img src="/assets/images/avatars/avatar10.png" alt="Avatar" class="avatar">
+            <div>Your Name</div>
+          </div>
+          <div>2,650</div>
+          <div class="badges-list">
+            <span class="badge-mini" title="Newcomer"><i class="ri-user-smile-fill"></i></span>
+            <span class="badge-mini" title="Quick Learner"><i class="ri-lightbulb-flash-fill"></i></span>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      // Simple functionality for the leaderboard
+      document.addEventListener('DOMContentLoaded', function() {
+        // Time filter buttons
+        const timeFilterButtons = document.querySelectorAll('.time-filter button');
+        timeFilterButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            timeFilterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+          });
+        });
+        
+        // Search functionality
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('input', function() {
+          const searchTerm = this.value.toLowerCase();
+          const rows = document.querySelectorAll('.leaderboard-table .row:not(.header)');
+          
+          rows.forEach(row => {
+            const name = row.querySelector('.profile-mini div').textContent.toLowerCase();
+            if (name.includes(searchTerm)) {
+              row.style.display = 'grid';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

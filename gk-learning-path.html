@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>General Knowledge Learning Path – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="subject-hero">
+        <div class="breadcrumb">
+          <a href="/index.html">Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>General Knowledge</span>
+        </div>
+        
+        <div class="hero-content">
+          <h1 class="text-balance">
+            <i class="ri-question-line"></i> General Knowledge
+          </h1>
+          <p class="lead text-pretty">
+            Expand your knowledge across various topics through structured lessons and engaging trivia games.
+          </p>
+        </div>
+      </section>
+
+      <section class="path-selection">
+        <div class="path-buttons">
+          <a href="/gk-chapters.html" class="path-button chapters-btn">
+            <div class="path-icon">
+              <i class="ri-book-open-line" aria-hidden="true"></i>
+            </div>
+            <div class="path-content">
+              <h2>Chapters</h2>
+              <p>Structured learning about history, geography, and current affairs</p>
+              <div class="path-features">
+                <span class="feature-tag">History</span>
+                <span class="feature-tag">Geography</span>
+                <span class="feature-tag">Current Affairs</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="/subjects/gk.html" class="path-button games-btn">
+            <div class="path-icon">
+              <i class="ri-gamepad-line" aria-hidden="true"></i>
+            </div>
+            <div class="path-content">
+              <h2>Games</h2>
+              <p>Interactive trivia games and knowledge challenges</p>
+              <div class="path-features">
+                <span class="feature-tag">Daily Quiz</span>
+                <span class="feature-tag">Guess Picture</span>
+                <span class="feature-tag">Rapid Fire</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <style>
+      .subject-hero {
+        text-align: center;
+        padding: 2rem 0 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .breadcrumb a {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+
+      .hero-content h1 i {
+        color: var(--color-primary);
+      }
+
+      .hero-content .lead {
+        font-size: 1.125rem;
+        color: #64748b;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .path-selection {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .path-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .path-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 3rem 2rem;
+        border: 2px solid var(--color-muted);
+        border-radius: 1.5rem;
+        background: var(--color-bg);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: var(--color-fg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .path-button:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-primary);
+      }
+
+      .path-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+      }
+
+      .path-button:hover::before {
+        opacity: 0.05;
+      }
+
+      .path-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .chapters-btn .path-icon {
+        background: linear-gradient(135deg, #16a34a, #22c55e);
+        color: white;
+      }
+
+      .games-btn .path-icon {
+        background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+        color: white;
+      }
+
+      .path-icon i {
+        font-size: 2rem;
+      }
+
+      .path-content h2 {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+        font-weight: 700;
+      }
+
+      .path-content p {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+
+      .path-features {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .feature-tag {
+        background: var(--color-muted);
+        color: var(--color-fg);
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .chapters-btn:hover .feature-tag {
+        background: rgba(22, 163, 74, 0.1);
+        color: var(--color-primary);
+      }
+
+      .games-btn:hover .feature-tag {
+        background: rgba(14, 165, 233, 0.1);
+        color: var(--color-accent);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .path-buttons {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .path-button {
+          padding: 2rem 1.5rem;
+        }
+
+        .hero-content h1 {
+          font-size: 2rem;
+        }
+
+        .path-icon {
+          width: 60px;
+          height: 60px;
+        }
+
+        .path-icon i {
+          font-size: 1.5rem;
+        }
+
+        .path-content h2 {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .path-button {
+          padding: 1.5rem 1rem;
+        }
+
+        .path-features {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Science Match the Following • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="science-match">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-link-line"></i> Science Match the Following</h1>
+        <div id="matchRoot">
+          <div id="gameIntro" class="game-intro">
+            <p>Match the science terms with their correct definitions or descriptions. Drag and drop to make the connections!</p>
+            <div class="difficulty-selector">
+              <label>Select Difficulty:</label>
+              <select id="difficultySelect">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="startGame">Start Game</button>
+          </div>
+          <div id="gamePlay" class="game-play hidden">
+            <div class="game-status">
+              <span>Question <span id="qIndex">1</span>/<span id="qTotal">6</span></span>
+              <span>Score: <strong id="qScore">0</strong></span>
+              <span>Time: <strong id="qTimer">90</strong>s</span>
+              <button class="btn btn-outline btn-sm" id="fullscreenToggle" title="Toggle Fullscreen">
+                <i class="ri-fullscreen-line"></i>
+              </button>
+            </div>
+            <div id="matchContainer" class="match-container">
+              <div id="leftColumn" class="match-column">
+                <h3>Terms</h3>
+                <div id="leftItems" class="match-items"></div>
+              </div>
+              <div id="rightColumn" class="match-column">
+                <h3>Definitions</h3>
+                <div id="rightItems" class="match-items"></div>
+              </div>
+            </div>
+            <div id="feedback" class="feedback hidden"></div>
+            <button class="btn btn-primary" id="checkMatches">Check Matches</button>
+          </div>
+          <div id="gameEnd" class="game-end hidden">
+            <h2>Game Complete!</h2>
+            <p>You scored <strong id="finalScore">0</strong> out of <strong id="totalQuestions">6</strong> points.</p>
+            <div id="performanceMessage"></div>
+            <div class="cta-group">
+              <button class="btn btn-accent" id="retryGame">Try Again</button>
+              <a class="btn" href="/subjects/science.html">Back to Science</a>
+              <a class="btn" href="/leaderboard.html">View Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      class ScienceMatch {
+        constructor() {
+          this.questions = {
+            easy: [
+              {
+                pairs: [
+                  { term: "Water", definition: "H2O - essential for life" },
+                  { term: "Sun", definition: "Star at the center of our solar system" },
+                  { term: "Gravity", definition: "Force that pulls objects toward Earth" },
+                  { term: "Oxygen", definition: "Gas we breathe to survive" }
+                ]
+              },
+              {
+                pairs: [
+                  { term: "Plant", definition: "Organism that makes its own food" },
+                  { term: "Animal", definition: "Organism that eats other organisms" },
+                  { term: "Bacteria", definition: "Microscopic single-celled organism" },
+                  { term: "Fungi", definition: "Organism that decomposes dead matter" }
+                ]
+              }
+            ],
+            medium: [
+              {
+                pairs: [
+                  { term: "Photosynthesis", definition: "Process by which plants make food using sunlight" },
+                  { term: "Mitochondria", definition: "Organelle known as the powerhouse of the cell" },
+                  { term: "DNA", definition: "Molecule that carries genetic information" },
+                  { term: "Enzyme", definition: "Protein that speeds up chemical reactions" },
+                  { term: "Atom", definition: "Smallest unit of matter" },
+                  { term: "Molecule", definition: "Two or more atoms bonded together" }
+                ]
+              },
+              {
+                pairs: [
+                  { term: "Ecosystem", definition: "Community of living and non-living things" },
+                  { term: "Evolution", definition: "Process of change in species over time" },
+                  { term: "Adaptation", definition: "Trait that helps an organism survive" },
+                  { term: "Habitat", definition: "Natural environment where an organism lives" },
+                  { term: "Food Chain", definition: "Sequence of who eats whom in nature" },
+                  { term: "Biodiversity", definition: "Variety of life in an ecosystem" }
+                ]
+              }
+            ],
+            hard: [
+              {
+                pairs: [
+                  { term: "Quantum Mechanics", definition: "Physics theory describing atomic and subatomic behavior" },
+                  { term: "Thermodynamics", definition: "Study of heat and energy transfer" },
+                  { term: "Electromagnetic Spectrum", definition: "Range of all electromagnetic radiation" },
+                  { term: "Catalyst", definition: "Substance that speeds up reactions without being consumed" },
+                  { term: "Entropy", definition: "Measure of disorder in a system" },
+                  { term: "Kinetic Energy", definition: "Energy of motion" }
+                ]
+              },
+              {
+                pairs: [
+                  { term: "Gene Expression", definition: "Process by which genetic information is used" },
+                  { term: "Protein Synthesis", definition: "Process of creating proteins from DNA" },
+                  { term: "Homeostasis", definition: "Maintenance of stable internal conditions" },
+                  { term: "Metabolism", definition: "Chemical processes that maintain life" },
+                  { term: "Neurotransmitter", definition: "Chemical messenger in the nervous system" },
+                  { term: "Antibody", definition: "Protein that fights infections" }
+                ]
+              }
+            ]
+          };
+          
+          this.currentDifficulty = 'medium';
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.timeLeft = 90;
+          this.timer = null;
+          this.matches = [];
+          this.draggedElement = null;
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('difficultySelect').addEventListener('change', (e) => {
+            this.currentDifficulty = e.target.value;
+          });
+          
+          document.getElementById('startGame').addEventListener('click', () => {
+            this.startGame();
+          });
+          
+          document.getElementById('checkMatches').addEventListener('click', () => {
+            this.checkMatches();
+          });
+          
+          document.getElementById('retryGame').addEventListener('click', () => {
+            this.resetGame();
+            this.startGame();
+          });
+          
+          document.getElementById('fullscreenToggle').addEventListener('click', () => {
+            this.toggleFullscreen();
+          });
+        }
+        
+        startGame() {
+          document.getElementById('gameIntro').classList.add('hidden');
+          document.getElementById('gamePlay').classList.remove('hidden');
+          document.getElementById('gameEnd').classList.add('hidden');
+          
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.matches = [];
+          this.showQuestion();
+          
+          // Enter fullscreen
+          this.enterFullscreen();
+        }
+        
+        showQuestion() {
+          const questions = this.questions[this.currentDifficulty];
+          const question = questions[this.currentQuestion];
+          
+          document.getElementById('qIndex').textContent = this.currentQuestion + 1;
+          document.getElementById('qTotal').textContent = questions.length;
+          document.getElementById('qScore').textContent = this.score;
+          
+          const leftItems = document.getElementById('leftItems');
+          const rightItems = document.getElementById('rightItems');
+          
+          leftItems.innerHTML = '';
+          rightItems.innerHTML = '';
+          
+          // Shuffle the pairs
+          const shuffledPairs = [...question.pairs].sort(() => Math.random() - 0.5);
+          const shuffledDefinitions = [...question.pairs].map(p => p.definition).sort(() => Math.random() - 0.5);
+          
+          // Create term items
+          shuffledPairs.forEach((pair, index) => {
+            const termElement = document.createElement('div');
+            termElement.className = 'match-item term-item';
+            termElement.textContent = pair.term;
+            termElement.draggable = true;
+            termElement.dataset.term = pair.term;
+            termElement.dataset.definition = pair.definition;
+            
+            termElement.addEventListener('dragstart', (e) => {
+              this.draggedElement = e.target;
+              e.target.style.opacity = '0.5';
+            });
+            
+            termElement.addEventListener('dragend', (e) => {
+              e.target.style.opacity = '1';
+            });
+            
+            leftItems.appendChild(termElement);
+          });
+          
+          // Create definition items
+          shuffledDefinitions.forEach((definition, index) => {
+            const defElement = document.createElement('div');
+            defElement.className = 'match-item definition-item';
+            defElement.textContent = definition;
+            defElement.dataset.definition = definition;
+            
+            defElement.addEventListener('dragover', (e) => {
+              e.preventDefault();
+            });
+            
+            defElement.addEventListener('drop', (e) => {
+              e.preventDefault();
+              if (this.draggedElement) {
+                const term = this.draggedElement.dataset.term;
+                const correctDefinition = this.draggedElement.dataset.definition;
+                const droppedDefinition = e.target.dataset.definition;
+                
+                // Check if this is a correct match
+                const isCorrect = correctDefinition === droppedDefinition;
+                
+                // Visual feedback
+                if (isCorrect) {
+                  e.target.classList.add('correct-match');
+                  this.draggedElement.classList.add('matched');
+                  this.draggedElement.style.opacity = '0.7';
+                } else {
+                  e.target.classList.add('incorrect-match');
+                  setTimeout(() => {
+                    e.target.classList.remove('incorrect-match');
+                  }, 1000);
+                }
+                
+                this.draggedElement = null;
+              }
+            });
+            
+            rightItems.appendChild(defElement);
+          });
+          
+          document.getElementById('feedback').classList.add('hidden');
+          this.startTimer();
+        }
+        
+        checkMatches() {
+          const questions = this.questions[this.currentDifficulty];
+          const question = questions[this.currentQuestion];
+          
+          const termItems = document.querySelectorAll('.term-item');
+          const definitionItems = document.querySelectorAll('.definition-item');
+          
+          let correctMatches = 0;
+          let totalMatches = question.pairs.length;
+          
+          // Check each term item
+          termItems.forEach(termItem => {
+            if (termItem.classList.contains('matched')) {
+              correctMatches++;
+            }
+          });
+          
+          const percentage = (correctMatches / totalMatches) * 100;
+          let feedbackText = '';
+          
+          if (percentage === 100) {
+            this.score += 10;
+            document.getElementById('qScore').textContent = this.score;
+            feedbackText = 'Perfect! All matches are correct!';
+          } else if (percentage >= 50) {
+            this.score += 5;
+            document.getElementById('qScore').textContent = this.score;
+            feedbackText = `Good job! You got ${correctMatches} out of ${totalMatches} matches correct.`;
+          } else {
+            feedbackText = `Keep trying! You got ${correctMatches} out of ${totalMatches} matches correct.`;
+          }
+          
+          const feedback = document.getElementById('feedback');
+          feedback.textContent = feedbackText;
+          feedback.classList.remove('hidden');
+          feedback.className = `feedback ${percentage === 100 ? 'correct' : percentage >= 50 ? 'partial' : 'incorrect'}`;
+          
+          // Disable further interactions
+          termItems.forEach(item => item.draggable = false);
+          document.getElementById('checkMatches').disabled = true;
+          
+          clearInterval(this.timer);
+          
+          setTimeout(() => {
+            this.nextQuestion();
+          }, 2000);
+        }
+        
+        startTimer() {
+          this.timeLeft = 90;
+          document.getElementById('qTimer').textContent = this.timeLeft;
+          
+          this.timer = setInterval(() => {
+            this.timeLeft--;
+            document.getElementById('qTimer').textContent = this.timeLeft;
+            
+            if (this.timeLeft <= 0) {
+              clearInterval(this.timer);
+              this.nextQuestion();
+            }
+          }, 1000);
+        }
+        
+        nextQuestion() {
+          const questions = this.questions[this.currentDifficulty];
+          
+          if (this.currentQuestion < questions.length - 1) {
+            this.currentQuestion++;
+            this.showQuestion();
+          } else {
+            this.endGame();
+          }
+        }
+        
+        endGame() {
+          document.getElementById('gamePlay').classList.add('hidden');
+          document.getElementById('gameEnd').classList.remove('hidden');
+          
+          const questions = this.questions[this.currentDifficulty];
+          const percentage = (this.score / (questions.length * 10)) * 100;
+          
+          document.getElementById('finalScore').textContent = this.score;
+          document.getElementById('totalQuestions').textContent = questions.length * 10;
+          
+          const performanceMessage = document.getElementById('performanceMessage');
+          if (percentage >= 80) {
+            performanceMessage.innerHTML = '<p class="success">Excellent! You have a strong understanding of science concepts!</p>';
+          } else if (percentage >= 60) {
+            performanceMessage.innerHTML = '<p class="warning">Good job! Keep studying to improve your science knowledge!</p>';
+          } else {
+            performanceMessage.innerHTML = '<p class="error">Keep practicing! Matching concepts helps build understanding!</p>';
+          }
+          
+          // Exit fullscreen when game ends
+          this.exitFullscreen();
+        }
+        
+        resetGame() {
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.matches = [];
+          clearInterval(this.timer);
+        }
+        
+        enterFullscreen() {
+          const element = document.documentElement;
+          if (element.requestFullscreen) {
+            element.requestFullscreen().catch(err => {
+              console.log('Fullscreen not supported or denied:', err);
+            });
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }
+        
+        exitFullscreen() {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+        
+        toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            this.enterFullscreen();
+          } else {
+            this.exitFullscreen();
+          }
+        }
+      }
+      
+      // Initialize game when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new ScienceMatch();
+      });
+    </script>
+    
+    <style>
+      .game-intro {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .difficulty-selector {
+        margin: 1rem 0;
+      }
+      
+      .difficulty-selector label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      
+      .difficulty-selector select {
+        padding: 0.5rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.5rem;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        font-size: 1rem;
+      }
+      
+      .game-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .match-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+      
+      .match-column h3 {
+        text-align: center;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+        font-weight: 600;
+      }
+      
+      .match-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .match-item {
+        padding: 1rem;
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 0.5rem;
+        cursor: grab;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+      
+      .match-item:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      
+      .match-item:active {
+        cursor: grabbing;
+      }
+      
+      .term-item {
+        background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+        border-color: #0ea5e9;
+      }
+      
+      .definition-item {
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+        border-color: #9c27b0;
+        cursor: default;
+      }
+      
+      .match-item.matched {
+        opacity: 0.7;
+        cursor: default;
+      }
+      
+      .match-item.correct-match {
+        background: #f0fdf4;
+        border-color: #10b981;
+        color: #10b981;
+      }
+      
+      .match-item.incorrect-match {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #ef4444;
+        animation: shake 0.5s ease-in-out;
+      }
+      
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+      
+      .feedback {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+        font-weight: 500;
+        text-align: center;
+      }
+      
+      .feedback.correct {
+        background: #f0fdf4;
+        color: #10b981;
+        border-left: 4px solid #10b981;
+      }
+      
+      .feedback.partial {
+        background: #fef3c7;
+        color: #f59e0b;
+        border-left: 4px solid #f59e0b;
+      }
+      
+      .feedback.incorrect {
+        background: #fef2f2;
+        color: #ef4444;
+        border-left: 4px solid #ef4444;
+      }
+      
+      .game-end {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .success {
+        color: #10b981;
+        font-weight: 600;
+      }
+      
+      .warning {
+        color: #f59e0b;
+        font-weight: 600;
+      }
+      
+      .error {
+        color: #ef4444;
+        font-weight: 600;
+      }
+      
+      .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      @media (max-width: 768px) {
+        .game-status {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        
+        .match-container {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+        
+        .cta-group {
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        .match-item {
+          font-size: 0.8rem;
+          padding: 0.75rem;
+        }
+      }
+    </style>
+  </body>
+</html>

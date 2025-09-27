@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Math Puzzle – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="math-puzzle">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-shape-2-line"></i> Math Puzzle</h1>
+        <div id="puzzleRoot">
+          <div id="puzzleIntro" class="quiz-intro">
+            <p>Solve mathematical puzzles and brain teasers to enhance your problem-solving skills!</p>
+            <div class="puzzle-types">
+              <button class="btn btn-primary" onclick="startPuzzle('sequence')">Number Sequences</button>
+              <button class="btn btn-accent" onclick="startPuzzle('logic')">Logic Puzzles</button>
+              <button class="btn" onclick="startPuzzle('pattern')">Pattern Recognition</button>
+            </div>
+          </div>
+          <div id="puzzlePlay" class="quiz-play hidden">
+            <div class="quiz-status">
+              <span>Puzzle <span id="pIndex">1</span>/<span id="pTotal">5</span></span>
+              <span>Score: <strong id="pScore">0</strong></span>
+              <span>Time: <strong id="pTimer">60</strong>s</span>
+            </div>
+            <div id="pText" class="q-text"></div>
+            <div id="pOptions" class="q-options"></div>
+            <div class="puzzle-hint">
+              <button class="btn" id="showHint">Show Hint</button>
+              <div id="hintText" class="hidden"></div>
+            </div>
+          </div>
+          <div id="puzzleEnd" class="quiz-end hidden">
+            <h2>Puzzle Master!</h2>
+            <p>You solved <strong id="finalPuzzles">0</strong> puzzles correctly.</p>
+            <p>Final Score: <strong id="finalPuzzleScore">0</strong> points.</p>
+            <div class="cta-group">
+              <button class="btn btn-primary" onclick="restartPuzzle()">Play Again</button>
+              <a class="btn btn-accent" href="/subjects/math.html">Back to Games</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <style>
+      .puzzle-types {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .puzzle-hint {
+        margin-top: 1rem;
+        text-align: center;
+      }
+      
+      #hintText {
+        margin-top: 0.5rem;
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+        border: 1px solid var(--color-muted);
+        font-style: italic;
+        color: #64748b;
+      }
+    </style>
+
+    <script>
+      // Math Puzzle Game Data
+      const MATH_PUZZLES = {
+        sequence: [
+          {
+            q: "What comes next in the sequence: 2, 4, 8, 16, ?",
+            options: ["24", "32", "28", "20"],
+            a: 1,
+            hint: "Each number is double the previous one."
+          },
+          {
+            q: "Complete the pattern: 1, 1, 2, 3, 5, 8, ?",
+            options: ["11", "13", "12", "10"],
+            a: 1,
+            hint: "This is the Fibonacci sequence - each number is the sum of the two before it."
+          },
+          {
+            q: "What's the next number: 3, 6, 12, 24, ?",
+            options: ["36", "48", "42", "30"],
+            a: 1,
+            hint: "Multiply each number by 2 to get the next."
+          },
+          {
+            q: "Find the pattern: 2, 6, 18, 54, ?",
+            options: ["108", "162", "90", "72"],
+            a: 1,
+            hint: "Each number is 3 times the previous one."
+          },
+          {
+            q: "Complete: 1, 4, 9, 16, 25, ?",
+            options: ["30", "36", "32", "28"],
+            a: 1,
+            hint: "These are perfect squares: 1², 2², 3², 4², 5²..."
+          }
+        ],
+        logic: [
+          {
+            q: "If 3 cats catch 3 mice in 3 minutes, how many cats are needed to catch 100 mice in 100 minutes?",
+            options: ["100 cats", "3 cats", "33 cats", "300 cats"],
+            a: 1,
+            hint: "Each cat catches 1 mouse per minute. Think about the rate."
+          },
+          {
+            q: "A farmer has 17 sheep. All but 9 die. How many sheep are left?",
+            options: ["8", "9", "17", "26"],
+            a: 1,
+            hint: "If 'all but 9 die', then 9 survive."
+          },
+          {
+            q: "What is half of 2 plus 2?",
+            options: ["2", "3", "4", "1"],
+            a: 1,
+            hint: "Half of 2 is 1, then add 2 more."
+          },
+          {
+            q: "If you have 6 apples and you take away 4, how many do you have?",
+            options: ["2", "4", "6", "10"],
+            a: 1,
+            hint: "You took away 4, so you have 4 apples."
+          },
+          {
+            q: "What comes next: Monday, Wednesday, Friday, ?",
+            options: ["Saturday", "Sunday", "Tuesday", "Thursday"],
+            a: 1,
+            hint: "This skips every other day."
+          }
+        ],
+        pattern: [
+          {
+            q: "Look at this pattern: ★★★☆☆★★★☆☆. What comes next?",
+            options: ["★★★", "☆☆☆", "★★☆", "☆★★"],
+            a: 0,
+            hint: "The pattern repeats every 5 symbols: 3 stars, 2 circles."
+          },
+          {
+            q: "Complete: A, C, E, G, ?",
+            options: ["H", "I", "F", "J"],
+            a: 1,
+            hint: "These are letters skipping one letter each time."
+          },
+          {
+            q: "What's the pattern: 1, 3, 5, 7, 9, ?",
+            options: ["10", "11", "12", "13"],
+            a: 1,
+            hint: "These are odd numbers in sequence."
+          },
+          {
+            q: "Complete the sequence: 10, 20, 30, 40, ?",
+            options: ["45", "50", "55", "60"],
+            a: 1,
+            hint: "Add 10 to each number."
+          },
+          {
+            q: "What comes next: 2, 5, 8, 11, 14, ?",
+            options: ["16", "17", "18", "19"],
+            a: 1,
+            hint: "Add 3 to each number."
+          }
+        ]
+      };
+
+      let puzzleState = { 
+        type: 'sequence', 
+        i: 0, 
+        score: 0, 
+        timer: 60, 
+        t: null,
+        puzzles: []
+      };
+
+      function startPuzzle(type) {
+        puzzleState.type = type;
+        puzzleState.puzzles = MATH_PUZZLES[type];
+        puzzleState.i = 0;
+        puzzleState.score = 0;
+        puzzleState.timer = 60;
+        
+        document.getElementById("puzzleIntro").classList.add("hidden");
+        document.getElementById("puzzlePlay").classList.remove("hidden");
+        document.getElementById("puzzleEnd").classList.add("hidden");
+        
+        document.getElementById("pScore").textContent = "0";
+        document.getElementById("pIndex").textContent = "1";
+        document.getElementById("pTotal").textContent = String(puzzleState.puzzles.length);
+        
+        nextPuzzle();
+        startPuzzleTimer();
+      }
+
+      function startPuzzleTimer() {
+        clearInterval(puzzleState.t);
+        puzzleState.timer = 60;
+        document.getElementById("pTimer").textContent = String(puzzleState.timer);
+        puzzleState.t = setInterval(() => {
+          puzzleState.timer -= 1;
+          document.getElementById("pTimer").textContent = String(puzzleState.timer);
+          if (puzzleState.timer <= 0) {
+            endPuzzle();
+          }
+        }, 1000);
+      }
+
+      function nextPuzzle() {
+        const p = puzzleState.puzzles[puzzleState.i];
+        if (!p) return endPuzzle();
+        
+        document.getElementById("pText").textContent = p.q;
+        document.getElementById("hintText").textContent = p.hint;
+        document.getElementById("hintText").classList.add("hidden");
+        
+        const root = document.getElementById("pOptions");
+        root.innerHTML = "";
+        p.options.forEach((opt, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "q-option";
+          btn.textContent = opt;
+          btn.addEventListener("click", () => submitPuzzleAnswer(idx));
+          root.appendChild(btn);
+        });
+      }
+
+      function submitPuzzleAnswer(choice) {
+        const p = puzzleState.puzzles[puzzleState.i];
+        if (!p) return;
+        
+        if (choice === p.a) {
+          puzzleState.score += 20; // points per puzzle
+        }
+        
+        document.getElementById("pScore").textContent = String(puzzleState.score);
+        puzzleState.i += 1;
+        clearInterval(puzzleState.t);
+        
+        if (puzzleState.i >= puzzleState.puzzles.length) {
+          endPuzzle();
+        } else {
+          document.getElementById("pIndex").textContent = String(puzzleState.i + 1);
+          nextPuzzle();
+          startPuzzleTimer();
+        }
+      }
+
+      function endPuzzle() {
+        clearInterval(puzzleState.t);
+        document.getElementById("puzzlePlay").classList.add("hidden");
+        document.getElementById("puzzleEnd").classList.remove("hidden");
+        document.getElementById("finalPuzzles").textContent = String(puzzleState.i);
+        document.getElementById("finalPuzzleScore").textContent = String(puzzleState.score);
+        
+        // Save game results to leaderboard and dashboards
+        if (typeof saveGameResults === 'function') {
+          const xpEarned = Math.round(puzzleState.score * 0.8); // 80% of score as XP
+          const progressEarned = Math.min(25, Math.round(puzzleState.score / 8)); // 0-25% progress based on score
+          saveGameResults(puzzleState.score, xpEarned, progressEarned);
+          
+          // Show success message
+          if (typeof showToast === 'function') {
+            showToast('Puzzle Completed', `You solved ${puzzleState.i} puzzles and earned ${xpEarned} XP!`, 'success');
+          }
+        }
+      }
+
+      function restartPuzzle() {
+        document.getElementById("puzzleEnd").classList.add("hidden");
+        document.getElementById("puzzleIntro").classList.remove("hidden");
+      }
+
+      // Show hint functionality
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('showHint')?.addEventListener('click', () => {
+          const hintText = document.getElementById('hintText');
+          hintText.classList.remove('hidden');
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Carbon Footprint Quiz • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="carbon-quiz">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-earth-line"></i> Carbon Footprint Quiz</h1>
+        <div id="quizRoot">
+          <div id="quizIntro" class="quiz-intro">
+            <p>Test your knowledge about carbon footprints and environmental impact! Learn how everyday choices affect our planet.</p>
+            <div class="difficulty-selector">
+              <label>Select Difficulty:</label>
+              <select id="difficultySelect">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="startQuiz">Start Quiz</button>
+          </div>
+          <div id="quizPlay" class="quiz-play hidden">
+            <div class="quiz-status">
+              <span>Question <span id="qIndex">1</span>/<span id="qTotal">10</span></span>
+              <span>Score: <strong id="qScore">0</strong></span>
+              <span>Time: <strong id="qTimer">30</strong>s</span>
+              <button class="btn btn-outline btn-sm" id="fullscreenToggle" title="Toggle Fullscreen">
+                <i class="ri-fullscreen-line"></i>
+              </button>
+            </div>
+            <div id="qText" class="q-text"></div>
+            <div id="qOptions" class="q-options"></div>
+            <div id="qExplanation" class="q-explanation hidden"></div>
+          </div>
+          <div id="quizEnd" class="quiz-end hidden">
+            <h2>Quiz Complete!</h2>
+            <p>You scored <strong id="finalScore">0</strong> out of <strong id="totalQuestions">10</strong> points.</p>
+            <div id="performanceMessage"></div>
+            <div class="cta-group">
+              <button class="btn btn-accent" id="retryQuiz">Try Again</button>
+              <a class="btn" href="/subjects/environment.html">Back to Environment</a>
+              <a class="btn" href="/leaderboard.html">View Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      class CarbonQuiz {
+        constructor() {
+          this.questions = {
+            easy: [
+              {
+                question: "What is a carbon footprint?",
+                options: ["The size of your shoe", "The amount of CO2 emissions caused by your activities", "A type of plant", "A weather pattern"],
+                correct: 1,
+                explanation: "A carbon footprint is the total amount of greenhouse gases (especially CO2) emitted by an individual, organization, or product."
+              },
+              {
+                question: "Which activity produces the most CO2 emissions?",
+                options: ["Walking", "Riding a bicycle", "Driving a car", "Reading a book"],
+                correct: 2,
+                explanation: "Driving a car produces significantly more CO2 emissions compared to walking, cycling, or reading."
+              },
+              {
+                question: "What can you do to reduce your carbon footprint?",
+                options: ["Use more electricity", "Drive everywhere", "Use public transportation", "Buy more things"],
+                correct: 2,
+                explanation: "Using public transportation, walking, or cycling instead of driving helps reduce your carbon footprint."
+              },
+              {
+                question: "Which energy source produces the least CO2?",
+                options: ["Coal", "Natural gas", "Solar power", "Oil"],
+                correct: 2,
+                explanation: "Solar power is a renewable energy source that produces virtually no CO2 emissions during operation."
+              },
+              {
+                question: "What does 'going green' mean?",
+                options: ["Wearing green clothes", "Making environmentally friendly choices", "Painting everything green", "Eating only vegetables"],
+                correct: 1,
+                explanation: "Going green means making choices that are environmentally friendly and sustainable."
+              },
+              {
+                question: "What is deforestation?",
+                options: ["Planting more trees", "Cutting down forests", "Building houses", "Growing crops"],
+                correct: 1,
+                explanation: "Deforestation is the clearing or removal of forests, which reduces the Earth's ability to absorb CO2."
+              },
+              {
+                question: "Which of these is a renewable energy source?",
+                options: ["Coal", "Natural gas", "Wind power", "Oil"],
+                correct: 2,
+                explanation: "Wind power is renewable because wind is naturally replenished and doesn't run out."
+              },
+              {
+                question: "What happens when we burn fossil fuels?",
+                options: ["Nothing", "CO2 is released into the atmosphere", "Water is created", "Trees grow"],
+                correct: 1,
+                explanation: "Burning fossil fuels releases CO2 and other greenhouse gases into the atmosphere, contributing to climate change."
+              }
+            ],
+            medium: [
+              {
+                question: "How much CO2 does the average car emit per mile?",
+                options: ["0.1 pounds", "0.4 pounds", "1.0 pounds", "2.5 pounds"],
+                correct: 2,
+                explanation: "The average car emits about 1 pound of CO2 per mile driven."
+              },
+              {
+                question: "Which of these has the highest carbon footprint?",
+                options: ["A flight from New York to London", "Driving 1000 miles", "Heating a home for a month", "Using a laptop for a year"],
+                correct: 0,
+                explanation: "A transatlantic flight produces significantly more CO2 emissions than the other activities listed."
+              },
+              {
+                question: "What percentage of global CO2 emissions come from transportation?",
+                options: ["5%", "15%", "25%", "35%"],
+                correct: 2,
+                explanation: "Transportation accounts for approximately 25% of global CO2 emissions."
+              },
+              {
+                question: "Which type of diet has the lowest carbon footprint?",
+                options: ["Meat-heavy diet", "Vegetarian diet", "Vegan diet", "All diets are equal"],
+                correct: 2,
+                explanation: "A vegan diet typically has the lowest carbon footprint as it eliminates animal products which require more resources to produce."
+              },
+              {
+                question: "What is the main greenhouse gas that contributes to global warming?",
+                options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Water vapor"],
+                correct: 2,
+                explanation: "While water vapor is the most abundant greenhouse gas, CO2 is the main one that humans can control and is the primary driver of recent climate change."
+              },
+              {
+                question: "What is the primary cause of ocean acidification?",
+                options: ["Plastic pollution", "Oil spills", "CO2 absorption by seawater", "Overfishing"],
+                correct: 2,
+                explanation: "Ocean acidification occurs when CO2 dissolves in seawater, forming carbonic acid and lowering the ocean's pH."
+              },
+              {
+                question: "Which activity contributes most to household carbon emissions?",
+                options: ["Using lights", "Heating and cooling", "Watching TV", "Cooking"],
+                correct: 1,
+                explanation: "Heating and cooling homes typically accounts for the largest portion of household energy use and carbon emissions."
+              },
+              {
+                question: "What is the greenhouse effect?",
+                options: ["Growing plants in greenhouses", "Heat trapping by atmospheric gases", "Using green energy", "Planting trees"],
+                correct: 1,
+                explanation: "The greenhouse effect is the process by which greenhouse gases trap heat in Earth's atmosphere, warming the planet."
+              },
+              {
+                question: "Which renewable energy source is most widely used globally?",
+                options: ["Solar", "Wind", "Hydroelectric", "Geothermal"],
+                correct: 2,
+                explanation: "Hydroelectric power is the most widely used renewable energy source globally, providing clean electricity from flowing water."
+              },
+              {
+                question: "What is the main environmental benefit of recycling?",
+                options: ["Saves money", "Reduces waste in landfills", "Creates jobs", "Makes things prettier"],
+                correct: 1,
+                explanation: "Recycling primarily helps reduce waste in landfills and decreases the need for new raw materials, reducing environmental impact."
+              }
+            ],
+            hard: [
+              {
+                question: "What is the current atmospheric CO2 concentration (in parts per million)?",
+                options: ["280 ppm", "350 ppm", "420 ppm", "500 ppm"],
+                correct: 2,
+                explanation: "Current atmospheric CO2 concentration is approximately 420 ppm, significantly higher than pre-industrial levels of 280 ppm."
+              },
+              {
+                question: "Which country has the highest per capita CO2 emissions?",
+                options: ["China", "United States", "Qatar", "India"],
+                correct: 2,
+                explanation: "Qatar has the highest per capita CO2 emissions, largely due to its oil and gas industry."
+              },
+              {
+                question: "What is the carbon intensity of electricity generation?",
+                options: ["The amount of CO2 per unit of electricity", "The brightness of electric lights", "The speed of electric current", "The cost of electricity"],
+                correct: 0,
+                explanation: "Carbon intensity measures how much CO2 is emitted per unit of electricity generated."
+              },
+              {
+                question: "What is the main source of methane emissions?",
+                options: ["Cars", "Agriculture and livestock", "Solar panels", "Wind turbines"],
+                correct: 1,
+                explanation: "Agriculture and livestock, particularly cattle farming, are the main sources of methane emissions."
+              },
+              {
+                question: "Which of these has the highest global warming potential?",
+                options: ["CO2", "Methane", "Nitrous oxide", "CFCs"],
+                correct: 3,
+                explanation: "CFCs (Chlorofluorocarbons) have the highest global warming potential, though they are now largely banned."
+              },
+              {
+                question: "What is the primary cause of the ozone hole?",
+                options: ["CO2 emissions", "CFCs and halons", "Methane", "Nitrous oxide"],
+                correct: 1,
+                explanation: "CFCs and halons released into the atmosphere break down ozone molecules, creating the ozone hole."
+              },
+              {
+                question: "Which sector contributes most to global CO2 emissions?",
+                options: ["Transportation", "Electricity and heat production", "Industry", "Agriculture"],
+                correct: 1,
+                explanation: "Electricity and heat production is the largest source of global CO2 emissions, primarily from burning fossil fuels."
+              },
+              {
+                question: "What is the Paris Agreement's main goal?",
+                options: ["Stop all CO2 emissions", "Limit global warming to well below 2°C", "Ban fossil fuels", "Plant 1 trillion trees"],
+                correct: 1,
+                explanation: "The Paris Agreement aims to limit global warming to well below 2°C above pre-industrial levels, with efforts to limit it to 1.5°C."
+              },
+              {
+                question: "Which renewable energy source has the highest capacity factor?",
+                options: ["Solar", "Wind", "Geothermal", "Tidal"],
+                correct: 2,
+                explanation: "Geothermal energy has the highest capacity factor because it can operate continuously, unlike solar and wind which depend on weather conditions."
+              },
+              {
+                question: "What is the main environmental impact of fast fashion?",
+                options: ["High water usage", "Textile waste", "Chemical pollution", "All of the above"],
+                correct: 3,
+                explanation: "Fast fashion has multiple environmental impacts including high water usage, massive textile waste, and chemical pollution from dyes and treatments."
+              }
+            ]
+          };
+          
+          this.currentDifficulty = 'medium';
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.timeLeft = 30;
+          this.timer = null;
+          this.selectedAnswers = [];
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('difficultySelect').addEventListener('change', (e) => {
+            this.currentDifficulty = e.target.value;
+          });
+          
+          document.getElementById('startQuiz').addEventListener('click', () => {
+            this.startQuiz();
+          });
+          
+          document.getElementById('retryQuiz').addEventListener('click', () => {
+            this.resetQuiz();
+            this.startQuiz();
+          });
+          
+          document.getElementById('fullscreenToggle').addEventListener('click', () => {
+            this.toggleFullscreen();
+          });
+        }
+        
+        startQuiz() {
+          document.getElementById('quizIntro').classList.add('hidden');
+          document.getElementById('quizPlay').classList.remove('hidden');
+          document.getElementById('quizEnd').classList.add('hidden');
+          
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.selectedAnswers = [];
+          this.showQuestion();
+          
+          this.enterFullscreen();
+        }
+        
+        showQuestion() {
+          const questions = this.questions[this.currentDifficulty];
+          const question = questions[this.currentQuestion];
+          
+          document.getElementById('qIndex').textContent = this.currentQuestion + 1;
+          document.getElementById('qTotal').textContent = questions.length;
+          document.getElementById('qScore').textContent = this.score;
+          document.getElementById('qText').textContent = question.question;
+          
+          const optionsContainer = document.getElementById('qOptions');
+          optionsContainer.innerHTML = '';
+          
+          question.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-outline q-option';
+            button.textContent = option;
+            button.addEventListener('click', () => this.selectAnswer(index));
+            optionsContainer.appendChild(button);
+          });
+          
+          document.getElementById('qExplanation').classList.add('hidden');
+          this.startTimer();
+        }
+        
+        selectAnswer(selectedIndex) {
+          const questions = this.questions[this.currentDifficulty];
+          const question = questions[this.currentQuestion];
+          
+          this.selectedAnswers.push(selectedIndex);
+          
+          document.querySelectorAll('.q-option').forEach(btn => {
+            btn.disabled = true;
+            if (btn.textContent === question.options[selectedIndex]) {
+              btn.classList.add(selectedIndex === question.correct ? 'correct' : 'incorrect');
+            } else if (btn.textContent === question.options[question.correct]) {
+              btn.classList.add('correct');
+            }
+          });
+          
+          if (selectedIndex === question.correct) {
+            this.score += 10;
+            document.getElementById('qScore').textContent = this.score;
+          }
+          
+          const explanation = document.getElementById('qExplanation');
+          explanation.textContent = question.explanation;
+          explanation.classList.remove('hidden');
+          
+          clearInterval(this.timer);
+          
+          setTimeout(() => {
+            this.nextQuestion();
+          }, 2000);
+        }
+        
+        startTimer() {
+          this.timeLeft = 30;
+          document.getElementById('qTimer').textContent = this.timeLeft;
+          
+          this.timer = setInterval(() => {
+            this.timeLeft--;
+            document.getElementById('qTimer').textContent = this.timeLeft;
+            
+            if (this.timeLeft <= 0) {
+              clearInterval(this.timer);
+              this.nextQuestion();
+            }
+          }, 1000);
+        }
+        
+        nextQuestion() {
+          const questions = this.questions[this.currentDifficulty];
+          
+          if (this.currentQuestion < questions.length - 1) {
+            this.currentQuestion++;
+            this.showQuestion();
+          } else {
+            this.endQuiz();
+          }
+        }
+        
+        endQuiz() {
+          document.getElementById('quizPlay').classList.add('hidden');
+          document.getElementById('quizEnd').classList.remove('hidden');
+          
+          const questions = this.questions[this.currentDifficulty];
+          const percentage = (this.score / (questions.length * 10)) * 100;
+          
+          document.getElementById('finalScore').textContent = this.score;
+          document.getElementById('totalQuestions').textContent = questions.length * 10;
+          
+          const performanceMessage = document.getElementById('performanceMessage');
+          if (percentage >= 80) {
+            performanceMessage.innerHTML = '<p class="success">Excellent! You\'re an environmental champion!</p>';
+          } else if (percentage >= 60) {
+            performanceMessage.innerHTML = '<p class="warning">Good job! Keep learning about environmental sustainability!</p>';
+          } else {
+            performanceMessage.innerHTML = '<p class="error">Keep studying! Every step towards environmental awareness counts!</p>';
+          }
+          
+          this.exitFullscreen();
+        }
+        
+        resetQuiz() {
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.selectedAnswers = [];
+          clearInterval(this.timer);
+        }
+        
+        enterFullscreen() {
+          const element = document.documentElement;
+          if (element.requestFullscreen) {
+            element.requestFullscreen().catch(err => {
+              console.log('Fullscreen not supported or denied:', err);
+            });
+          }
+        }
+        
+        exitFullscreen() {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+        
+        toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            this.enterFullscreen();
+          } else {
+            this.exitFullscreen();
+          }
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', () => {
+        new CarbonQuiz();
+      });
+    </script>
+    
+    <style>
+      .quiz-intro {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .difficulty-selector {
+        margin: 1rem 0;
+      }
+      
+      .difficulty-selector label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      
+      .difficulty-selector select {
+        padding: 0.5rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.5rem;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        font-size: 1rem;
+      }
+      
+      .quiz-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .q-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+      }
+      
+      .q-options {
+        display: grid;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      
+      .q-option {
+        padding: 1rem;
+        text-align: left;
+        transition: all 0.3s ease;
+      }
+      
+      .q-option:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      
+      .q-option.correct {
+        background: #10b981;
+        color: white;
+        border-color: #10b981;
+      }
+      
+      .q-option.incorrect {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+      }
+      
+      .q-explanation {
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        border-left: 4px solid var(--color-primary);
+        font-style: italic;
+      }
+      
+      .quiz-end {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .success {
+        color: #10b981;
+        font-weight: 600;
+      }
+      
+      .warning {
+        color: #f59e0b;
+        font-weight: 600;
+      }
+      
+      .error {
+        color: #ef4444;
+        font-weight: 600;
+      }
+      
+      .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      @media (max-width: 768px) {
+        .quiz-status {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        
+        .cta-group {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </body>
+</html>

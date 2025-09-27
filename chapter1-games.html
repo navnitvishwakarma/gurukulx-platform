@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1 Games - GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/game-selection.css">
+    <link rel="icon" href="/assets/images/logo.png" type="image/png">
+    <script src="/js/main.js" defer></script>
+    <script src="/js/game-selection.js" defer></script>
+</head>
+<body data-page="game-selection">
+    <header id="site-header"></header>
+    
+    <main class="container">
+        <div class="game-selection-container card">
+            <!-- <div class="breadcrumb">
+                <a href="/class-selection.html">Classes</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <a href="/class6-chapters.html">Class 6</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Knowing Our Numbers</span>
+            </div> -->
+            
+            <div class="page-header">
+                <h1 class="text-balance">Maths Games</h1>
+                <p class="muted text-pretty">Practice working with large numbers, comparisons, estimation, and Roman numerals through fun games.</p>
+                
+                <div class="chapter-progress">
+                    <div class="progress-label">
+                        <span>Chapter Progress</span>
+                        <span id="chapterProgress">35%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 35%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="games-grid" id="gamesGrid">
+                <div class="game-card" data-game="quiz">
+                    <div class="game-icon">
+                        <i class="ri-questionnaire-line"></i>
+                    </div>
+                    <h3>Numbers Quiz</h3>
+                    <p>Test your knowledge with multiple-choice questions about numbers.</p>
+                    <div class="game-stats">
+                        <span class="game-stat"><i class="ri-time-line"></i> 10-15 min</span>
+                        <span class="game-stat"><i class="ri-medal-line"></i> 50 XP</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="startGame('quiz')">Start Quiz</button>
+                </div>
+                
+                <div class="game-card" data-game="balloon">
+                    <div class="game-icon">
+                        <i class="ri-balloon-line"></i>
+                    </div>
+                    <h3>Balloon Pop Numbers</h3>
+                    <p>Pop balloons in the correct order to practice number sequences.</p>
+                    <div class="game-stats">
+                        <span class="game-stat"><i class="ri-time-line"></i> 5-10 min</span>
+                        <span class="game-stat"><i class="ri-medal-line"></i> 30 XP</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="startGame('balloon')">Play Game</button>
+                </div>
+                
+                <div class="game-card" data-game="comparison">
+                    <div class="game-icon">
+                        <i class="ri-scale-line"></i>
+                    </div>
+                    <h3>Number Comparison</h3>
+                    <p>Determine which number is larger or smaller in this challenging game.</p>
+                    <div class="game-stats">
+                        <span class="game-stat"><i class="ri-time-line"></i> 8-12 min</span>
+                        <span class="game-stat"><i class="ri-medal-line"></i> 40 XP</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="startGame('comparison')">Play Game</button>
+                </div>
+                
+                <div class="game-card" data-game="roman">
+                    <div class="game-icon">
+                        <i class="ri-character-recognition-line"></i>
+                    </div>
+                    <h3>Roman Numerals</h3>
+                    <p>Learn and practice converting between Roman and Arabic numerals.</p>
+                    <div class="game-stats">
+                        <span class="game-stat"><i class="ri-time-line"></i> 10-15 min</span>
+                        <span class="game-stat"><i class="ri-medal-line"></i> 45 XP</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="startGame('roman')">Coming Soon</button>
+                </div>
+
+                <div class="game-card" data-game="eqballoon">
+                    <div class="game-icon">
+                        <i class="ri-balloon-line"></i>
+                    </div>
+                    <h3>Balloon Equations</h3>
+                    <p>Pick the correct answer balloon for the equation at the top. 3 minutes.</p>
+                    <div class="game-stats">
+                        <span class="game-stat"><i class="ri-time-line"></i> 3 min</span>
+                        <span class="game-stat"><i class="ri-medal-line"></i> 60 XP max</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="startGame('eqballoon')">Play Game</button>
+                </div>
+            </div>
+<!--             
+            <div class="learning-objectives">
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Read and write large numbers up to 1,00,000</li>
+                    <li>Compare numbers using >, <, and = symbols</li>
+                    <li>Estimate numbers to the nearest tens, hundreds, and thousands</li>
+                    <li>Understand and use Roman numerals up to 100</li>
+                </ul>
+            </div> -->
+        </div>
+    </main>
+    
+    <footer id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Science Quiz • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <body data-game="science-quiz">
+    <header id="site-header"></header>
+    <main class="container narrow">
+      <section class="card">
+        <h1><i class="ri-flask-line"></i> Science Quiz</h1>
+        <div id="quizRoot">
+          <div id="quizIntro" class="quiz-intro">
+            <p>Test your science knowledge with questions covering physics, chemistry, biology, and earth sciences!</p>
+            <div class="difficulty-selector">
+              <label>Select Difficulty:</label>
+              <select id="difficultySelect">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="startQuiz">Start Quiz</button>
+          </div>
+          <div id="quizPlay" class="quiz-play hidden">
+            <div class="quiz-status">
+              <span>Question <span id="qIndex">1</span>/<span id="qTotal">10</span></span>
+              <span>Score: <strong id="qScore">0</strong></span>
+              <span>Time: <strong id="qTimer">30</strong>s</span>
+              <button class="btn btn-outline btn-sm" id="fullscreenToggle" title="Toggle Fullscreen">
+                <i class="ri-fullscreen-line"></i>
+              </button>
+            </div>
+            <div id="qText" class="q-text"></div>
+            <div id="qOptions" class="q-options"></div>
+            <div id="qExplanation" class="q-explanation hidden"></div>
+          </div>
+          <div id="quizEnd" class="quiz-end hidden">
+            <h2>Quiz Complete!</h2>
+            <p>You scored <strong id="finalScore">0</strong> out of <strong id="totalQuestions">10</strong> points.</p>
+            <div id="performanceMessage"></div>
+            <div class="cta-group">
+              <button class="btn btn-accent" id="retryQuiz">Try Again</button>
+              <a class="btn" href="/subjects/science.html">Back to Science</a>
+              <a class="btn" href="/leaderboard.html">View Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    
+    <script>
+      class ScienceQuiz {
+        constructor() {
+          this.questions = {
+            easy: [
+              {
+                question: "What is the chemical symbol for water?",
+                options: ["H2O", "CO2", "NaCl", "O2"],
+                correct: 0,
+                explanation: "Water is composed of two hydrogen atoms and one oxygen atom, hence H2O."
+              },
+              {
+                question: "Which planet is closest to the Sun?",
+                options: ["Venus", "Mercury", "Earth", "Mars"],
+                correct: 1,
+                explanation: "Mercury is the closest planet to the Sun in our solar system."
+              },
+              {
+                question: "What gas do plants absorb from the atmosphere?",
+                options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+                correct: 2,
+                explanation: "Plants absorb carbon dioxide from the atmosphere during photosynthesis."
+              },
+              {
+                question: "What is the hardest natural substance on Earth?",
+                options: ["Gold", "Iron", "Diamond", "Quartz"],
+                correct: 2,
+                explanation: "Diamond is the hardest naturally occurring substance known on Earth."
+              },
+              {
+                question: "How many bones are in an adult human body?",
+                options: ["206", "150", "300", "250"],
+                correct: 0,
+                explanation: "An adult human body typically has 206 bones."
+              }
+            ],
+            medium: [
+              {
+                question: "What is the process by which plants make their own food?",
+                options: ["Respiration", "Photosynthesis", "Digestion", "Fermentation"],
+                correct: 1,
+                explanation: "Photosynthesis is the process by which plants convert sunlight, water, and carbon dioxide into glucose and oxygen."
+              },
+              {
+                question: "Which element has the atomic number 1?",
+                options: ["Helium", "Hydrogen", "Lithium", "Carbon"],
+                correct: 1,
+                explanation: "Hydrogen has atomic number 1, meaning it has 1 proton in its nucleus."
+              },
+              {
+                question: "What is the speed of light in vacuum?",
+                options: ["300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"],
+                correct: 0,
+                explanation: "The speed of light in vacuum is approximately 300,000 kilometers per second."
+              },
+              {
+                question: "Which blood type is known as the universal donor?",
+                options: ["A", "B", "AB", "O"],
+                correct: 3,
+                explanation: "Type O negative blood is considered the universal donor because it can be given to people with any blood type."
+              },
+              {
+                question: "What is the chemical formula for table salt?",
+                options: ["NaCl", "KCl", "CaCl2", "MgCl2"],
+                correct: 0,
+                explanation: "Table salt is sodium chloride, with the chemical formula NaCl."
+              },
+              {
+                question: "Which layer of the atmosphere contains the ozone layer?",
+                options: ["Troposphere", "Stratosphere", "Mesosphere", "Thermosphere"],
+                correct: 1,
+                explanation: "The ozone layer is located in the stratosphere, approximately 10-50 kilometers above Earth's surface."
+              },
+              {
+                question: "What is the pH of pure water?",
+                options: ["5", "6", "7", "8"],
+                correct: 2,
+                explanation: "Pure water has a pH of 7, which is considered neutral on the pH scale."
+              },
+              {
+                question: "Which organelle is known as the powerhouse of the cell?",
+                options: ["Nucleus", "Mitochondria", "Ribosome", "Golgi Apparatus"],
+                correct: 1,
+                explanation: "Mitochondria are called the powerhouse of the cell because they produce ATP, the cell's energy currency."
+              },
+              {
+                question: "What is the most abundant gas in Earth's atmosphere?",
+                options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Argon"],
+                correct: 2,
+                explanation: "Nitrogen makes up about 78% of Earth's atmosphere, making it the most abundant gas."
+              },
+              {
+                question: "Which scientist proposed the theory of evolution?",
+                options: ["Isaac Newton", "Charles Darwin", "Albert Einstein", "Marie Curie"],
+                correct: 1,
+                explanation: "Charles Darwin proposed the theory of evolution by natural selection in his book 'On the Origin of Species'."
+              }
+            ],
+            hard: [
+              {
+                question: "What is the quantum mechanical property that describes the intrinsic angular momentum of particles?",
+                options: ["Charge", "Spin", "Mass", "Energy"],
+                correct: 1,
+                explanation: "Spin is a quantum mechanical property that describes the intrinsic angular momentum of elementary particles."
+              },
+              {
+                question: "Which enzyme catalyzes the conversion of carbon dioxide and water into carbonic acid?",
+                options: ["Catalase", "Carbonic anhydrase", "Amylase", "Lipase"],
+                correct: 1,
+                explanation: "Carbonic anhydrase catalyzes the reversible conversion of carbon dioxide and water into carbonic acid."
+              },
+              {
+                question: "What is the name of the process by which heavy atomic nuclei split into smaller nuclei?",
+                options: ["Fusion", "Fission", "Decay", "Transmutation"],
+                correct: 1,
+                explanation: "Nuclear fission is the process by which heavy atomic nuclei split into smaller nuclei, releasing energy."
+              },
+              {
+                question: "Which principle states that energy cannot be created or destroyed, only transformed?",
+                options: ["Newton's First Law", "Conservation of Energy", "Heisenberg Uncertainty", "Pauli Exclusion"],
+                correct: 1,
+                explanation: "The Conservation of Energy principle states that energy cannot be created or destroyed, only converted from one form to another."
+              },
+              {
+                question: "What is the name of the protein that carries oxygen in red blood cells?",
+                options: ["Insulin", "Hemoglobin", "Collagen", "Keratin"],
+                correct: 1,
+                explanation: "Hemoglobin is the protein in red blood cells that binds and carries oxygen throughout the body."
+              }
+            ]
+          };
+          
+          this.currentDifficulty = 'medium';
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.timeLeft = 30;
+          this.timer = null;
+          this.selectedAnswers = [];
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('difficultySelect').addEventListener('change', (e) => {
+            this.currentDifficulty = e.target.value;
+          });
+          
+          document.getElementById('startQuiz').addEventListener('click', () => {
+            this.startQuiz();
+          });
+          
+          document.getElementById('retryQuiz').addEventListener('click', () => {
+            this.resetQuiz();
+            this.startQuiz();
+          });
+          
+          document.getElementById('fullscreenToggle').addEventListener('click', () => {
+            this.toggleFullscreen();
+          });
+        }
+        
+        startQuiz() {
+          document.getElementById('quizIntro').classList.add('hidden');
+          document.getElementById('quizPlay').classList.remove('hidden');
+          document.getElementById('quizEnd').classList.add('hidden');
+          
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.selectedAnswers = [];
+          this.showQuestion();
+          
+          // Enter fullscreen
+          this.enterFullscreen();
+        }
+        
+        showQuestion() {
+          const questions = this.questions[this.currentDifficulty];
+          const question = questions[this.currentQuestion];
+          
+          document.getElementById('qIndex').textContent = this.currentQuestion + 1;
+          document.getElementById('qTotal').textContent = questions.length;
+          document.getElementById('qScore').textContent = this.score;
+          document.getElementById('qText').textContent = question.question;
+          
+          const optionsContainer = document.getElementById('qOptions');
+          optionsContainer.innerHTML = '';
+          
+          question.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-outline q-option';
+            button.textContent = option;
+            button.addEventListener('click', () => this.selectAnswer(index));
+            optionsContainer.appendChild(button);
+          });
+          
+          document.getElementById('qExplanation').classList.add('hidden');
+          this.startTimer();
+        }
+        
+        selectAnswer(selectedIndex) {
+          const questions = this.questions[this.currentDifficulty];
+          const question = questions[this.currentQuestion];
+          
+          this.selectedAnswers.push(selectedIndex);
+          
+          // Disable all options
+          document.querySelectorAll('.q-option').forEach(btn => {
+            btn.disabled = true;
+            if (btn.textContent === question.options[selectedIndex]) {
+              btn.classList.add(selectedIndex === question.correct ? 'correct' : 'incorrect');
+            } else if (btn.textContent === question.options[question.correct]) {
+              btn.classList.add('correct');
+            }
+          });
+          
+          if (selectedIndex === question.correct) {
+            this.score += 10;
+            document.getElementById('qScore').textContent = this.score;
+          }
+          
+          // Show explanation
+          const explanation = document.getElementById('qExplanation');
+          explanation.textContent = question.explanation;
+          explanation.classList.remove('hidden');
+          
+          clearInterval(this.timer);
+          
+          setTimeout(() => {
+            this.nextQuestion();
+          }, 2000);
+        }
+        
+        startTimer() {
+          this.timeLeft = 30;
+          document.getElementById('qTimer').textContent = this.timeLeft;
+          
+          this.timer = setInterval(() => {
+            this.timeLeft--;
+            document.getElementById('qTimer').textContent = this.timeLeft;
+            
+            if (this.timeLeft <= 0) {
+              clearInterval(this.timer);
+              this.nextQuestion();
+            }
+          }, 1000);
+        }
+        
+        nextQuestion() {
+          const questions = this.questions[this.currentDifficulty];
+          
+          if (this.currentQuestion < questions.length - 1) {
+            this.currentQuestion++;
+            this.showQuestion();
+          } else {
+            this.endQuiz();
+          }
+        }
+        
+        endQuiz() {
+          document.getElementById('quizPlay').classList.add('hidden');
+          document.getElementById('quizEnd').classList.remove('hidden');
+          
+          const questions = this.questions[this.currentDifficulty];
+          const percentage = (this.score / (questions.length * 10)) * 100;
+          
+          document.getElementById('finalScore').textContent = this.score;
+          document.getElementById('totalQuestions').textContent = questions.length * 10;
+          
+          const performanceMessage = document.getElementById('performanceMessage');
+          if (percentage >= 80) {
+            performanceMessage.innerHTML = '<p class="success">Excellent! You have a strong understanding of science concepts!</p>';
+          } else if (percentage >= 60) {
+            performanceMessage.innerHTML = '<p class="warning">Good job! Keep studying to improve your science knowledge!</p>';
+          } else {
+            performanceMessage.innerHTML = '<p class="error">Keep practicing! Science is all about curiosity and learning!</p>';
+          }
+          
+          // Save game results to leaderboard and dashboards
+          if (typeof saveGameResults === 'function') {
+            const xpEarned = this.score; // Use score as XP
+            const progressEarned = Math.min(20, Math.round(percentage / 5)); // 0-20% progress based on performance
+            saveGameResults(this.score, xpEarned, progressEarned);
+            
+            // Show success message
+            if (typeof showToast === 'function') {
+              showToast('Quiz Completed', `You earned ${xpEarned} XP and ${progressEarned}% progress!`, 'success');
+            }
+          }
+          
+          // Exit fullscreen when quiz ends
+          this.exitFullscreen();
+        }
+        
+        resetQuiz() {
+          this.currentQuestion = 0;
+          this.score = 0;
+          this.selectedAnswers = [];
+          clearInterval(this.timer);
+        }
+        
+        enterFullscreen() {
+          const element = document.documentElement;
+          if (element.requestFullscreen) {
+            element.requestFullscreen().catch(err => {
+              console.log('Fullscreen not supported or denied:', err);
+            });
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }
+        
+        exitFullscreen() {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+        
+        toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            this.enterFullscreen();
+          } else {
+            this.exitFullscreen();
+          }
+        }
+      }
+      
+      // Initialize quiz when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new ScienceQuiz();
+      });
+    </script>
+    
+    <style>
+      .quiz-intro {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .difficulty-selector {
+        margin: 1rem 0;
+      }
+      
+      .difficulty-selector label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      
+      .difficulty-selector select {
+        padding: 0.5rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.5rem;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        font-size: 1rem;
+      }
+      
+      .quiz-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .q-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+      }
+      
+      .q-options {
+        display: grid;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      
+      .q-option {
+        padding: 1rem;
+        text-align: left;
+        transition: all 0.3s ease;
+      }
+      
+      .q-option:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      
+      .q-option.correct {
+        background: #10b981;
+        color: white;
+        border-color: #10b981;
+      }
+      
+      .q-option.incorrect {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+      }
+      
+      .q-explanation {
+        padding: 1rem;
+        background: var(--color-muted);
+        border-radius: 0.5rem;
+        border-left: 4px solid var(--color-primary);
+        font-style: italic;
+      }
+      
+      .quiz-end {
+        text-align: center;
+        padding: 2rem 0;
+      }
+      
+      .success {
+        color: #10b981;
+        font-weight: 600;
+      }
+      
+      .warning {
+        color: #f59e0b;
+        font-weight: 600;
+      }
+      
+      .error {
+        color: #ef4444;
+        font-weight: 600;
+      }
+      
+      .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      
+      @media (max-width: 768px) {
+        .quiz-status {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        
+        .cta-group {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </body>
+</html>

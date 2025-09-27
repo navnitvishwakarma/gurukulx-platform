@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Manage Groups • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+    <style>
+      .groups { max-width: 900px; margin: 1rem auto; display:grid; gap:1rem; }
+      .group { border:1px solid var(--color-muted); border-radius:.75rem; padding:1rem; }
+      .group header { display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem; }
+      .member { display:flex; justify-content:space-between; padding:.4rem 0; border-top:1px solid var(--color-muted); }
+      .member:first-child { border-top:none; }
+    </style>
+  </head>
+  <body data-page="teacher-groups">
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="card groups">
+        <h1>Manage Groups</h1>
+        <form id="groupForm" class="form">
+          <div class="form-row">
+            <label for="groupName">Group Name</label>
+            <input id="groupName" placeholder="e.g., Grade 6 - Eco Champions" required />
+          </div>
+          <div class="form-row">
+            <label for="groupClass">Class</label>
+            <select id="groupClass" required></select>
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" type="submit">Create Group</button>
+          </div>
+        </form>
+        <div id="groupList"></div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+    <script>
+      const GROUPS_LS = 'gx_groups';
+      document.addEventListener('DOMContentLoaded', ()=> setTimeout(initGroups,100));
+      function initGroups(){
+        // classes dropdown
+        const classes = JSON.parse(localStorage.getItem('gx_classes')||'[]');
+        document.getElementById('groupClass').innerHTML = classes.map(c=>`<option value="${c.name}">${c.fullName||('Grade '+c.name)}</option>`).join('');
+        // events
+        document.getElementById('groupForm').addEventListener('submit', (e)=>{
+          e.preventDefault();
+          const group = { id: Date.now(), name: document.getElementById('groupName').value.trim(), class: document.getElementById('groupClass').value, members: [] };
+          const list = JSON.parse(localStorage.getItem(GROUPS_LS)||'[]');
+          list.push(group);
+          localStorage.setItem(GROUPS_LS, JSON.stringify(list));
+          renderGroups();
+          e.target.reset();
+        });
+        renderGroups();
+      }
+      function renderGroups(){
+        const root = document.getElementById('groupList');
+        const list = JSON.parse(localStorage.getItem(GROUPS_LS)||'[]');
+        const students = JSON.parse(localStorage.getItem('gx_students')||'[]');
+        if(!list.length){ root.innerHTML = '<div class="empty-state"><i class="ri-team-line"></i><p>No groups yet</p></div>'; return; }
+        root.innerHTML = list.map(g=>{
+          const clsStudents = students.filter(s=> String(s.class)===String(g.class));
+          const options = clsStudents.map(s=>`<option value="${s.name}">${s.name} (Score: ${s.score})</option>`).join('');
+          const members = (g.members||[]).map(m=>`<div class="member"><span>${m}</span><button class="btn btn-small" onclick="removeMember(${g.id}, '${m}')">Remove</button></div>`).join('') || '<div class="muted">No members</div>';
+          return `
+            <div class="group">
+              <header>
+                <div>
+                  <strong>${g.name}</strong>
+                  <div class="muted">Grade ${g.class}</div>
+                </div>
+                <button class="btn btn-small" onclick="deleteGroup(${g.id})">Delete</button>
+              </header>
+              <div class="form-row">
+                <label>Add member</label>
+                <div class="flex-row gap">
+                  <select id="sel-${g.id}">${options}</select>
+                  <button class="btn" onclick="addMember(${g.id})">Add</button>
+                </div>
+              </div>
+              <div>${members}</div>
+            </div>
+          `;
+        }).join('');
+      }
+      function addMember(id){
+        const list = JSON.parse(localStorage.getItem(GROUPS_LS)||'[]');
+        const g = list.find(x=>x.id===id);
+        const sel = document.getElementById('sel-'+id);
+        if(!g.members) g.members = [];
+        const name = sel.value;
+        if(!g.members.includes(name)) g.members.push(name);
+        localStorage.setItem(GROUPS_LS, JSON.stringify(list));
+        renderGroups();
+      }
+      function removeMember(id, name){
+        const list = JSON.parse(localStorage.getItem(GROUPS_LS)||'[]');
+        const g = list.find(x=>x.id===id);
+        g.members = (g.members||[]).filter(m=>m!==name);
+        localStorage.setItem(GROUPS_LS, JSON.stringify(list));
+        renderGroups();
+      }
+      function deleteGroup(id){
+        const list = JSON.parse(localStorage.getItem(GROUPS_LS)||'[]').filter(x=>x.id!==id);
+        localStorage.setItem(GROUPS_LS, JSON.stringify(list));
+        renderGroups();
+      }
+    </script>
+  </body>
+</html>
+
+

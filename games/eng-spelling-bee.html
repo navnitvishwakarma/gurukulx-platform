@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Spelling Bee • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <script defer src="/js/main.js"></script>
+    <style>
+      .container {
+        max-width: 100% !important;
+        padding: 1rem !important;
+      }
+      .card {
+        margin: 0 !important;
+        padding: 1rem !important;
+      }
+      .spelling-container {
+        max-width: 100%;
+        margin: 1rem;
+        padding: 1rem;
+      }
+      
+      .word-display {
+        text-align: center;
+        margin: 3rem 0;
+      }
+      
+      .word-audio {
+        font-size: 3rem;
+        margin: 2rem 0;
+        color: var(--color-primary);
+      }
+      
+      .play-audio-btn {
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin: 1rem;
+      }
+      
+      .play-audio-btn:hover {
+        background: var(--color-accent);
+        transform: scale(1.1);
+      }
+      
+      .word-definition {
+        background: color-mix(in srgb, var(--color-muted) 20%, transparent);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        margin: 2rem 0;
+        text-align: center;
+      }
+      
+      .word-definition h3 {
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+      }
+      
+      .spelling-input {
+        width: 100%;
+        max-width: 400px;
+        padding: 1rem;
+        font-size: 1.5rem;
+        text-align: center;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        margin: 2rem auto;
+        display: block;
+        background: var(--color-bg);
+        font-family: inherit;
+      }
+      
+      .spelling-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+      }
+      
+      .spelling-input.correct {
+        border-color: #16a34a;
+        background: color-mix(in srgb, #16a34a 10%, transparent);
+      }
+      
+      .spelling-input.incorrect {
+        border-color: #dc2626;
+        background: color-mix(in srgb, #dc2626 10%, transparent);
+      }
+      
+      .spelling-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+      }
+      
+      .spelling-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+      
+      .stat-card {
+        padding: 1rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.75rem;
+        text-align: center;
+        background: var(--color-bg);
+      }
+      
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--color-primary);
+      }
+      
+      .stat-label {
+        font-size: 0.9rem;
+        color: var(--color-fg);
+        opacity: 0.7;
+      }
+      
+      .word-progress {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 2rem 0;
+      }
+      
+      .progress-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--color-muted);
+        transition: all 0.2s ease;
+      }
+      
+      .progress-dot.correct {
+        background: #16a34a;
+      }
+      
+      .progress-dot.incorrect {
+        background: #dc2626;
+      }
+      
+      .progress-dot.current {
+        background: var(--color-primary);
+        transform: scale(1.3);
+      }
+      
+      .difficulty-selector {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+      
+      .difficulty-btn {
+        padding: 0.75rem 1.5rem;
+        border: 1px solid var(--color-muted);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: var(--color-bg);
+      }
+      
+      .difficulty-btn:hover {
+        border-color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      }
+      
+      .difficulty-btn.selected {
+        border-color: var(--color-primary);
+        background: var(--color-primary);
+        color: white;
+      }
+      
+      .hint-section {
+        text-align: center;
+        margin: 2rem 0;
+      }
+      
+      .hint-text {
+        background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+        border: 1px solid var(--color-accent);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+      }
+      
+      @media (max-width: 768px) {
+        .spelling-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .spelling-controls {
+          flex-direction: column;
+        }
+        
+        .spelling-controls .btn {
+          width: 100%;
+        }
+        
+        .difficulty-selector {
+          flex-direction: column;
+        }
+        
+        .difficulty-btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body data-game="eng-spelling-bee">
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="card">
+        <div class="breadcrumb">
+          <a href="/student-home.html"><i class="ri-home-line"></i> Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/subjects/english.html">English</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>Spelling Bee</span>
+        </div>
+        
+        <div class="quiz-header">
+          <h1><i class="ri-mic-line"></i> Spelling Bee</h1>
+          <p class="muted">Listen to the words and spell them correctly!</p>
+        </div>
+
+        <div id="spellingRoot">
+          <div id="spellingIntro" class="quiz-intro">
+            <div class="intro-card">
+              <div class="intro-icon">
+                <i class="ri-spell-check-line"></i>
+              </div>
+              <h2>Ready for the Spelling Challenge?</h2>
+              <p>Listen carefully to each word and spell it correctly. Use hints if you need help!</p>
+              
+              <div class="difficulty-selector">
+                <div class="difficulty-btn selected" data-difficulty="easy">Easy</div>
+                <div class="difficulty-btn" data-difficulty="medium">Medium</div>
+                <div class="difficulty-btn" data-difficulty="hard">Hard</div>
+              </div>
+              
+              <div class="quiz-details">
+                <div class="detail-item">
+                  <i class="ri-question-line"></i>
+                  <span>10 Words to Spell</span>
+                </div>
+                <div class="detail-item">
+                  <i class="ri-time-line"></i>
+                  <span>No Time Limit</span>
+                </div>
+                <div class="detail-item">
+                  <i class="ri-trophy-line"></i>
+                  <span>Earn XP for accuracy</span>
+                </div>
+              </div>
+              
+              <button class="btn btn-primary btn-lg" id="startSpelling">Start Spelling Bee</button>
+            </div>
+          </div>
+
+          <div id="spellingPlay" class="spelling-container hidden">
+            <div class="spelling-stats">
+              <div class="stat-card">
+                <div class="stat-value" id="currentWordNum">1</div>
+                <div class="stat-label">Current Word</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="correctSpellings">0</div>
+                <div class="stat-label">Correct</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="accuracy">100%</div>
+                <div class="stat-label">Accuracy</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="xpEarned">0</div>
+                <div class="stat-label">XP Earned</div>
+              </div>
+            </div>
+            
+            <div class="word-progress" id="wordProgress"></div>
+            
+            <div class="word-display">
+              <button class="play-audio-btn" id="playAudio">
+                <i class="ri-volume-up-line"></i>
+              </button>
+              <p class="muted">Click the button to hear the word</p>
+            </div>
+            
+            <div class="word-definition hidden" id="wordDefinition">
+              <h3>Definition:</h3>
+              <p id="definitionText"></p>
+            </div>
+            
+            <div class="hint-section">
+              <button class="btn" id="showHint">Show Hint</button>
+              <div class="hint-text hidden" id="hintText"></div>
+            </div>
+            
+            <input 
+              type="text" 
+              class="spelling-input" 
+              id="spellingInput" 
+              placeholder="Type the spelling here..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+            
+            <div class="spelling-controls">
+              <button class="btn" id="playAgainBtn">Play Again</button>
+              <button class="btn" id="showDefinition">Show Definition</button>
+              <button class="btn btn-primary" id="submitSpelling">Submit</button>
+              <button class="btn" id="skipWord">Skip Word</button>
+            </div>
+          </div>
+
+          <div id="spellingEnd" class="quiz-end hidden">
+            <div class="results-card">
+              <div class="results-icon">
+                <i class="ri-trophy-line"></i>
+              </div>
+              <h2>Spelling Bee Complete!</h2>
+              <p>Great job on completing the spelling challenge!</p>
+              
+              <div class="results-stats">
+                <div class="result-stat">
+                  <span class="stat-label">Correct Spellings</span>
+                  <span class="stat-value" id="finalCorrect">0</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">Accuracy</span>
+                  <span class="stat-value" id="finalAccuracy">0%</span>
+                </div>
+                <div class="result-stat">
+                  <span class="stat-label">XP Earned</span>
+                  <span class="stat-value" id="finalXpEarned">0</span>
+                </div>
+              </div>
+              
+              <div class="results-feedback" id="feedbackMessage">
+                <p>Excellent spelling skills! Keep practicing to improve even more!</p>
+              </div>
+              
+              <div class="results-actions">
+                <a class="btn btn-accent" href="/leaderboard.html">View Leaderboard</a>
+                <a class="btn" href="/subjects/english.html">Back to English</a>
+                <button class="btn btn-primary" id="playAgainFinal">Play Again</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+      // Spelling Bee Game Logic
+      class SpellingBee {
+        constructor() {
+          this.wordLists = {
+            easy: [
+              { word: "cat", definition: "A small furry animal that meows", hint: "Rhymes with 'hat'" },
+              { word: "dog", definition: "A loyal pet that barks", hint: "Man's best friend" },
+              { word: "sun", definition: "The bright star in our sky", hint: "Gives us light and warmth" },
+              { word: "book", definition: "Something you read", hint: "Has pages with words" },
+              { word: "tree", definition: "A tall plant with branches", hint: "Has leaves and grows in soil" },
+              { word: "fish", definition: "An animal that lives in water", hint: "Swims and has fins" },
+              { word: "bird", definition: "An animal that can fly", hint: "Has wings and feathers" },
+              { word: "house", definition: "A place where people live", hint: "You sleep here at night" },
+              { word: "water", definition: "A clear liquid we drink", hint: "Falls from the sky as rain" },
+              { word: "happy", definition: "Feeling joyful or pleased", hint: "The opposite of sad" }
+            ],
+            medium: [
+              { word: "elephant", definition: "A large gray animal with a trunk", hint: "The largest land animal" },
+              { word: "rainbow", definition: "Colorful arc in the sky after rain", hint: "Has seven colors" },
+              { word: "butterfly", definition: "A colorful insect with wings", hint: "Starts as a caterpillar" },
+              { word: "computer", definition: "An electronic device for processing data", hint: "You can type and browse internet on it" },
+              { word: "hospital", definition: "A place where sick people get treatment", hint: "Doctors and nurses work here" },
+              { word: "mountain", definition: "A very high hill", hint: "Snow often covers the top" },
+              { word: "sandwich", definition: "Food made with bread and fillings", hint: "Common lunch item" },
+              { word: "telephone", definition: "A device used to talk to people far away", hint: "You dial numbers on it" },
+              { word: "umbrella", definition: "Something that protects you from rain", hint: "You hold it over your head" },
+              { word: "bicycle", definition: "A two-wheeled vehicle you pedal", hint: "An eco-friendly way to travel" }
+            ],
+            hard: [
+              { word: "necessary", definition: "Something that is needed or required", hint: "Essential or important" },
+              { word: "beautiful", definition: "Pleasing to look at", hint: "Attractive or lovely" },
+              { word: "restaurant", definition: "A place where you eat meals", hint: "You order food from a menu here" },
+              { word: "chocolate", definition: "A sweet brown candy", hint: "Made from cocoa beans" },
+              { word: "adventure", definition: "An exciting or dangerous experience", hint: "A thrilling journey" },
+              { word: "knowledge", definition: "Information and understanding", hint: "What you gain from learning" },
+              { word: "wonderful", definition: "Extremely good or amazing", hint: "Full of wonder" },
+              { word: "different", definition: "Not the same as something else", hint: "Unlike or distinct" },
+              { word: "important", definition: "Having great significance", hint: "Matters a lot" },
+              { word: "interesting", definition: "Holding attention or curiosity", hint: "Fascinating or engaging" }
+            ]
+          };
+          
+          this.currentDifficulty = 'easy';
+          this.currentWordIndex = 0;
+          this.correctCount = 0;
+          this.totalWords = 10;
+          this.currentWords = [];
+          this.usedHint = false;
+          
+          this.init();
+        }
+        
+        init() {
+          document.getElementById('startSpelling').addEventListener('click', () => this.startSpelling());
+          document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.selectDifficulty(btn.dataset.difficulty));
+          });
+          document.getElementById('playAudio').addEventListener('click', () => this.playAudio());
+          document.getElementById('submitSpelling').addEventListener('click', () => this.submitSpelling());
+          document.getElementById('skipWord').addEventListener('click', () => this.skipWord());
+          document.getElementById('showHint').addEventListener('click', () => this.showHint());
+          document.getElementById('showDefinition').addEventListener('click', () => this.showDefinition());
+          document.getElementById('playAgainBtn').addEventListener('click', () => this.playAudio());
+          document.getElementById('playAgainFinal').addEventListener('click', () => this.playAgainFinal());
+          
+          // Enter key to submit
+          document.getElementById('spellingInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              this.submitSpelling();
+            }
+          });
+        }
+        
+        selectDifficulty(difficulty) {
+          document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.classList.remove('selected');
+          });
+          document.querySelector(`[data-difficulty="${difficulty}"]`).classList.add('selected');
+          this.currentDifficulty = difficulty;
+        }
+        
+        startSpelling() {
+          document.getElementById('spellingIntro').classList.add('hidden');
+          document.getElementById('spellingPlay').classList.remove('hidden');
+          
+          this.currentWords = [...this.wordLists[this.currentDifficulty]].sort(() => Math.random() - 0.5);
+          this.createProgress();
+          this.showCurrentWord();
+        }
+        
+        createProgress() {
+          const progressContainer = document.getElementById('wordProgress');
+          progressContainer.innerHTML = '';
+          
+          for (let i = 0; i < this.totalWords; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'progress-dot';
+            if (i === 0) dot.classList.add('current');
+            progressContainer.appendChild(dot);
+          }
+        }
+        
+        showCurrentWord() {
+          const currentWord = this.currentWords[this.currentWordIndex];
+          document.getElementById('currentWordNum').textContent = this.currentWordIndex + 1;
+          document.getElementById('spellingInput').value = '';
+          document.getElementById('spellingInput').className = 'spelling-input';
+          document.getElementById('wordDefinition').classList.add('hidden');
+          document.getElementById('hintText').classList.add('hidden');
+          this.usedHint = false;
+          
+          // Update progress dots
+          document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+            dot.classList.remove('current');
+            if (index === this.currentWordIndex) {
+              dot.classList.add('current');
+            }
+          });
+          
+          // Focus input
+          setTimeout(() => {
+            document.getElementById('spellingInput').focus();
+          }, 100);
+        }
+        
+        playAudio() {
+          const currentWord = this.currentWords[this.currentWordIndex];
+          
+          // Use Web Speech API to speak the word
+          if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(currentWord.word);
+            utterance.rate = 0.7;
+            utterance.pitch = 1;
+            speechSynthesis.speak(utterance);
+          } else {
+            // Fallback: show the word briefly
+            const playBtn = document.getElementById('playAudio');
+            const originalHTML = playBtn.innerHTML;
+            playBtn.innerHTML = `<span style="font-size: 1rem;">${currentWord.word.toUpperCase()}</span>`;
+            setTimeout(() => {
+              playBtn.innerHTML = originalHTML;
+            }, 2000);
+          }
+        }
+        
+        submitSpelling() {
+          const userSpelling = document.getElementById('spellingInput').value.trim().toLowerCase();
+          const currentWord = this.currentWords[this.currentWordIndex];
+          const correctSpelling = currentWord.word.toLowerCase();
+          const input = document.getElementById('spellingInput');
+          
+          if (!userSpelling) {
+            alert('Please enter a spelling!');
+            return;
+          }
+          
+          const isCorrect = userSpelling === correctSpelling;
+          
+          if (isCorrect) {
+            input.classList.add('correct');
+            this.correctCount++;
+            document.querySelectorAll('.progress-dot')[this.currentWordIndex].classList.add('correct');
+            
+            // Calculate XP (less if hint was used)
+            const xp = this.usedHint ? 5 : 10;
+            const currentXP = parseInt(document.getElementById('xpEarned').textContent);
+            document.getElementById('xpEarned').textContent = currentXP + xp;
+          } else {
+            input.classList.add('incorrect');
+            document.querySelectorAll('.progress-dot')[this.currentWordIndex].classList.add('incorrect');
+            
+            // Show correct spelling
+            setTimeout(() => {
+              alert(`Incorrect! The correct spelling is: ${currentWord.word}`);
+            }, 500);
+          }
+          
+          // Update stats
+          document.getElementById('correctSpellings').textContent = this.correctCount;
+          const accuracy = Math.round((this.correctCount / (this.currentWordIndex + 1)) * 100);
+          document.getElementById('accuracy').textContent = accuracy + '%';
+          
+          // Move to next word after delay
+          setTimeout(() => {
+            this.nextWord();
+          }, 2000);
+        }
+        
+        skipWord() {
+          const currentWord = this.currentWords[this.currentWordIndex];
+          alert(`Skipped word: ${currentWord.word}`);
+          document.querySelectorAll('.progress-dot')[this.currentWordIndex].classList.add('incorrect');
+          this.nextWord();
+        }
+        
+        showHint() {
+          const currentWord = this.currentWords[this.currentWordIndex];
+          document.getElementById('hintText').textContent = currentWord.hint;
+          document.getElementById('hintText').classList.remove('hidden');
+          this.usedHint = true;
+        }
+        
+        showDefinition() {
+          const currentWord = this.currentWords[this.currentWordIndex];
+          document.getElementById('definitionText').textContent = currentWord.definition;
+          document.getElementById('wordDefinition').classList.remove('hidden');
+        }
+        
+        nextWord() {
+          this.currentWordIndex++;
+          
+          if (this.currentWordIndex < this.totalWords) {
+            this.showCurrentWord();
+          } else {
+            this.endSpelling();
+          }
+        }
+        
+        endSpelling() {
+          document.getElementById('spellingPlay').classList.add('hidden');
+          document.getElementById('spellingEnd').classList.remove('hidden');
+          
+          const accuracy = Math.round((this.correctCount / this.totalWords) * 100);
+          const xpEarned = document.getElementById('xpEarned').textContent;
+          
+          document.getElementById('finalCorrect').textContent = this.correctCount;
+          document.getElementById('finalAccuracy').textContent = accuracy + '%';
+          document.getElementById('finalXpEarned').textContent = xpEarned;
+          
+          // Set feedback message
+          const feedbackElement = document.getElementById('feedbackMessage');
+          let feedback = '';
+          if (accuracy >= 90) {
+            feedback = 'Outstanding! You are a spelling champion!';
+          } else if (accuracy >= 70) {
+            feedback = 'Great job! You have excellent spelling skills!';
+          } else if (accuracy >= 50) {
+            feedback = 'Good effort! Keep practicing to improve your spelling!';
+          } else {
+            feedback = 'Keep studying! Practice makes perfect!';
+          }
+          feedbackElement.innerHTML = `<p>${feedback}</p>`;
+        }
+        
+        playAgainFinal() {
+          this.currentWordIndex = 0;
+          this.correctCount = 0;
+          
+          document.getElementById('spellingEnd').classList.add('hidden');
+          document.getElementById('spellingIntro').classList.remove('hidden');
+        }
+      }
+      
+      // Initialize the spelling bee when the page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new SpellingBee();
+      });
+    </script>
+  </body>
+</html>

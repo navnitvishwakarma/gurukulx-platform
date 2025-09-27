@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Matter and Its Properties – Science Chapter 1 – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+    <script>
+      // Smooth scrolling for table of contents links
+      document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.content-nav a[href^="#"]');
+        
+        navLinks.forEach(link => {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+              targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          });
+        });
+
+        // Highlight current section in navigation and update progress
+        const sections = document.querySelectorAll('.lesson, .experiments, .quiz-section');
+        const navItems = document.querySelectorAll('.content-nav a');
+        const progressBar = document.getElementById('navProgress');
+        
+        function updateNavigation() {
+          let current = '';
+          let progress = 0;
+          
+          sections.forEach((section, index) => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionHeight = section.offsetHeight;
+            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+              current = section.getAttribute('id');
+            }
+            
+            // Calculate progress based on scroll position
+            if (window.scrollY >= sectionTop) {
+              progress = ((index + 1) / sections.length) * 100;
+            }
+          });
+
+          // Update active navigation item
+          navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === '#' + current) {
+              item.classList.add('active');
+            }
+          });
+
+          // Update progress bar
+          if (progressBar) {
+            progressBar.style.width = Math.min(progress, 100) + '%';
+          }
+        }
+
+        window.addEventListener('scroll', updateNavigation);
+        updateNavigation(); // Call once on load
+      });
+    </script>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="chapter-hero">
+        <div class="breadcrumb">
+          <a href="/index.html">Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-learning-path.html">Science</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-chapters.html">Chapters</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>Chapter 1</span>
+        </div>
+        
+        <div class="hero-content">
+          <div class="chapter-icon">
+            <i class="ri-atom-line"></i>
+          </div>
+          <h1 class="text-balance">Matter and Its Properties</h1>
+          <p class="lead text-pretty">
+            Everything around us is made of matter. Let's explore the fundamental nature of matter and understand its various properties.
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-content">
+        <div class="content-nav">
+          <h3>Table of Contents</h3>
+          <div class="nav-progress">
+            <div class="nav-progress-bar" id="navProgress"></div>
+          </div>
+          <ul>
+            <li><a href="#lesson-1">Lesson 1: What is Matter?</a></li>
+            <li><a href="#lesson-2">Lesson 2: States of Matter</a></li>
+            <li><a href="#lesson-3">Lesson 3: Physical Properties</a></li>
+            <li><a href="#lesson-4">Lesson 4: Chemical Properties</a></li>
+            <li><a href="#experiments">Experiments</a></li>
+            <li><a href="#quiz">Chapter Quiz</a></li>
+          </ul>
+        </div>
+
+        <div class="lesson" id="lesson-1">
+          <div class="lesson-header">
+            <h2><i class="ri-atom-line"></i> Lesson 1: What is Matter?</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 15 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Beginner</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>Definition of Matter</h3>
+            <p>Matter is anything that has mass and takes up space. Everything you can see, touch, smell, or taste is made of matter. This includes:</p>
+            
+            <div class="info-box">
+              <h4>Examples of Matter:</h4>
+              <ul>
+                <li><strong>Solids:</strong> Books, tables, rocks, ice</li>
+                <li><strong>Liquids:</strong> Water, milk, oil, juice</li>
+                <li><strong>Gases:</strong> Air, steam, oxygen, carbon dioxide</li>
+              </ul>
+            </div>
+
+            <h3>Characteristics of Matter</h3>
+            <p>All matter has two fundamental characteristics:</p>
+            
+            <div class="characteristics-grid">
+              <div class="characteristic-card">
+                <div class="char-icon">
+                  <i class="ri-scales-line"></i>
+                </div>
+                <h4>Mass</h4>
+                <p>The amount of material in an object. Measured in grams (g) or kilograms (kg).</p>
+              </div>
+              
+              <div class="characteristic-card">
+                <div class="char-icon">
+                  <i class="ri-ruler-line"></i>
+                </div>
+                <h4>Volume</h4>
+                <p>The amount of space an object occupies. Measured in cubic centimeters (cm³) or liters (L).</p>
+              </div>
+            </div>
+
+            <div class="key-points">
+              <h4>Key Points to Remember:</h4>
+              <ul>
+                <li>Matter is everywhere around us</li>
+                <li>All matter has mass and volume</li>
+                <li>Matter can exist in different states</li>
+                <li>Even things we can't see (like air) are matter</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson" id="lesson-2">
+          <div class="lesson-header">
+            <h2><i class="ri-drop-line"></i> Lesson 2: States of Matter</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 20 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Beginner</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>The Three States of Matter</h3>
+            <p>Matter can exist in three main states, depending on temperature and pressure:</p>
+            
+            <div class="states-grid">
+              <div class="state-card solid">
+                <div class="state-icon">
+                  <i class="ri-cube-line"></i>
+                </div>
+                <h4>Solid</h4>
+                <div class="state-properties">
+                  <p><strong>Shape:</strong> Definite shape</p>
+                  <p><strong>Volume:</strong> Definite volume</p>
+                  <p><strong>Particles:</strong> Closely packed, vibrate in place</p>
+                  <p><strong>Examples:</strong> Ice, wood, metal</p>
+                </div>
+              </div>
+              
+              <div class="state-card liquid">
+                <div class="state-icon">
+                  <i class="ri-drop-line"></i>
+                </div>
+                <h4>Liquid</h4>
+                <div class="state-properties">
+                  <p><strong>Shape:</strong> Takes shape of container</p>
+                  <p><strong>Volume:</strong> Definite volume</p>
+                  <p><strong>Particles:</strong> Loosely packed, can move around</p>
+                  <p><strong>Examples:</strong> Water, oil, milk</p>
+                </div>
+              </div>
+              
+              <div class="state-card gas">
+                <div class="state-icon">
+                  <i class="ri-windy-line"></i>
+                </div>
+                <h4>Gas</h4>
+                <div class="state-properties">
+                  <p><strong>Shape:</strong> No definite shape</p>
+                  <p><strong>Volume:</strong> No definite volume</p>
+                  <p><strong>Particles:</strong> Far apart, move freely</p>
+                  <p><strong>Examples:</strong> Air, steam, oxygen</p>
+                </div>
+              </div>
+            </div>
+
+            <h3>Changes of State</h3>
+            <p>Matter can change from one state to another when energy is added or removed:</p>
+            
+            <div class="state-changes">
+              <div class="change-process">
+                <span class="state-name">Solid</span>
+                <i class="ri-arrow-right-line"></i>
+                <span class="process">Melting</span>
+                <i class="ri-arrow-right-line"></i>
+                <span class="state-name">Liquid</span>
+              </div>
+              
+              <div class="change-process">
+                <span class="state-name">Liquid</span>
+                <i class="ri-arrow-right-line"></i>
+                <span class="process">Evaporation</span>
+                <i class="ri-arrow-right-line"></i>
+                <span class="state-name">Gas</span>
+              </div>
+              
+              <div class="change-process">
+                <span class="state-name">Gas</span>
+                <i class="ri-arrow-right-line"></i>
+                <span class="process">Condensation</span>
+                <i class="ri-arrow-right-line"></i>
+                <span class="state-name">Liquid</span>
+              </div>
+              
+              <div class="change-process">
+                <span class="state-name">Liquid</span>
+                <i class="ri-arrow-right-line"></i>
+                <span class="process">Freezing</span>
+                <i class="ri-arrow-right-line"></i>
+                <span class="state-name">Solid</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson" id="lesson-3">
+          <div class="lesson-header">
+            <h2><i class="ri-ruler-line"></i> Lesson 3: Physical Properties</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 18 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Intermediate</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>What are Physical Properties?</h3>
+            <p>Physical properties are characteristics that can be observed or measured without changing the substance into something else.</p>
+            
+            <div class="properties-grid">
+              <div class="property-card">
+                <h4>Color</h4>
+                <p>The appearance of an object based on the light it reflects</p>
+                <div class="examples">
+                  <span class="example">Gold is yellow</span>
+                  <span class="example">Copper is reddish</span>
+                </div>
+              </div>
+              
+              <div class="property-card">
+                <h4>Density</h4>
+                <p>Mass per unit volume (Density = Mass ÷ Volume)</p>
+                <div class="examples">
+                  <span class="example">Wood floats on water</span>
+                  <span class="example">Iron sinks in water</span>
+                </div>
+              </div>
+              
+              <div class="property-card">
+                <h4>Melting Point</h4>
+                <p>Temperature at which a solid becomes a liquid</p>
+                <div class="examples">
+                  <span class="example">Ice melts at 0°C</span>
+                  <span class="example">Gold melts at 1064°C</span>
+                </div>
+              </div>
+              
+              <div class="property-card">
+                <h4>Boiling Point</h4>
+                <p>Temperature at which a liquid becomes a gas</p>
+                <div class="examples">
+                  <span class="example">Water boils at 100°C</span>
+                  <span class="example">Alcohol boils at 78°C</span>
+                </div>
+              </div>
+              
+              <div class="property-card">
+                <h4>Hardness</h4>
+                <p>Resistance to being scratched or dented</p>
+                <div class="examples">
+                  <span class="example">Diamond is very hard</span>
+                  <span class="example">Talc is very soft</span>
+                </div>
+              </div>
+              
+              <div class="property-card">
+                <h4>Solubility</h4>
+                <p>Ability to dissolve in a solvent</p>
+                <div class="examples">
+                  <span class="example">Salt dissolves in water</span>
+                  <span class="example">Oil doesn't dissolve in water</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson" id="lesson-4">
+          <div class="lesson-header">
+            <h2><i class="ri-flask-line"></i> Lesson 4: Chemical Properties</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 20 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Intermediate</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>What are Chemical Properties?</h3>
+            <p>Chemical properties describe how a substance reacts with other substances to form new materials.</p>
+            
+            <div class="chemical-properties">
+              <div class="property-section">
+                <h4>Flammability</h4>
+                <p>The ability of a substance to burn or catch fire</p>
+                <div class="examples">
+                  <div class="example-item">
+                    <span class="material">Paper</span>
+                    <span class="property">Highly flammable</span>
+                  </div>
+                  <div class="example-item">
+                    <span class="material">Water</span>
+                    <span class="property">Not flammable</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="property-section">
+                <h4>Reactivity</h4>
+                <p>How easily a substance reacts with other substances</p>
+                <div class="examples">
+                  <div class="example-item">
+                    <span class="material">Sodium</span>
+                    <span class="property">Very reactive with water</span>
+                  </div>
+                  <div class="example-item">
+                    <span class="material">Gold</span>
+                    <span class="property">Very unreactive</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="property-section">
+                <h4>Oxidation</h4>
+                <p>Reaction with oxygen, often causing rust or tarnish</p>
+                <div class="examples">
+                  <div class="example-item">
+                    <span class="material">Iron</span>
+                    <span class="property">Rusts in moist air</span>
+                  </div>
+                  <div class="example-item">
+                    <span class="material">Silver</span>
+                    <span class="property">Tarnishes over time</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="experiments" id="experiments">
+          <h2><i class="ri-flask-line"></i> Hands-on Experiments</h2>
+          
+          <div class="experiment-card">
+            <h3>Experiment 1: States of Water</h3>
+            <div class="experiment-content">
+              <h4>Materials Needed:</h4>
+              <ul>
+                <li>Ice cubes</li>
+                <li>Water</li>
+                <li>Heat source (stove or hot plate)</li>
+                <li>Thermometer</li>
+              </ul>
+              
+              <h4>Procedure:</h4>
+              <ol>
+                <li>Observe the ice cubes (solid state)</li>
+                <li>Place ice in a container and let it melt (solid to liquid)</li>
+                <li>Heat the water until it boils (liquid to gas)</li>
+                <li>Record the temperatures at each change</li>
+              </ol>
+              
+              <h4>What to Observe:</h4>
+              <p>Notice how the particles behave differently in each state and how energy affects the changes.</p>
+            </div>
+          </div>
+          
+          <div class="experiment-card">
+            <h3>Experiment 2: Density Test</h3>
+            <div class="experiment-content">
+              <h4>Materials Needed:</h4>
+              <ul>
+                <li>Water</li>
+                <li>Oil</li>
+                <li>Small objects (cork, coin, wood)</li>
+                <li>Clear container</li>
+              </ul>
+              
+              <h4>Procedure:</h4>
+              <ol>
+                <li>Fill container halfway with water</li>
+                <li>Add oil slowly</li>
+                <li>Drop different objects into the container</li>
+                <li>Observe which objects float and which sink</li>
+              </ol>
+              
+              <h4>What to Observe:</h4>
+              <p>Objects with higher density than water will sink, while those with lower density will float.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-section" id="quiz">
+          <h2><i class="ri-question-line"></i> Chapter Quiz</h2>
+          <p>Test your understanding of matter and its properties!</p>
+          <a href="/science-quiz-1.html" class="quiz-btn">
+            <i class="ri-play-circle-line"></i>
+            Start Quiz
+          </a>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <style>
+      .chapter-hero {
+        text-align: center;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        border-radius: 1rem;
+      }
+
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .breadcrumb a {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .chapter-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #16a34a, #22c55e);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .chapter-icon:hover {
+        transform: scale(1.1);
+      }
+
+      .chapter-icon i {
+        font-size: 3rem;
+      }
+
+      .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .hero-content .lead {
+        font-size: 1.125rem;
+        color: #64748b;
+        line-height: 1.6;
+      }
+
+      .chapter-content {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        align-items: start;
+        min-height: 100vh;
+      }
+
+      .chapter-content > div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .content-nav {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        height: fit-content;
+        position: sticky;
+        top: 1rem;
+        z-index: 10;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+        transition: all 0.3s ease;
+      }
+
+      .content-nav h3 {
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .content-nav ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .content-nav li {
+        margin-bottom: 0.5rem;
+      }
+
+      .content-nav a {
+        color: #64748b;
+        text-decoration: none;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        display: block;
+        transition: all 0.3s ease;
+      }
+
+      .content-nav a:hover {
+        background: var(--color-muted);
+        color: var(--color-primary);
+      }
+
+      .content-nav a.active {
+        background: var(--color-primary);
+        color: white;
+        font-weight: 600;
+      }
+
+      .nav-progress {
+        width: 100%;
+        height: 4px;
+        background: var(--color-muted);
+        border-radius: 2px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+
+      .nav-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        border-radius: 2px;
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .lesson {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+        clear: both;
+        overflow: visible;
+      }
+
+      .lesson-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-muted);
+        position: relative;
+        z-index: 2;
+      }
+
+      .lesson-header h2 {
+        font-size: 1.75rem;
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .lesson-header h2 i {
+        color: var(--color-primary);
+      }
+
+      .lesson-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .lesson-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .lesson-content h3 {
+        font-size: 1.5rem;
+        margin: 1.5rem 0 1rem;
+        color: var(--color-fg);
+        position: relative;
+        z-index: 1;
+      }
+
+      .lesson-content p {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .info-box {
+        background: #f0f9ff;
+        border: 2px solid #0ea5e9;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0 2rem 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .info-box h4 {
+        color: #0c4a6e;
+        margin-bottom: 1rem;
+      }
+
+      .info-box ul {
+        color: #0c4a6e;
+        padding-left: 1.5rem;
+      }
+
+      .characteristics-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0 2rem 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .characteristic-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .char-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--color-primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+      }
+
+      .char-icon i {
+        font-size: 1.5rem;
+      }
+
+      .characteristic-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-fg);
+      }
+
+      .key-points {
+        background: #f0fdf4;
+        border: 2px solid #16a34a;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0 3rem 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .key-points h4 {
+        color: #14532d;
+        margin-bottom: 1rem;
+      }
+
+      .key-points ul {
+        color: #14532d;
+        padding-left: 1.5rem;
+      }
+
+      .states-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0 2rem 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .state-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .state-card.solid {
+        border-color: #3b82f6;
+      }
+
+      .state-card.liquid {
+        border-color: #0ea5e9;
+      }
+
+      .state-card.gas {
+        border-color: #8b5cf6;
+      }
+
+      .state-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+      }
+
+      .state-card.solid .state-icon {
+        background: #3b82f6;
+      }
+
+      .state-card.liquid .state-icon {
+        background: #0ea5e9;
+      }
+
+      .state-card.gas .state-icon {
+        background: #8b5cf6;
+      }
+
+      .state-icon i {
+        font-size: 1.5rem;
+      }
+
+      .state-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .state-properties p {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .state-changes {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 1.5rem 0 2rem 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .change-process {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        border: 2px solid var(--color-muted);
+      }
+
+      .state-name {
+        background: var(--color-primary);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+      }
+
+      .process {
+        background: var(--color-accent);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+      }
+
+      .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .property-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+      }
+
+      .property-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+        color: var(--color-fg);
+      }
+
+      .property-card p {
+        color: #64748b;
+        margin-bottom: 1rem;
+      }
+
+      .examples {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .example {
+        background: var(--color-muted);
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--color-fg);
+      }
+
+      .chemical-properties {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        margin: 1.5rem 0;
+      }
+
+      .property-section {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+      }
+
+      .property-section h4 {
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+        color: var(--color-fg);
+      }
+
+      .property-section p {
+        color: #64748b;
+        margin-bottom: 1rem;
+      }
+
+      .example-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+        border: 1px solid var(--color-muted);
+      }
+
+      .material {
+        font-weight: 600;
+        color: var(--color-fg);
+      }
+
+      .property {
+        color: #64748b;
+        font-style: italic;
+      }
+
+      .experiments {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        z-index: 1;
+        clear: both;
+      }
+
+      .experiments h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .experiments h2 i {
+        color: var(--color-primary);
+      }
+
+      .experiment-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .experiment-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .experiment-content h4 {
+        font-size: 1.1rem;
+        margin: 1rem 0 0.5rem;
+        color: var(--color-fg);
+      }
+
+      .experiment-content ul, .experiment-content ol {
+        color: #64748b;
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .quiz-section {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 2px solid #0ea5e9;
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+        z-index: 1;
+        clear: both;
+      }
+
+      .quiz-section h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+
+      .quiz-section h2 i {
+        color: #0ea5e9;
+      }
+
+      .quiz-section p {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      .quiz-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #0ea5e9;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-btn:hover {
+        background: #0284c7;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+      }
+
+      .quiz-btn i {
+        font-size: 1.25rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .chapter-content {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .content-nav {
+          position: static;
+          order: -1;
+          max-height: none;
+          overflow-y: visible;
+        }
+
+        .hero-content h1 {
+          font-size: 2rem;
+        }
+
+        .chapter-icon {
+          width: 80px;
+          height: 80px;
+        }
+
+        .chapter-icon i {
+          font-size: 2rem;
+        }
+
+        .characteristics-grid,
+        .states-grid,
+        .properties-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .lesson-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .lesson-meta {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .change-process {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .lesson {
+          padding: 1.5rem;
+        }
+
+        .experiment-card {
+          padding: 1rem;
+        }
+
+        .quiz-section {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </body>
+</html>

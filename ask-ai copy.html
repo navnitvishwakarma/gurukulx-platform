@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Search Assistant - GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script defer src="/js/main.js"></script>
+    <style>
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #16a34a;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        /* Search section */
+        .search-section {
+            margin-bottom: 30px;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .search-btn {
+            background-color: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .search-btn:hover {
+            background-color: #128a3f;
+        }
+        
+        /* Results section */
+        .results-section {
+            display: none;
+        }
+        
+        .search-results {
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            border-bottom: 1px solid #eee;
+            padding: 20px 0;
+        }
+        
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a0dab;
+            margin-bottom: 5px;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .result-title:hover {
+            text-decoration: underline;
+        }
+        
+        .result-url {
+            color: #006621;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .result-description {
+            color: #545454;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* AI Answer section */
+        .ai-answer {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .ai-answer h3 {
+            color: #0ea5e9;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ai-answer-content {
+            line-height: 1.6;
+        }
+        
+        .ai-answer-content p {
+            margin-bottom: 15px;
+        }
+        
+        /* Loading indicator */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #16a34a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* No results message */
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="site-header"></header>
+    
+    <main class="container">
+        <h1>Ask AI - Search Assistant</h1>
+        
+        <section class="search-section">
+            <p>Ask any question and our AI will search the web to find the best answer for you.</p>
+            
+            <form class="search-form" id="searchForm">
+                <input type="text" class="search-input" id="searchQuery" placeholder="Ask me anything..." required>
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </section>
+        
+        <div class="loading" id="loadingIndicator">
+            <div class="loading-spinner"></div>
+            <p>Searching the web for answers...</p>
+        </div>
+        
+        <div class="no-results" id="noResults">
+            <p>No results found. Try a different search query.</p>
+        </div>
+        
+        <section class="results-section" id="resultsSection">
+            <div class="ai-answer" id="aiAnswer">
+                <h3><i class="ri-ai-generator"></i> AI Answer</h3>
+                <div class="ai-answer-content" id="aiAnswerContent">
+                    <!-- AI-generated answer will appear here -->
+                </div>
+            </div>
+            
+            <div class="search-results" id="searchResults">
+                <h3>Search Results from Google</h3>
+                <!-- Search results will appear here -->
+            </div>
+        </section>
+    </main>
+    
+    <footer id="site-footer"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('searchForm');
+            const searchQuery = document.getElementById('searchQuery');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultsSection = document.getElementById('resultsSection');
+            const noResults = document.getElementById('noResults');
+            const aiAnswerContent = document.getElementById('aiAnswerContent');
+            const searchResults = document.getElementById('searchResults');
+            
+            // Function to perform Google search via proxy
+            async function performGoogleSearch(query) {
+                // In a real implementation, you would use a backend service or API
+                // This is a simulation that returns mock data
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                resultsSection.style.display = 'none';
+                noResults.style.display = 'none';
+                
+                try {
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // This would be replaced with actual API call in production
+                    // const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                    // const data = await response.json();
+                    
+                    // Mock search results
+                    const mockResults = {
+                        aiAnswer: `Based on my search for "${query}", I found several relevant sources. ${query} is a topic that has been discussed across various educational platforms and resources. The most comprehensive information comes from established educational websites and academic resources.`,
+                        searchResults: [
+                            {
+                                title: `Understanding ${query} - Educational Resource`,
+                                url: `https://www.example.com/education/${query.replace(/\s+/g, '-').toLowerCase()}`,
+                                description: `A comprehensive guide to ${query} covering fundamental concepts, practical applications, and common questions asked by students. This resource is regularly updated by subject matter experts.`
+                            },
+                            {
+                                title: `${query} - Khan Academy`,
+                                url: `https://www.khanacademy.org/search?page_search_query=${encodeURIComponent(query)}`,
+                                description: `Free courses and lessons on ${query} with practice exercises, instructional videos, and a personalized learning dashboard. Suitable for learners at all levels.`
+                            },
+                            {
+                                title: `${query} - Wikipedia`,
+                                url: `https://en.wikipedia.org/wiki/${query.replace(/\s+/g, '_')}`,
+                                description: `Wikipedia article providing an overview of ${query}, including historical context, key concepts, and references to additional resources for further reading.`
+                            },
+                            {
+                                title: `What is ${query}? - Britannica`,
+                                url: `https://www.britannica.com/search?query=${encodeURIComponent(query)}`,
+                                description: `Encyclopedia entry explaining ${query} in depth, with related topics, multimedia resources, and citations from verified academic sources.`
+                            }
+                        ]
+                    };
+                    
+                    return mockResults;
+                } catch (error) {
+                    console.error('Search error:', error);
+                    throw new Error('Failed to perform search');
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+            
+            // Function to display search results
+            function displayResults(data) {
+                // Display AI answer
+                aiAnswerContent.innerHTML = `<p>${data.aiAnswer}</p>
+                <p>I've summarized information from multiple sources to give you a comprehensive answer. For more detailed information, please check the search results below.</p>`;
+                
+                // Display search results
+                searchResults.innerHTML = '<h3>Search Results from Google</h3>';
+                
+                if (data.searchResults && data.searchResults.length > 0) {
+                    data.searchResults.forEach(result => {
+                        const resultElement = document.createElement('div');
+                        resultElement.className = 'result-item';
+                        resultElement.innerHTML = `
+                            <a href="${result.url}" class="result-title" target="_blank">${result.title}</a>
+                            <div class="result-url">${result.url}</div>
+                            <div class="result-description">${result.description}</div>
+                        `;
+                        searchResults.appendChild(resultElement);
+                    });
+                } else {
+                    noResults.style.display = 'block';
+                }
+                
+                // Show results section
+                resultsSection.style.display = 'block';
+            }
+            
+            // Handle form submission
+            searchForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const query = searchQuery.value.trim();
+                if (!query) return;
+                
+                try {
+                    const results = await performGoogleSearch(query);
+                    displayResults(results);
+                } catch (error) {
+                    console.error('Search failed:', error);
+                    loadingIndicator.style.display = 'none';
+                    noResults.style.display = 'block';
+                    noResults.innerHTML = `<p>Sorry, we encountered an error while searching. Please try again later.</p>`;
+                }
+            });
+        });
+    </script>
+    
+    <!-- Remix Icon CDN for icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</body>
+</html>

@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Light and Sound – Science Chapter 2 – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+    <script>
+      // Smooth scrolling for table of contents links
+      document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.content-nav a[href^="#"]');
+        
+        navLinks.forEach(link => {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+              targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          });
+        });
+
+        // Highlight current section in navigation and update progress
+        const sections = document.querySelectorAll('.lesson, .experiments, .quiz-section');
+        const navItems = document.querySelectorAll('.content-nav a');
+        const progressBar = document.getElementById('navProgress');
+        
+        function updateNavigation() {
+          let current = '';
+          let progress = 0;
+          
+          sections.forEach((section, index) => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionHeight = section.offsetHeight;
+            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+              current = section.getAttribute('id');
+            }
+            
+            // Calculate progress based on scroll position
+            if (window.scrollY >= sectionTop) {
+              progress = ((index + 1) / sections.length) * 100;
+            }
+          });
+
+          // Update active navigation item
+          navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === '#' + current) {
+              item.classList.add('active');
+            }
+          });
+
+          // Update progress bar
+          if (progressBar) {
+            progressBar.style.width = Math.min(progress, 100) + '%';
+          }
+        }
+
+        window.addEventListener('scroll', updateNavigation);
+        updateNavigation(); // Call once on load
+      });
+    </script>
+  </head>
+  <body>
+    <header id="site-header"></header>
+    <main class="container">
+      <section class="chapter-hero">
+        <div class="breadcrumb">
+          <a href="/index.html">Home</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-learning-path.html">Science</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <a href="/science-chapters.html">Chapters</a>
+          <i class="ri-arrow-right-s-line"></i>
+          <span>Chapter 2</span>
+        </div>
+        
+        <div class="hero-content">
+          <div class="chapter-icon">
+            <i class="ri-sun-line"></i>
+          </div>
+          <h1 class="text-balance">Light and Sound</h1>
+          <p class="lead text-pretty">
+            Discover the fascinating properties of light and sound waves, and understand how they travel and interact with our world.
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-content">
+        <div class="content-nav">
+          <h3>Table of Contents</h3>
+          <div class="nav-progress">
+            <div class="nav-progress-bar" id="navProgress"></div>
+          </div>
+          <ul>
+            <li><a href="#lesson-1">Lesson 1: Properties of Light</a></li>
+            <li><a href="#lesson-2">Lesson 2: Reflection and Refraction</a></li>
+            <li><a href="#lesson-3">Lesson 3: Sound Waves</a></li>
+            <li><a href="#lesson-4">Lesson 4: Echo and Reverberation</a></li>
+            <li><a href="#lesson-5">Lesson 5: Light and Sound in Daily Life</a></li>
+            <li><a href="#experiments">Experiments</a></li>
+            <li><a href="#quiz">Chapter Quiz</a></li>
+          </ul>
+        </div>
+
+        <div class="lesson" id="lesson-1">
+          <div class="lesson-header">
+            <h2><i class="ri-sun-line"></i> Lesson 1: Properties of Light</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 18 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Beginner</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>What is Light?</h3>
+            <p>Light is a form of energy that enables us to see objects. It travels in straight lines and at a very high speed.</p>
+            
+            <div class="info-box">
+              <h4>Key Properties of Light:</h4>
+              <ul>
+                <li><strong>Speed:</strong> Light travels at approximately 300,000 km/s in vacuum</li>
+                <li><strong>Travel:</strong> Light travels in straight lines</li>
+                <li><strong>Reflection:</strong> Light bounces off surfaces</li>
+                <li><strong>Refraction:</strong> Light bends when passing through different materials</li>
+              </ul>
+            </div>
+
+            <h3>Sources of Light</h3>
+            <div class="sources-grid">
+              <div class="source-card natural">
+                <h4>Natural Sources</h4>
+                <ul>
+                  <li>Sun</li>
+                  <li>Stars</li>
+                  <li>Fireflies</li>
+                  <li>Lightning</li>
+                </ul>
+              </div>
+              
+              <div class="source-card artificial">
+                <h4>Artificial Sources</h4>
+                <ul>
+                  <li>Electric bulbs</li>
+                  <li>LED lights</li>
+                  <li>Candles</li>
+                  <li>Torches</li>
+                </ul>
+              </div>
+            </div>
+
+            <h3>How We See Objects</h3>
+            <div class="vision-process">
+              <div class="process-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <h4>Light Source</h4>
+                  <p>Light is emitted from a source (like the sun or a bulb)</p>
+                </div>
+              </div>
+              
+              <div class="process-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <h4>Object Illumination</h4>
+                  <p>Light falls on objects and gets reflected</p>
+                </div>
+              </div>
+              
+              <div class="process-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <h4>Eye Reception</h4>
+                  <p>Reflected light enters our eyes</p>
+                </div>
+              </div>
+              
+              <div class="process-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <h4>Brain Processing</h4>
+                  <p>Our brain processes the light signals to form images</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson" id="lesson-2">
+          <div class="lesson-header">
+            <h2><i class="ri-mirror-line"></i> Lesson 2: Reflection and Refraction</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 22 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Intermediate</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>Reflection of Light</h3>
+            <p>Reflection occurs when light bounces off a surface. There are two types of reflection:</p>
+            
+            <div class="reflection-types">
+              <div class="reflection-card regular">
+                <h4>Regular Reflection</h4>
+                <p>Light reflects off smooth surfaces like mirrors, creating clear images</p>
+                <div class="example">
+                  <strong>Examples:</strong> Mirrors, still water, polished metal
+                </div>
+              </div>
+              
+              <div class="reflection-card diffuse">
+                <h4>Diffuse Reflection</h4>
+                <p>Light reflects off rough surfaces in many directions, creating scattered light</p>
+                <div class="example">
+                  <strong>Examples:</strong> Paper, walls, most everyday objects
+                </div>
+              </div>
+            </div>
+
+            <h3>Laws of Reflection</h3>
+            <div class="laws-box">
+              <div class="law">
+                <h4>First Law</h4>
+                <p>The incident ray, reflected ray, and normal all lie in the same plane</p>
+              </div>
+              <div class="law">
+                <h4>Second Law</h4>
+                <p>The angle of incidence equals the angle of reflection</p>
+              </div>
+            </div>
+
+            <h3>Refraction of Light</h3>
+            <p>Refraction occurs when light passes from one medium to another and changes direction.</p>
+            
+            <div class="refraction-info">
+              <h4>Why Does Refraction Happen?</h4>
+              <p>Light travels at different speeds in different materials. When it enters a new medium, it bends due to this speed change.</p>
+              
+              <div class="refraction-examples">
+                <div class="example-item">
+                  <strong>Pencil in Water:</strong> Appears bent when viewed from the side
+                </div>
+                <div class="example-item">
+                  <strong>Rainbow:</strong> Formed by refraction and dispersion of sunlight in water droplets
+                </div>
+                <div class="example-item">
+                  <strong>Lenses:</strong> Use refraction to focus or spread light
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson" id="lesson-3">
+          <div class="lesson-header">
+            <h2><i class="ri-sound-module-line"></i> Lesson 3: Sound Waves</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 20 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Intermediate</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>What is Sound?</h3>
+            <p>Sound is a form of energy that travels as waves through air, water, or other materials. It is produced by vibrations.</p>
+            
+            <div class="sound-properties">
+              <div class="property-card">
+                <h4>Frequency</h4>
+                <p>Number of vibrations per second, measured in Hertz (Hz)</p>
+                <div class="examples">
+                  <span class="example">High frequency = High pitch</span>
+                  <span class="example">Low frequency = Low pitch</span>
+                </div>
+              </div>
+              
+              <div class="property-card">
+                <h4>Amplitude</h4>
+                <p>Height of the sound wave, determines volume</p>
+                <div class="examples">
+                  <span class="example">Large amplitude = Loud sound</span>
+                  <span class="example">Small amplitude = Soft sound</span>
+                </div>
+              </div>
+              
+              <div class="property-card">
+                <h4>Wavelength</h4>
+                <p>Distance between two consecutive wave peaks</p>
+                <div class="examples">
+                  <span class="example">Short wavelength = High frequency</span>
+                  <span class="example">Long wavelength = Low frequency</span>
+                </div>
+              </div>
+            </div>
+
+            <h3>How Sound Travels</h3>
+            <div class="sound-travel">
+              <div class="travel-step">
+                <div class="step-icon">
+                  <i class="ri-vibrate-line"></i>
+                </div>
+                <h4>Vibration</h4>
+                <p>An object vibrates, creating sound waves</p>
+              </div>
+              
+              <div class="travel-step">
+                <div class="step-icon">
+                  <i class="ri-windy-line"></i>
+                </div>
+                <h4>Wave Propagation</h4>
+                <p>Sound waves travel through air as compressions and rarefactions</p>
+              </div>
+              
+              <div class="travel-step">
+                <div class="step-icon">
+                  <i class="ri-ear-line"></i>
+                </div>
+                <h4>Reception</h4>
+                <p>Our ears detect the sound waves and convert them to electrical signals</p>
+              </div>
+            </div>
+
+            <h3>Speed of Sound</h3>
+            <div class="speed-info">
+              <p>Sound travels at different speeds in different materials:</p>
+              <ul>
+                <li><strong>Air:</strong> 343 m/s (at 20°C)</li>
+                <li><strong>Water:</strong> 1,500 m/s</li>
+                <li><strong>Steel:</strong> 5,000 m/s</li>
+                <li><strong>Vacuum:</strong> 0 m/s (sound cannot travel in vacuum)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson" id="lesson-4">
+          <div class="lesson-header">
+            <h2><i class="ri-echo-line"></i> Lesson 4: Echo and Reverberation</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 15 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Beginner</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>What is an Echo?</h3>
+            <p>An echo is the reflection of sound waves off a surface. We hear an echo when the reflected sound reaches our ears after the original sound.</p>
+            
+            <div class="echo-conditions">
+              <h4>Conditions for Hearing Echo:</h4>
+              <ul>
+                <li>The reflecting surface must be at least 17 meters away</li>
+                <li>The surface should be hard and smooth</li>
+                <li>There should be no obstacles between the source and the reflecting surface</li>
+                <li>The original sound should be loud enough</li>
+              </ul>
+            </div>
+
+            <h3>Reverberation</h3>
+            <p>Reverberation occurs when sound waves reflect multiple times off different surfaces, creating a prolonged sound effect.</p>
+            
+            <div class="reverberation-comparison">
+              <div class="comparison-card good">
+                <h4>Good Reverberation</h4>
+                <p>Enhances music and speech in concert halls and theaters</p>
+                <div class="examples">
+                  <span class="example">Concert halls</span>
+                  <span class="example">Churches</span>
+                  <span class="example">Theaters</span>
+                </div>
+              </div>
+              
+              <div class="comparison-card bad">
+                <h4>Excessive Reverberation</h4>
+                <p>Makes speech unclear and music muddy</p>
+                <div class="examples">
+                  <span class="example">Empty rooms</span>
+                  <span class="example">Tunnels</span>
+                  <span class="example">Caves</span>
+                </div>
+              </div>
+            </div>
+
+            <h3>Sound Absorption</h3>
+            <p>Some materials absorb sound waves instead of reflecting them, reducing echoes and reverberation.</p>
+            
+            <div class="absorption-materials">
+              <div class="material-card">
+                <h4>Good Absorbers</h4>
+                <ul>
+                  <li>Carpets and rugs</li>
+                  <li>Curtains and drapes</li>
+                  <li>Foam padding</li>
+                  <li>Fiberglass insulation</li>
+                </ul>
+              </div>
+              
+              <div class="material-card">
+                <h4>Poor Absorbers</h4>
+                <ul>
+                  <li>Glass windows</li>
+                  <li>Bare walls</li>
+                  <li>Hard floors</li>
+                  <li>Metal surfaces</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson" id="lesson-5">
+          <div class="lesson-header">
+            <h2><i class="ri-lightbulb-line"></i> Lesson 5: Light and Sound in Daily Life</h2>
+            <div class="lesson-meta">
+              <span class="duration"><i class="ri-time-line"></i> 16 minutes</span>
+              <span class="difficulty"><i class="ri-star-line"></i> Beginner</span>
+            </div>
+          </div>
+          
+          <div class="lesson-content">
+            <h3>Applications of Light</h3>
+            <div class="applications-grid">
+              <div class="application-card">
+                <div class="app-icon">
+                  <i class="ri-eye-line"></i>
+                </div>
+                <h4>Vision</h4>
+                <p>Light enables us to see the world around us</p>
+              </div>
+              
+              <div class="application-card">
+                <div class="app-icon">
+                  <i class="ri-camera-line"></i>
+                </div>
+                <h4>Photography</h4>
+                <p>Cameras capture light to create images</p>
+              </div>
+              
+              <div class="application-card">
+                <div class="app-icon">
+                  <i class="ri-flashlight-line"></i>
+                </div>
+                <h4>Illumination</h4>
+                <p>Artificial lights help us see in the dark</p>
+              </div>
+              
+              <div class="application-card">
+                <div class="app-icon">
+                  <i class="ri-focus-3-line"></i>
+                </div>
+                <h4>Lenses</h4>
+                <p>Glasses and microscopes use light refraction</p>
+              </div>
+            </div>
+
+            <h3>Applications of Sound</h3>
+            <div class="applications-grid">
+              <div class="application-card">
+                <div class="app-icon">
+                  <i class="ri-mic-line"></i>
+                </div>
+                <h4>Communication</h4>
+                <p>Speech and music are forms of sound communication</p>
+              </div>
+              
+              <div class="application-card">
+                <div class="app-icon">
+                  <i class="ri-radar-line"></i>
+                </div>
+                <h4>Sonar</h4>
+                <p>Uses sound waves to detect objects underwater</p>
+              </div>
+              
+              <div class="application-card">
+                <div class="app-icon">
+                  <i class="ri-stethoscope-line"></i>
+                </div>
+                <h4>Medical Imaging</h4>
+                <p>Ultrasound uses sound waves to create images of the body</p>
+              </div>
+              
+              <div class="application-card">
+                <div class="app-icon">
+                  <i class="ri-alarm-warning-line"></i>
+                </div>
+                <h4>Alarms</h4>
+                <p>Sound alerts warn us of danger or important events</p>
+              </div>
+            </div>
+
+            <h3>Safety and Health</h3>
+            <div class="safety-info">
+              <div class="safety-card light">
+                <h4>Light Safety</h4>
+                <ul>
+                  <li>Never look directly at the sun</li>
+                  <li>Use proper eye protection when welding</li>
+                  <li>Take breaks from bright screens</li>
+                  <li>Use appropriate lighting for reading</li>
+                </ul>
+              </div>
+              
+              <div class="safety-card sound">
+                <h4>Sound Safety</h4>
+                <ul>
+                  <li>Wear ear protection in loud environments</li>
+                  <li>Keep music volume at safe levels</li>
+                  <li>Take breaks from loud sounds</li>
+                  <li>Be aware of noise pollution</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="experiments" id="experiments">
+          <h2><i class="ri-flask-line"></i> Hands-on Experiments</h2>
+          
+          <div class="experiment-card">
+            <h3>Experiment 1: Making a Rainbow</h3>
+            <div class="experiment-content">
+              <h4>Materials Needed:</h4>
+              <ul>
+                <li>Glass of water</li>
+                <li>White paper</li>
+                <li>Sunlight or flashlight</li>
+                <li>Prism (optional)</li>
+              </ul>
+              
+              <h4>Procedure:</h4>
+              <ol>
+                <li>Fill a glass with water</li>
+                <li>Place it near a window with sunlight</li>
+                <li>Hold white paper behind the glass</li>
+                <li>Adjust the angle to see a rainbow on the paper</li>
+              </ol>
+              
+              <h4>What to Observe:</h4>
+              <p>Notice how white light is separated into different colors due to refraction and dispersion.</p>
+            </div>
+          </div>
+          
+          <div class="experiment-card">
+            <h3>Experiment 2: Sound Vibrations</h3>
+            <div class="experiment-content">
+              <h4>Materials Needed:</h4>
+              <ul>
+                <li>Empty can</li>
+                <li>Balloon</li>
+                <li>Rubber band</li>
+                <li>Small pieces of paper</li>
+              </ul>
+              
+              <h4>Procedure:</h4>
+              <ol>
+                <li>Cut the balloon and stretch it over the can opening</li>
+                <li>Secure with a rubber band</li>
+                <li>Place small paper pieces on the balloon</li>
+                <li>Make sounds near the can and observe the paper pieces</li>
+              </ol>
+              
+              <h4>What to Observe:</h4>
+              <p>Watch how the paper pieces move when sound waves hit the balloon, showing that sound is made of vibrations.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-section" id="quiz">
+          <h2><i class="ri-question-line"></i> Chapter Quiz</h2>
+          <p>Test your understanding of light and sound!</p>
+          <a href="/science-quiz-2.html" class="quiz-btn">
+            <i class="ri-play-circle-line"></i>
+            Start Quiz
+          </a>
+        </div>
+      </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <style>
+      .chapter-hero {
+        text-align: center;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-radius: 1rem;
+      }
+
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .breadcrumb a {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .chapter-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .chapter-icon:hover {
+        transform: scale(1.1);
+      }
+
+      .chapter-icon i {
+        font-size: 3rem;
+      }
+
+      .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .hero-content .lead {
+        font-size: 1.125rem;
+        color: #64748b;
+        line-height: 1.6;
+      }
+
+      .chapter-content {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        align-items: start;
+        min-height: 100vh;
+      }
+
+      .chapter-content > div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .content-nav {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        height: fit-content;
+        position: sticky;
+        top: 1rem;
+        z-index: 10;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+        transition: all 0.3s ease;
+      }
+
+      .content-nav h3 {
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .content-nav ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .content-nav li {
+        margin-bottom: 0.5rem;
+      }
+
+      .content-nav a {
+        color: #64748b;
+        text-decoration: none;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        display: block;
+        transition: all 0.3s ease;
+      }
+
+      .content-nav a:hover {
+        background: var(--color-muted);
+        color: var(--color-primary);
+      }
+
+      .content-nav a.active {
+        background: var(--color-primary);
+        color: white;
+        font-weight: 600;
+      }
+
+      .nav-progress {
+        width: 100%;
+        height: 4px;
+        background: var(--color-muted);
+        border-radius: 2px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+
+      .nav-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        border-radius: 2px;
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .lesson {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+        clear: both;
+        overflow: visible;
+      }
+
+      .lesson-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-muted);
+        position: relative;
+        z-index: 2;
+      }
+
+      .lesson-header h2 {
+        font-size: 1.75rem;
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .lesson-header h2 i {
+        color: var(--color-primary);
+      }
+
+      .lesson-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .lesson-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .lesson-content h3 {
+        font-size: 1.5rem;
+        margin: 1.5rem 0 1rem;
+        color: var(--color-fg);
+        position: relative;
+        z-index: 1;
+      }
+
+      .lesson-content p {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .info-box {
+        background: #f0f9ff;
+        border: 2px solid #0ea5e9;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0 2rem 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .info-box h4 {
+        color: #0c4a6e;
+        margin-bottom: 1rem;
+      }
+
+      .info-box ul {
+        color: #0c4a6e;
+        padding-left: 1.5rem;
+      }
+
+      .sources-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .source-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+      }
+
+      .source-card.natural {
+        border-color: #f59e0b;
+      }
+
+      .source-card.artificial {
+        border-color: #3b82f6;
+      }
+
+      .source-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .source-card ul {
+        color: #64748b;
+        padding-left: 1.5rem;
+      }
+
+      .vision-process {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .process-step {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        position: relative;
+      }
+
+      .process-step::after {
+        content: '→';
+        position: absolute;
+        right: -0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.5rem;
+        color: var(--color-primary);
+        font-weight: bold;
+      }
+
+      .process-step:last-child::after {
+        display: none;
+      }
+
+      .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+      }
+
+      .step-content h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-fg);
+      }
+
+      .step-content p {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0;
+      }
+
+      .reflection-types {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .reflection-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+      }
+
+      .reflection-card.regular {
+        border-color: #16a34a;
+      }
+
+      .reflection-card.diffuse {
+        border-color: #f59e0b;
+      }
+
+      .reflection-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .reflection-card p {
+        color: #64748b;
+        margin-bottom: 1rem;
+      }
+
+      .example {
+        background: var(--color-muted);
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--color-fg);
+      }
+
+      .laws-box {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .law {
+        background: #f0fdf4;
+        border: 2px solid #16a34a;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .law h4 {
+        color: #14532d;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+      }
+
+      .law p {
+        color: #14532d;
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      .refraction-info {
+        background: #fef3c7;
+        border: 2px solid #f59e0b;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .refraction-info h4 {
+        color: #92400e;
+        margin-bottom: 1rem;
+      }
+
+      .refraction-info p {
+        color: #92400e;
+        margin-bottom: 1rem;
+      }
+
+      .refraction-examples {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .example-item {
+        background: white;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        color: #92400e;
+        font-size: 0.9rem;
+      }
+
+      .sound-properties {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .property-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .property-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+        color: var(--color-fg);
+      }
+
+      .property-card p {
+        color: #64748b;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+
+      .examples {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .example {
+        background: var(--color-muted);
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--color-fg);
+      }
+
+      .sound-travel {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .travel-step {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .step-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+      }
+
+      .step-icon i {
+        font-size: 1.5rem;
+      }
+
+      .travel-step h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-fg);
+      }
+
+      .travel-step p {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0;
+      }
+
+      .speed-info {
+        background: #f0fdf4;
+        border: 2px solid #16a34a;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .speed-info p {
+        color: #14532d;
+        margin-bottom: 1rem;
+      }
+
+      .speed-info ul {
+        color: #14532d;
+        padding-left: 1.5rem;
+      }
+
+      .echo-conditions {
+        background: #f0f9ff;
+        border: 2px solid #0ea5e9;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .echo-conditions h4 {
+        color: #0c4a6e;
+        margin-bottom: 1rem;
+      }
+
+      .echo-conditions ul {
+        color: #0c4a6e;
+        padding-left: 1.5rem;
+      }
+
+      .reverberation-comparison {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .comparison-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+      }
+
+      .comparison-card.good {
+        border-color: #16a34a;
+      }
+
+      .comparison-card.bad {
+        border-color: #ef4444;
+      }
+
+      .comparison-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .comparison-card p {
+        color: #64748b;
+        margin-bottom: 1rem;
+      }
+
+      .absorption-materials {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .material-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+      }
+
+      .material-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .material-card ul {
+        color: #64748b;
+        padding-left: 1.5rem;
+      }
+
+      .applications-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .application-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .app-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+      }
+
+      .app-icon i {
+        font-size: 1.5rem;
+      }
+
+      .application-card h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-fg);
+      }
+
+      .application-card p {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0;
+      }
+
+      .safety-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .safety-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+      }
+
+      .safety-card.light {
+        border-color: #f59e0b;
+      }
+
+      .safety-card.sound {
+        border-color: #3b82f6;
+      }
+
+      .safety-card h4 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .safety-card ul {
+        color: #64748b;
+        padding-left: 1.5rem;
+      }
+
+      .experiments {
+        background: var(--color-bg);
+        border: 2px solid var(--color-muted);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        z-index: 1;
+        clear: both;
+      }
+
+      .experiments h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .experiments h2 i {
+        color: var(--color-primary);
+      }
+
+      .experiment-card {
+        background: #f8fafc;
+        border: 2px solid var(--color-muted);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .experiment-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+      }
+
+      .experiment-content h4 {
+        font-size: 1.1rem;
+        margin: 1rem 0 0.5rem;
+        color: var(--color-fg);
+      }
+
+      .experiment-content ul, .experiment-content ol {
+        color: #64748b;
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .quiz-section {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 2px solid #0ea5e9;
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+        z-index: 1;
+        clear: both;
+      }
+
+      .quiz-section h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        color: var(--color-fg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+
+      .quiz-section h2 i {
+        color: #0ea5e9;
+      }
+
+      .quiz-section p {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      .quiz-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #0ea5e9;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-btn:hover {
+        background: #0284c7;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+      }
+
+      .quiz-btn i {
+        font-size: 1.25rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .chapter-content {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .content-nav {
+          position: static;
+          order: -1;
+          max-height: none;
+          overflow-y: visible;
+        }
+
+        .hero-content h1 {
+          font-size: 2rem;
+        }
+
+        .chapter-icon {
+          width: 80px;
+          height: 80px;
+        }
+
+        .chapter-icon i {
+          font-size: 2rem;
+        }
+
+        .sources-grid,
+        .reflection-types,
+        .laws-box,
+        .sound-properties,
+        .sound-travel,
+        .reverberation-comparison,
+        .absorption-materials,
+        .applications-grid,
+        .safety-info {
+          grid-template-columns: 1fr;
+        }
+
+        .vision-process {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .process-step::after {
+          display: none;
+        }
+
+        .lesson-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .lesson-meta {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .lesson {
+          padding: 1.5rem;
+        }
+
+        .experiment-card {
+          padding: 1rem;
+        }
+
+        .quiz-section {
+          padding: 1.5rem;
+        }
+
+        .vision-process {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </body>
+</html>
