@@ -22,7 +22,7 @@ const DEFAULT_AI_ENDPOINT = `${DEFAULT_API_BASE}/api/ai`
 
 // Gemini API configuration
 const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do' // Your actual Gemini API key
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent'
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
 
 // Initialize once DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
@@ -1193,7 +1193,7 @@ Please provide a helpful educational response:`
         }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 500,
+          maxOutputTokens: 1000,
           topP: 0.8,
           topK: 10
         }

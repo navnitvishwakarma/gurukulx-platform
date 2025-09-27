@@ -1,6 +1,6 @@
 // Quick test script for Gemini API integration
 const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 async function testGeminiAPI() {
   try {
@@ -33,7 +33,7 @@ async function testGeminiAPI() {
         }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 500,
+          maxOutputTokens: 1000,
           topP: 0.8,
           topK: 10
         }

@@ -54,6 +54,9 @@
         <div class="card" style="grid-column: 1 / -1; max-width: 100%;">
           <h2>Ask AI</h2>
           <p>Get instant answers powered by Google's Gemini AI. Use text or voice search.</p>
+          <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px; margin-bottom: 1rem; font-size: 14px;">
+            <strong>💡 Tips:</strong> Ask questions about math, science, English, or any subject. Try "How do I solve quadratic equations?" or "What is photosynthesis?"
+          </div>
           <form id="geminiSearchForm" class="form" style="margin-top: 1rem;">
             <div class="search-container" style="display: flex; gap: 8px; width: 100%; margin-bottom: 1rem;">
               <input type="text" id="geminiQuery" placeholder="Ask AI anything..." required style="flex: 1; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; min-width: 0;">
@@ -67,8 +70,13 @@
           </form>
           <div id="geminiAnswer" style="margin-top: 1rem; display: none;">
             <div class="card" style="border: 1px solid var(--color-muted);">
-              <h3 style="margin: 0 0 0.5rem;">AI Response</h3>
-              <div id="geminiAnswerContent" class="text-pretty"></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h3 style="margin: 0;">AI Response</h3>
+                <button id="copyResponseBtn" class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;" title="Copy response">
+                  <i class="ri-copy-line"></i> Copy
+                </button>
+              </div>
+              <div id="geminiAnswerContent" class="text-pretty" style="line-height: 1.6;"></div>
             </div>
           </div>
           <div id="geminiLoading" style="display: none; text-align: center; padding: 1rem;">
@@ -89,91 +97,76 @@
         const geminiLoading = document.getElementById('geminiLoading');
         const voiceSearchBtn = document.getElementById('voiceSearchBtn');
         const micIcon = document.getElementById('micIcon');
+        const copyResponseBtn = document.getElementById('copyResponseBtn');
         
         const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
-        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
         
         async function searchWithGemini(query) {
           try {
             console.log('Attempting to connect to Gemini AI...');
             console.log('Query:', query);
             
-            // First try direct API call
-            try {
-              const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  contents: [{
-                    parts: [{
-                      text: query
-                    }]
+            // Create a more educational prompt
+            const educationalPrompt = `You are an AI tutor for GuruKulX, an educational platform. Please provide a helpful, educational response to this student question: "${query}". 
+            
+            Guidelines:
+            - Keep responses clear and age-appropriate for students
+            - If it's a math question, show step-by-step solutions
+            - If it's a general knowledge question, provide accurate information
+            - If it's about study tips or learning, give practical advice
+            - Keep responses concise but informative (2-3 paragraphs max)
+            - Use simple language that students can understand`;
+            
+            const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                contents: [{
+                  parts: [{
+                    text: educationalPrompt
                   }]
-                })
-              });
-              
-              console.log('Direct API Response status:', response.status);
-              
-              if (response.ok) {
-                const data = await response.json();
-                console.log('Direct API Response:', data);
-                
-                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                  return data.candidates[0].content.parts[0].text;
+                }],
+                generationConfig: {
+                  temperature: 0.7,
+                  topK: 40,
+                  topP: 0.95,
+                  maxOutputTokens: 1024,
                 }
-              }
-            } catch (directError) {
-              console.log('Direct API failed, trying CORS proxy...', directError);
-              
-              // Fallback to CORS proxy
-              const proxyUrl = `${CORS_PROXY}${encodeURIComponent(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`)}`;
-              
-              const response = await fetch(proxyUrl, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  contents: [{
-                    parts: [{
-                      text: query
-                    }]
-                  }]
-                })
-              });
-              
-              console.log('CORS Proxy Response status:', response.status);
-              
-              if (!response.ok) {
-                const errorText = await response.text();
-                console.error('API Error Response:', errorText);
-                throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
-              }
-              
-              const data = await response.json();
-              console.log('CORS Proxy API Response:', data);
-              
-              if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                return data.candidates[0].content.parts[0].text;
-              } else {
-                console.error('Unexpected API response structure:', data);
-                throw new Error('No response from Gemini AI');
-              }
+              })
+            });
+            
+            console.log('API Response status:', response.status);
+            
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error('API Error Response:', errorText);
+              throw new Error(`API error: ${response.status} - ${errorText}`);
             }
             
-            throw new Error('No response from Gemini AI');
+            const data = await response.json();
+            console.log('API Response:', data);
+            
+            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+              return data.candidates[0].content.parts[0].text;
+            } else {
+              console.error('Unexpected API response structure:', data);
+              throw new Error('No response received from AI');
+            }
+            
           } catch (error) {
             console.error('Error calling Gemini API:', error);
             
-            // Provide a helpful error message
+            // Provide a helpful fallback response
             if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
-              throw new Error('CORS Error: The API cannot be called directly from the browser. Please check the browser console for more details.');
+              throw new Error('Unable to connect to AI service. Please check your internet connection and try again.');
+            } else if (error.message.includes('API error')) {
+              throw new Error('AI service is temporarily unavailable. Please try again in a few moments.');
+            } else {
+              throw new Error('Sorry, I encountered an error while processing your question. Please try again.');
             }
-            
-            throw error;
           }
         }
         
@@ -238,28 +231,102 @@
           e.preventDefault();
           
           const query = geminiQuery.value.trim();
-          if (!query) return;
+          if (!query) {
+            alert('Please enter a question to ask the AI.');
+            return;
+          }
           
           // Show loading state
           geminiAnswer.style.display = 'none';
           geminiLoading.style.display = 'block';
+          
+          // Disable form during processing
+          const submitBtn = geminiForm.querySelector('button[type="submit"]');
+          const originalBtnText = submitBtn.innerHTML;
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite;"></i> Searching...';
           
           try {
             const response = await searchWithGemini(query);
             
             // Hide loading and show response
             geminiLoading.style.display = 'none';
-            geminiAnswerContent.textContent = response;
+            geminiAnswerContent.innerHTML = response.replace(/\n/g, '<br>');
             geminiAnswer.style.display = 'block';
+            
+            // Clear the input after successful response
+            geminiQuery.value = '';
             
           } catch (error) {
             // Hide loading and show error
             geminiLoading.style.display = 'none';
-            geminiAnswerContent.textContent = 'Sorry, there was an error connecting to AI. Please try again later.';
+            geminiAnswerContent.innerHTML = `
+              <div style="color: #dc2626; padding: 1rem; background: #fef2f2; border-radius: 8px; border: 1px solid #fecaca;">
+                <strong>Error:</strong> ${error.message}
+                <br><br>
+                <small>Please try again or check your internet connection.</small>
+              </div>
+            `;
             geminiAnswer.style.display = 'block';
             console.error('Gemini search error:', error);
+          } finally {
+            // Re-enable form
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
           }
         });
+        
+        // Copy response functionality
+        copyResponseBtn.addEventListener('click', function() {
+          const responseText = geminiAnswerContent.textContent || geminiAnswerContent.innerText;
+          if (responseText) {
+            navigator.clipboard.writeText(responseText).then(() => {
+              const originalText = copyResponseBtn.innerHTML;
+              copyResponseBtn.innerHTML = '<i class="ri-check-line"></i> Copied!';
+              copyResponseBtn.style.background = '#16a34a';
+              copyResponseBtn.style.color = 'white';
+              
+              setTimeout(() => {
+                copyResponseBtn.innerHTML = originalText;
+                copyResponseBtn.style.background = '';
+                copyResponseBtn.style.color = '';
+              }, 2000);
+            }).catch(err => {
+              console.error('Failed to copy text: ', err);
+              alert('Failed to copy response. Please select and copy manually.');
+            });
+          }
+        });
+        
+        // Allow Enter key to submit form
+        geminiQuery.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            geminiForm.dispatchEvent(new Event('submit'));
+          }
+        });
+        
+        // Clear response when user starts typing a new question
+        geminiQuery.addEventListener('input', function() {
+          if (geminiAnswer.style.display !== 'none') {
+            geminiAnswer.style.display = 'none';
+          }
+        });
+        
+        // Test function for debugging (can be called from browser console)
+        window.testAskAI = async function() {
+          console.log('Testing Ask AI functionality...');
+          try {
+            const testQuery = 'What is 2 + 2?';
+            console.log('Test query:', testQuery);
+            const response = await searchWithGemini(testQuery);
+            console.log('✅ Ask AI test successful:', response);
+            return response;
+          } catch (error) {
+            console.error('❌ Ask AI test failed:', error);
+            throw error;
+          }
+        };
       });
     </script>
   </body>
