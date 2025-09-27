@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test AI API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI API Test Page</h1>
+        
+        <div class="test-section">
+            <h3>Authentication Test</h3>
+            <p>Token: <span id="tokenStatus">Not found</span></p>
+            <button onclick="checkAuth()">Check Authentication</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>API Test</h3>
+            <input type="text" id="testQuery" placeholder="Enter a question..." value="What is 2+2?" style="width: 300px; padding: 5px;">
+            <button onclick="testAPI()">Test AI API</button>
+            <div id="apiResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Server Status</h3>
+            <button onclick="checkServer()">Check Server</button>
+            <div id="serverResult"></div>
+        </div>
+    </div>
+
+    <script>
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const status = document.getElementById('tokenStatus');
+            if (token && token !== 'null' && token !== 'undefined') {
+                status.textContent = `Found: ${token.substring(0, 20)}...`;
+                status.parentElement.parentElement.className = 'test-section success';
+            } else {
+                status.textContent = 'Not found - Please log in first';
+                status.parentElement.parentElement.className = 'test-section error';
+            }
+        }
+        
+        async function testAPI() {
+            const query = document.getElementById('testQuery').value;
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token || token === 'null' || token === 'undefined') {
+                    throw new Error('Please log in first');
+                }
+                
+                const response = await fetch('/api/ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        subject: 'General',
+                        question: query
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>Success!</h4>
+                            <p><strong>Response:</strong> ${data.answer}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>Error!</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Error:</strong> ${data.error || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>Error!</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function checkServer() {
+            const resultDiv = document.getElementById('serverResult');
+            resultDiv.innerHTML = 'Checking...';
+            
+            try {
+                const response = await fetch('/api/ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject: 'General',
+                        question: 'test'
+                    })
+                });
+                
+                if (response.status === 401) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>Server is running!</h4>
+                            <p>API endpoint is accessible (authentication required as expected)</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>Unexpected response</h4>
+                            <p>Status: ${response.status}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>Server Error!</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Check auth on page load
+        checkAuth();
+    </script>
+</body>
+</html>

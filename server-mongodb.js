@@ -460,7 +460,6 @@ app.post('/api/doubts', authenticateToken, [
 
 // AI endpoint with Gemini API integration
 app.post('/api/ai', authenticateToken, [
-  body('subject').notEmpty().trim().escape(),
   body('question').notEmpty().trim().escape()
 ], async (req, res) => {
   try {
@@ -469,7 +468,7 @@ app.post('/api/ai', authenticateToken, [
       return res.status(400).json({ error: 'Validation failed', details: errors.array() });
     }
 
-    const { subject, question, profile } = req.body;
+    const { subject = 'General', question, profile } = req.body;
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
     const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
 

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Gemini API Direct</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Direct Gemini API Test</h1>
+        
+        <div class="test-section">
+            <h3>Test 1: Direct API Call</h3>
+            <button onclick="testDirectAPI()">Test Direct API</button>
+            <div id="directResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 2: CORS Proxy</h3>
+            <button onclick="testCORSProxy()">Test CORS Proxy</button>
+            <div id="corsResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 3: Alternative CORS Proxy</h3>
+            <button onclick="testAltCORS()">Test Alternative CORS</button>
+            <div id="altCorsResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+        
+        async function testDirectAPI() {
+            const resultDiv = document.getElementById('directResult');
+            resultDiv.innerHTML = 'Testing direct API...';
+            
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: "What is 2+2?"
+                            }]
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>Success!</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>Error!</h4>
+                            <p>Status: ${response.status}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>Error!</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function testCORSProxy() {
+            const resultDiv = document.getElementById('corsResult');
+            resultDiv.innerHTML = 'Testing CORS proxy...';
+            
+            try {
+                const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+                const proxyUrl = `${CORS_PROXY}${encodeURIComponent(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`)}`;
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: "What is 2+2?"
+                            }]
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>Success!</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>Error!</h4>
+                            <p>Status: ${response.status}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>Error!</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function testAltCORS() {
+            const resultDiv = document.getElementById('altCorsResult');
+            resultDiv.innerHTML = 'Testing alternative CORS proxy...';
+            
+            try {
+                const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+                const proxyUrl = `${CORS_PROXY}${GEMINI_API_URL}?key=${GEMINI_API_KEY}`;
+                
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: "What is 2+2?"
+                            }]
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>Success!</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>Error!</h4>
+                            <p>Status: ${response.status}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>Error!</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
