@@ -261,15 +261,8 @@ const initializeDefaultUsers = async () => {
   }
 };
 
-// Initialize default users on first connection
+// Track initialization
 let usersInitialized = false;
-app.use(async (req, res, next) => {
-  if (!usersInitialized) {
-    await initializeDefaultUsers();
-    usersInitialized = true;
-  }
-  next();
-});
 
 // API Routes
 
@@ -737,24 +730,42 @@ const handler = async (event, context) => {
     
     // Authentication routes
     if (path === '/api/auth/register' && method === 'POST') {
-      const { username, password, name, role, userClass, email } = req.body;
-      
-      if (!username || !password || !name || !role) {
-        return res.status(400).json({ error: 'Missing required fields' });
+      try {
+        console.log('Registration attempt:', { username: req.body.username, role: req.body.role });
+        
+        const { username, password, name, role, userClass, email } = req.body;
+        
+        if (!username || !password || !name || !role) {
+          console.log('Missing required fields:', { username: !!username, password: !!password, name: !!name, role: !!role });
+          return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        // Check if user already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+          console.log('Username already exists:', username);
+          return res.status(400).json({ error: 'Username already exists' });
+        }
+        
+        // Create new user
+        const user = new User({
+          username, 
+          password, 
+          name, 
+          role, 
+          class: userClass, 
+          email,
+          profile: { score: 0, xp: 0, level: 1, progress: 0, streak: 0, badges: [] }
+        });
+        
+        await user.save();
+        console.log('User created successfully:', user._id);
+        return res.status(201).json({ message: 'User created successfully', userId: user._id });
+        
+      } catch (error) {
+        console.error('Registration error:', error);
+        return res.status(500).json({ error: 'Registration failed: ' + error.message });
       }
-      
-      const existingUser = await User.findOne({ username });
-      if (existingUser) {
-        return res.status(400).json({ error: 'Username already exists' });
-      }
-      
-      const user = new User({
-        username, password, name, role, class: userClass, email,
-        profile: { score: 0, xp: 0, level: 1, progress: 0, streak: 0, badges: [] }
-      });
-      
-      await user.save();
-      return res.status(201).json({ message: 'User created successfully', userId: user._id });
     }
     
     if (path === '/api/auth/login' && method === 'POST') {

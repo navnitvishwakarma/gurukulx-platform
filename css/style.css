@@ -291,6 +291,24 @@ a {
   border-color: #0d8ec8;
 }
 
+/* Auth Links */
+.auth-links {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.btn-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.btn-link:hover {
+  color: #128a3f;
+  text-decoration: underline;
+}
+
 /* Cards */
 .card {
   background: var(--color-bg);
