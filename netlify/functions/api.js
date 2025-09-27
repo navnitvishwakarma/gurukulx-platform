@@ -154,11 +154,20 @@ const handler = async (event, context) => {
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
   };
 
-  if (event.method === 'OPTIONS') {
+  if (event.method === 'OPTIONS' || event.httpMethod === 'OPTIONS') {
+    console.log('Handling OPTIONS request:', { 
+      method: event.method, 
+      httpMethod: event.httpMethod,
+      path: event.path,
+      headers: event.headers 
+    });
     return {
       statusCode: 200,
-      headers,
-      body: ''
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: 'CORS preflight handled' })
     };
   }
 

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success { border-color: #28a745; background: #d4edda; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Browser Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Test Health Check</h2>
+        <button onclick="testHealth()">Test Health</button>
+        <div id="health-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Test Login</h2>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="login-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Test Direct Function</h2>
+        <button onclick="testDirectFunction()">Test Direct Function</button>
+        <div id="direct-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Test with Different Origins</h2>
+        <button onclick="testWithOrigin()">Test with Origin Header</button>
+        <div id="origin-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://gurukool-x.netlify.app';
+        
+        function showResult(elementId, data, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(data, null, 2);
+            element.className = `result ${isSuccess ? 'success' : 'error'}`;
+        }
+        
+        async function testHealth() {
+            try {
+                console.log('Testing health check...');
+                const response = await fetch(`${API_BASE}/api/health`);
+                console.log('Health response:', response);
+                const data = await response.json();
+                showResult('health-result', {
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: data
+                }, response.ok);
+            } catch (error) {
+                console.error('Health test error:', error);
+                showResult('health-result', { error: error.message, stack: error.stack }, false);
+            }
+        }
+        
+        async function testLogin() {
+            try {
+                console.log('Testing login...');
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'student1',
+                        password: 'student123'
+                    })
+                });
+                console.log('Login response:', response);
+                const data = await response.json();
+                showResult('login-result', {
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: data
+                }, response.ok);
+            } catch (error) {
+                console.error('Login test error:', error);
+                showResult('login-result', { error: error.message, stack: error.stack }, false);
+            }
+        }
+        
+        async function testDirectFunction() {
+            try {
+                console.log('Testing direct function...');
+                const response = await fetch(`${API_BASE}/.netlify/functions/api`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'student1',
+                        password: 'student123'
+                    })
+                });
+                console.log('Direct function response:', response);
+                const data = await response.json();
+                showResult('direct-result', {
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: data
+                }, response.ok);
+            } catch (error) {
+                console.error('Direct function test error:', error);
+                showResult('direct-result', { error: error.message, stack: error.stack }, false);
+            }
+        }
+        
+        async function testWithOrigin() {
+            try {
+                console.log('Testing with origin header...');
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': window.location.origin
+                    },
+                    body: JSON.stringify({
+                        username: 'student1',
+                        password: 'student123'
+                    })
+                });
+                console.log('Origin test response:', response);
+                const data = await response.json();
+                showResult('origin-result', {
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: data
+                }, response.ok);
+            } catch (error) {
+                console.error('Origin test error:', error);
+                showResult('origin-result', { error: error.message, stack: error.stack }, false);
+            }
+        }
+        
+        // Auto-run health check on page load
+        window.onload = function() {
+            console.log('Page loaded, testing health...');
+            testHealth();
+        };
+    </script>
+</body>
+</html>
