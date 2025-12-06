@@ -63,5 +63,6 @@ const assignmentSchema = new mongoose.Schema({
 // Index for efficient queries
 assignmentSchema.index({ teacher: 1, created_at: -1 });
 assignmentSchema.index({ class_name: 1, status: 1 });
+assignmentSchema.index({ createdAt: 1 }, { expireAfterSeconds: 604800 }); // Auto-delete after 7 days
 
 module.exports = mongoose.model('Assignment', assignmentSchema);

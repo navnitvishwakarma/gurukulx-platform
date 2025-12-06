@@ -1,63 +1,406 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Leaderboard • GuruKulX</title>
     <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/leaderboard.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
     <script defer src="/js/main.js"></script>
-    <script defer src="/js/leaderboard.js"></script>
-  </head>
-  <body data-page="leaderboard">
+</head>
+
+<body data-page="leaderboard">
     <header id="site-header"></header>
+
     <main class="container">
-      <section class="card">
-        <h1>Global Leaderboard</h1>
-        
-        <div class="leaderboard-stats">
-          <div class="leaderboard-stat">
-            <div class="value" id="totalPlayers">0</div>
-            <div class="label">Total Players</div>
-          </div>
-          <div class="leaderboard-stat">
-            <div class="value" id="topScore">0</div>
-            <div class="label">Top Score</div>
-          </div>
-          <div class="leaderboard-stat">
-            <div class="value" id="yourRank">-</div>
-            <div class="label">Your Rank</div>
-          </div>
-        </div>
-        
-        <div class="leaderboard-controls">
-          <div class="leaderboard-filter">
-            <label for="classFilter">Filter by Class:</label>
-            <select id="classFilter">
-              <option value="all">All Classes</option>
-              <option value="6">Grade 6</option>
-              <option value="7">Grade 7</option>
-              <option value="8">Grade 8</option>
-              <option value="9">Grade 9</option>
-              <option value="10">Grade 10</option>
-              <option value="11">Grade 11</option>
-              <option value="12">Grade 12</option>
-            </select>
-          </div>
-          <button id="refreshLeaderboard" class="btn">
-            <i class="ri-refresh-line"></i> Refresh
-          </button>
-        </div>
-        
-        <div id="leaderboardTable" class="table-like">
-          <div class="empty-state">
-            <i class="ri-trophy-line"></i>
-            <p>No leaderboard data available yet.</p>
-            <p>Complete some activities to appear on the leaderboard!</p>
-          </div>
-        </div>
-      </section>
+        <section class="card">
+            <h1>🏆 Leaderboard</h1>
+            <p class="lead">Top performing students in your class</p>
+
+            <div class="filter-controls">
+                <select id="classFilter" class="filter-select">
+                    <option value="">All Classes</option>
+                </select>
+            </div>
+
+            <div id="leaderboardList" class="table-like">
+                <div class="row">
+                    <div class="rank">—</div>
+                    <div>Loading leaderboard...</div>
+                    <div>—</div>
+                    <div>—</div>
+                </div>
+            </div>
+        </section>
     </main>
+
     <footer id="site-footer"></footer>
-  </body>
+
+    <script>
+        let allStudents = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLeaderboard();
+            setupFilters();
+            // Ensure FAB is initialized
+            setTimeout(() => {
+                if (typeof initFloatingWidget === 'function' && !document.querySelector('.fab-container')) {
+                    initFloatingWidget();
+                }
+            }, 500);
+        });
+
+        function setupFilters() {
+            const classes = JSON.parse(localStorage.getItem('gx_classes') || '[]');
+            const classFilter = document.getElementById('classFilter');
+
+            if (classes.length > 0) {
+                classes.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.name;
+                    option.textContent = c.fullName || `Grade ${c.name}`;
+                    classFilter.appendChild(option);
+                });
+            } else {
+                ['6', '7', '8', '9', '10'].forEach(grade => {
+                    const option = document.createElement('option');
+                    option.value = grade;
+                    option.textContent = `Grade ${grade}`;
+                    classFilter.appendChild(option);
+                });
+            }
+
+            document.getElementById('classFilter').addEventListener('change', filterLeaderboard);
+        }
+
+        async function loadLeaderboard() {
+            try {
+                const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || 'http://localhost:8080';
+                const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/leaderboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('GX_TOKEN')}`
+                    }
+                });
+
+                if (res.ok) {
+                    allStudents = await res.json();
+                }
+            } catch (err) {
+                console.error('Failed to fetch leaderboard from server:', err);
+            }
+
+            if (allStudents.length === 0) {
+                allStudents = generateMockLeaderboard();
+            }
+
+            renderLeaderboard(allStudents);
+        }
+
+        function generateMockLeaderboard() {
+            const names = [
+                'Aarav Sharma', 'Diya Patel', 'Arjun Kumar', 'Ananya Singh', 'Vihaan Gupta',
+                'Isha Reddy', 'Aditya Verma', 'Saanvi Joshi', 'Reyansh Mehta', 'Myra Desai',
+                'Kabir Shah', 'Anika Nair', 'Vivaan Rao', 'Kiara Iyer', 'Ayaan Khan'
+            ];
+
+            const classes = ['6', '7', '8', '9', '10'];
+
+            return names.map((name, index) => ({
+                name: name,
+                class: classes[Math.floor(Math.random() * classes.length)],
+                totalXP: Math.floor(Math.random() * 5000) + 1000,
+                quizzesCompleted: Math.floor(Math.random() * 50) + 5,
+                gamesPlayed: Math.floor(Math.random() * 100) + 10,
+                progress: Math.floor(Math.random() * 100)
+            })).sort((a, b) => b.totalXP - a.totalXP);
+        }
+
+        function filterLeaderboard() {
+            const classFilter = document.getElementById('classFilter').value;
+            let filtered = [...allStudents];
+
+            if (classFilter) {
+                filtered = filtered.filter(s => s.class === classFilter);
+            }
+
+            renderLeaderboard(filtered);
+        }
+
+        function renderLeaderboard(students) {
+            const leaderboardList = document.getElementById('leaderboardList');
+
+            if (students.length === 0) {
+                leaderboardList.innerHTML = `
+          <div class="row">
+            <div class="rank">—</div>
+            <div>No students found</div>
+            <div>—</div>
+            <div>—</div>
+          </div>
+        `;
+                return;
+            }
+
+            leaderboardList.innerHTML = `
+        <div class="row header">
+          <div class="rank">#</div>
+          <div>Student</div>
+          <div>Class</div>
+          <div>Score</div>
+        </div>
+        ${students.map((student, index) => {
+                const rank = index + 1;
+                let rankBadge = `<span class="rank-number">#${rank}</span>`;
+                let rowClass = '';
+
+                // Score fallback logic: API (profile.score or score) vs Mock (totalXP)
+                const score = student.profile?.score ?? student.score ?? student.totalXP ?? 0;
+
+                // Class fallback
+                const className = student.class ? `Grade ${student.class}` : 'Guest';
+
+                if (rank === 1) { rankBadge = '🥇'; rowClass = 'rank-1'; }
+                else if (rank === 2) { rankBadge = '🥈'; rowClass = 'rank-2'; }
+                else if (rank === 3) { rankBadge = '🥉'; rowClass = 'rank-3'; }
+
+                return `
+            <div class="row ${rowClass} hover-raise">
+              <div class="rank">${rankBadge}</div>
+              <div class="student-name">
+                <div class="avatar-placeholder">${student.name ? student.name.charAt(0).toUpperCase() : 'U'}</div>
+                <div>
+                    <div class="name-text">${escapeHTML(student.name || 'User')}</div>
+                    ${student.profile?.badges?.length ? `<div class="badge-mini">🏆 ${student.profile.badges[0]}</div>` : ''}
+                </div>
+              </div>
+              <div><span class="class-badge">${className}</span></div>
+              <div class="score-value">
+                <strong>${score.toLocaleString()}</strong> <small>XP</small>
+              </div>
+            </div>
+          `;
+            }).join('')}
+      `;
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, (c) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[c]);
+        }
+    </script>
+
+    <style>
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--color-muted);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            background: var(--color-bg);
+            color: var(--color-fg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .table-like {
+            margin-top: 1.5rem;
+        }
+
+        .table-like .row {
+            display: grid;
+            grid-template-columns: 60px 2fr 120px 120px;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--color-muted);
+            align-items: center;
+            transition: transform 0.2s ease, background 0.2s ease;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .table-like .row.header {
+            font-weight: 700;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-like .row:hover:not(.header) {
+            transform: translateX(5px);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .rank {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .rank-1 {
+            background: linear-gradient(90deg, #fffbeb 0%, #ffffff 100%) !important;
+            border: 1px solid #fcd34d;
+        }
+
+        .rank-2 {
+            background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%) !important;
+            border: 1px solid #cbd5e1;
+        }
+
+        .rank-3 {
+            background: linear-gradient(90deg, #fff7ed 0%, #ffffff 100%) !important;
+            border: 1px solid #fdba74;
+        }
+
+        .rank-1 .rank {
+            font-size: 2rem;
+        }
+
+        .rank-2 .rank {
+            font-size: 1.75rem;
+        }
+
+        .rank-3 .rank {
+            font-size: 1.5rem;
+        }
+
+        .student-name {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .rank-1 .avatar-placeholder {
+            background: #f59e0b;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+        }
+
+        .rank-2 .avatar-placeholder {
+            background: #64748b;
+        }
+
+        .rank-3 .avatar-placeholder {
+            background: #d97706;
+        }
+
+        .name-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .badge-mini {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
+        .class-badge {
+            background: var(--color-accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .score-value {
+            text-align: right;
+            color: var(--color-fg);
+            font-size: 1.2rem;
+        }
+
+        .score-value small {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .student-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        .student-name i {
+            font-size: 1.25rem;
+            color: var(--color-primary);
+        }
+
+        .score-value {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .filter-controls {
+                flex-direction: column;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .table-like .row {
+                grid-template-columns: 50px 1fr;
+                gap: 0.5rem;
+            }
+
+            .table-like .row>div:nth-child(3),
+            .table-like .row>div:nth-child(4) {
+                grid-column: 2;
+                margin-top: 0.5rem;
+            }
+
+            .rank {
+                font-size: 1rem;
+            }
+
+            .top-rank .rank {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</body>
+
 </html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Quiz • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body data-page="quiz-selection">
+    <header id="site-header"></header>
+
+    <main class="container">
+        <section class="quiz-selection-hero">
+            <div class="breadcrumb">
+                <a href="/index.html">Home</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span id="subjectBreadcrumb">Quizzes</span>
+            </div>
+
+            <div class="hero-content">
+                <div class="quiz-icon">
+                    <i class="ri-question-line"></i>
+                </div>
+                <h1 class="text-balance" id="pageTitle">Select a Quiz</h1>
+                <p class="lead text-pretty" id="pageDescription">
+                    Choose from teacher-created quizzes to test your knowledge
+                </p>
+            </div>
+        </section>
+
+        <section class="quizzes-grid" id="quizzesGrid">
+            <!-- Quiz cards will be loaded here -->
+            <div class="loading-message">
+                <i class="ri-loader-4-line"></i>
+                <p>Loading quizzes...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer id="site-footer"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuizzes();
+        });
+
+        async function loadQuizzes() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const subject = urlParams.get('subject') || 'All';
+
+            // Update page title
+            if (subject !== 'All') {
+                document.getElementById('pageTitle').textContent = `${subject} Quizzes`;
+                document.getElementById('pageDescription').textContent = `Choose from ${subject} quizzes created by your teachers`;
+                document.getElementById('subjectBreadcrumb').textContent = `${subject} Quizzes`;
+            }
+
+            const quizzesGrid = document.getElementById('quizzesGrid');
+
+            // Get user info
+            const user = JSON.parse(localStorage.getItem('gx_user') || '{}');
+            const userClass = user.class || '';
+
+            let quizzes = [];
+
+            // Try to fetch from server
+            try {
+                const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || 'http://localhost:8080';
+                const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/quizzes?subject=${subject}&class=${userClass}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('GX_TOKEN')}`
+                    }
+                });
+
+                if (res.ok) {
+                    quizzes = await res.json();
+                }
+            } catch (err) {
+                console.error('Failed to fetch quizzes from server:', err);
+            }
+
+            // Fallback to local storage
+            if (quizzes.length === 0) {
+                const allQuizzes = JSON.parse(localStorage.getItem('gx_quizzes') || '[]');
+                quizzes = allQuizzes.filter(q => {
+                    const matchesSubject = subject === 'All' || q.subject === subject;
+                    const matchesClass = !q.class || q.class === userClass;
+                    return matchesSubject && matchesClass;
+                });
+            }
+
+            renderQuizzes(quizzes, subject);
+        }
+
+        function renderQuizzes(quizzes, subject) {
+            const quizzesGrid = document.getElementById('quizzesGrid');
+
+            if (quizzes.length === 0) {
+                quizzesGrid.innerHTML = `
+          <div class="empty-state">
+            <i class="ri-file-list-line"></i>
+            <h3>No Quizzes Available</h3>
+            <p>Your teacher hasn't created any quizzes for ${subject === 'All' ? 'your class' : subject} yet.</p>
+            <a href="/index.html" class="btn btn-primary">
+              <i class="ri-home-line"></i>
+              Go to Home
+            </a>
+          </div>
+        `;
+                return;
+            }
+
+            quizzesGrid.innerHTML = quizzes.map(quiz => `
+        <div class="quiz-card">
+          <div class="quiz-card-icon">
+            <i class="${getSubjectIcon(quiz.subject)}"></i>
+          </div>
+          <div class="quiz-card-content">
+            <h3>${escapeHTML(quiz.title || `${quiz.subject} Quiz`)}</h3>
+            <p>${escapeHTML(quiz.description || 'Test your knowledge with this quiz')}</p>
+            <div class="quiz-features">
+              <span class="feature-tag">${escapeHTML(quiz.subject)}</span>
+              ${quiz.difficulty ? `<span class="feature-tag">${escapeHTML(quiz.difficulty)}</span>` : ''}
+              ${quiz.timed ? '<span class="feature-tag">Timed</span>' : ''}
+            </div>
+            <div class="quiz-stats">
+              <div class="stat-item">
+                <span class="stat-number">${quiz.questions?.length || quiz.questionCount || 0}</span>
+                <span class="stat-label">Questions</span>
+              </div>
+              ${quiz.timeLimit ? `
+                <div class="stat-item">
+                  <span class="stat-number">${quiz.timeLimit}</span>
+                  <span class="stat-label">Minutes</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+          <button class="quiz-btn" data-quiz-id="${quiz.id || quiz._id}" data-subject="${escapeHTML(quiz.subject)}">
+            Play Now
+          </button>
+        </div>
+      `).join('');
+
+            // Add event listeners to all quiz buttons
+            document.querySelectorAll('.quiz-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const quizId = this.getAttribute('data-quiz-id');
+                    const subject = this.getAttribute('data-subject');
+                    startQuiz(quizId, subject);
+                });
+            });
+        }
+
+        function getSubjectIcon(subject) {
+            const icons = {
+                'Math': 'ri-calculator-line',
+                'Science': 'ri-flask-line',
+                'English': 'ri-book-open-line',
+                'Social Science': 'ri-global-line',
+                'Environment': 'ri-plant-line',
+                'Computer Science': 'ri-code-line',
+                'GK': 'ri-lightbulb-line'
+            };
+            return icons[subject] || 'ri-question-line';
+        }
+
+        function startQuiz(quizId, subject) {
+            // Redirect to quiz player with quiz ID
+            window.location.href = `/quiz-player.html?id=${quizId}&subject=${encodeURIComponent(subject)}`;
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, (c) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[c]);
+        }
+    </script>
+
+    <style>
+        .quiz-selection-hero {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quiz-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .quiz-icon i {
+            font-size: 3rem;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-fg);
+        }
+
+        .hero-content .lead {
+            font-size: 1.125rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .quizzes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-card {
+            background: var(--color-bg);
+            border: 2px solid var(--color-muted);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-accent);
+        }
+
+        .quiz-card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+        }
+
+        .quiz-card-icon i {
+            font-size: 2rem;
+        }
+
+        .quiz-card-content {
+            flex: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-card-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            color: var(--color-fg);
+        }
+
+        .quiz-card-content p {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .quiz-features {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tag {
+            background: var(--color-muted);
+            color: var(--color-fg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .quiz-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--color-fg);
+        }
+
+        .quiz-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--color-accent);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .quiz-btn:hover {
+            background: #0d8ec8;
+            transform: translateY(-2px);
+        }
+
+        .loading-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+        }
+
+        .loading-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--color-muted);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .empty-state p {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .quizzes-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .quiz-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</body>
+
+</html>

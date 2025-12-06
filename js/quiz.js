@@ -1,5 +1,5 @@
 // Quiz Functionality for Knowing Our Numbers
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Wait for header/footer to be injected
     setTimeout(initQuiz, 100);
 });
@@ -118,7 +118,7 @@ function initQuiz() {
             explanation: "First 5 is in thousands place (5,000), second 5 is in tens place (50). Difference = 5,000 - 50 = 4,950."
         }
     ];
-    
+
     // Quiz state
     let quizState = {
         currentQuestion: 0,
@@ -127,7 +127,7 @@ function initQuiz() {
         quizStarted: false,
         reviewMode: false
     };
-    
+
     // DOM elements
     const quizIntro = document.getElementById('quizIntro');
     const quizPlay = document.getElementById('quizPlay');
@@ -137,44 +137,44 @@ function initQuiz() {
     const nextQuestionBtn = document.getElementById('nextQuestionBtn');
     const reviewQuizBtn = document.getElementById('reviewQuizBtn');
     const retryQuizBtn = document.getElementById('retryQuizBtn');
-    
+
     // Event listeners
     startQuizBtn.addEventListener('click', startQuiz);
     prevQuestionBtn.addEventListener('click', showPreviousQuestion);
     nextQuestionBtn.addEventListener('click', showNextQuestion);
     reviewQuizBtn.addEventListener('click', reviewQuiz);
     retryQuizBtn.addEventListener('click', retryQuiz);
-    
+
     function startQuiz() {
         quizState.quizStarted = true;
         quizIntro.classList.add('hidden');
         quizPlay.classList.remove('hidden');
-        
+
         updateProgressBar();
         displayQuestion(0);
     }
-    
+
     function displayQuestion(questionIndex) {
         quizState.currentQuestion = questionIndex;
         const question = quizQuestions[questionIndex];
-        
+
         // Update question counter
         document.getElementById('currentQuestion').textContent = questionIndex + 1;
         document.getElementById('totalQuestions').textContent = quizQuestions.length;
-        
+
         // Display question text
         document.getElementById('questionText').textContent = question.question;
-        
+
         // Display options
         const optionsContainer = document.getElementById('questionOptions');
         optionsContainer.innerHTML = '';
-        
+
         const optionPrefixes = ['A', 'B', 'C', 'D'];
-        
+
         question.options.forEach((option, index) => {
             const optionElement = document.createElement('div');
             optionElement.className = 'option';
-            
+
             // If in review mode, show correct/incorrect status
             if (quizState.reviewMode) {
                 if (index === question.correctIndex) {
@@ -185,23 +185,23 @@ function initQuiz() {
             } else if (quizState.userAnswers[questionIndex] === index) {
                 optionElement.classList.add('selected');
             }
-            
+
             optionElement.innerHTML = `
                 <span class="option-prefix">${optionPrefixes[index]}</span>
                 <span class="option-text">${option}</span>
             `;
-            
+
             // Only add click event if not in review mode
             if (!quizState.reviewMode) {
                 optionElement.addEventListener('click', () => selectOption(index));
             }
-            
+
             optionsContainer.appendChild(optionElement);
         });
-        
+
         // Update navigation buttons
         prevQuestionBtn.disabled = questionIndex === 0;
-        
+
         if (questionIndex === quizQuestions.length - 1) {
             nextQuestionBtn.textContent = 'Finish Quiz';
             nextQuestionBtn.removeEventListener('click', showNextQuestion);
@@ -211,18 +211,18 @@ function initQuiz() {
             nextQuestionBtn.removeEventListener('click', finishQuiz);
             nextQuestionBtn.addEventListener('click', showNextQuestion);
         }
-        
+
         updateProgressBar();
     }
-    
+
     function selectOption(optionIndex) {
         quizState.userAnswers[quizState.currentQuestion] = optionIndex;
-        
+
         // Update UI to show selected option
         const options = document.querySelectorAll('.option');
         options.forEach(option => option.classList.remove('selected'));
         options[optionIndex].classList.add('selected');
-        
+
         // Check if answer is correct and update score
         const currentQuestion = quizQuestions[quizState.currentQuestion];
         if (optionIndex === currentQuestion.correctIndex) {
@@ -239,36 +239,36 @@ function initQuiz() {
             }
         }
     }
-    
+
     function showPreviousQuestion() {
         if (quizState.currentQuestion > 0) {
             displayQuestion(quizState.currentQuestion - 1);
         }
     }
-    
+
     function showNextQuestion() {
         if (quizState.currentQuestion < quizQuestions.length - 1) {
             displayQuestion(quizState.currentQuestion + 1);
         }
     }
-    
+
     function finishQuiz() {
         quizPlay.classList.add('hidden');
         quizEnd.classList.remove('hidden');
-        
+
         // Calculate final score and results
         const correctAnswers = calculateCorrectAnswers();
         const xpEarned = calculateXPEarned(correctAnswers);
-        
+
         // Update results display
         document.getElementById('finalScore').textContent = quizState.score;
         document.getElementById('correctAnswers').textContent = `${correctAnswers}/${quizQuestions.length}`;
         document.getElementById('xpEarned').textContent = xpEarned;
-        
+
         // Display feedback based on performance
         const feedbackElement = document.getElementById('resultsFeedback');
         let feedbackText = '';
-        
+
         if (correctAnswers === quizQuestions.length) {
             feedbackText = '<p>Perfect score! You have mastered Knowing Our Numbers! 🌟</p>';
         } else if (correctAnswers >= quizQuestions.length * 0.7) {
@@ -278,13 +278,13 @@ function initQuiz() {
         } else {
             feedbackText = '<p>Keep practicing! Review the chapter materials and try the quiz again. 📚</p>';
         }
-        
+
         feedbackElement.innerHTML = feedbackText;
-        
+
         // Save progress and XP
         saveQuizResults(xpEarned);
     }
-    
+
     function calculateCorrectAnswers() {
         let correctCount = 0;
         quizQuestions.forEach((question, index) => {
@@ -294,19 +294,19 @@ function initQuiz() {
         });
         return correctCount;
     }
-    
+
     function calculateXPEarned(correctAnswers) {
         // Base XP is 30, plus 2 XP for each correct answer
         return 30 + (correctAnswers * 2);
     }
-    
+
     function saveQuizResults(xpEarned) {
         // Update chapter progress in localStorage
         const currentProgress = parseInt(localStorage.getItem('chapter1_progress') || 35);
         const newProgress = Math.min(100, currentProgress + 20); // Add 20% for completing the quiz
-        
+
         localStorage.setItem('chapter1_progress', newProgress);
-        
+
         // Use standardized score saving function
         const progressEarned = 20; // 20% progress for completing the quiz
         if (typeof saveGameResults === 'function') {
@@ -316,33 +316,33 @@ function initQuiz() {
             const currentXP = parseInt(localStorage.getItem(LS.xp) || 0);
             const newXP = currentXP + xpEarned;
             localStorage.setItem(LS.xp, newXP);
-            
+
             const currentScore = parseInt(localStorage.getItem(LS.score) || 0);
             const newScore = currentScore + quizState.score;
             localStorage.setItem(LS.score, newScore);
-            
-            try { if (typeof syncScoreboards === 'function') syncScoreboards(); } catch {}
+
+            try { if (typeof syncScoreboards === 'function') syncScoreboards(); } catch { }
         }
-        
+
         // Show XP earned message
         showToast('Quiz Completed', `You earned ${xpEarned} XP and ${progressEarned}% progress!`, 'success');
     }
-    
+
     function reviewQuiz() {
         quizState.reviewMode = true;
         quizEnd.classList.add('hidden');
         quizPlay.classList.remove('hidden');
-        
+
         // Add review class to body for special styling
         document.body.classList.add('review-mode');
-        
+
         // Display first question
         displayQuestion(0);
-        
+
         // Change next button text
         nextQuestionBtn.textContent = 'Next <i class="ri-arrow-right-line"></i> ';
         nextQuestionBtn.addEventListener('click', showNextQuestion);
-        
+
         // Add a back to results button
         if (!document.getElementById('backToResultsBtn')) {
             const backToResultsBtn = document.createElement('button');
@@ -350,24 +350,24 @@ function initQuiz() {
             backToResultsBtn.className = 'btn btn-outline';
             backToResultsBtn.innerHTML = '<i class="ri-arrow-left-line"></i> Back to Results';
             backToResultsBtn.addEventListener('click', backToResults);
-            
+
             quizControls.appendChild(backToResultsBtn);
         }
     }
-    
+
     function backToResults() {
         quizState.reviewMode = false;
         quizPlay.classList.add('hidden');
         quizEnd.classList.remove('hidden');
         document.body.classList.remove('review-mode');
-        
+
         // Remove back to results button
         const backToResultsBtn = document.getElementById('backToResultsBtn');
         if (backToResultsBtn) {
             backToResultsBtn.remove();
         }
     }
-    
+
     function retryQuiz() {
         // Reset quiz state
         quizState = {
@@ -377,22 +377,22 @@ function initQuiz() {
             quizStarted: false,
             reviewMode: false
         };
-        
+
         // Reset UI
         quizEnd.classList.add('hidden');
         quizIntro.classList.remove('hidden');
         document.body.classList.remove('review-mode');
-        
+
         // Update score display
         document.getElementById('currentScore').textContent = '0';
-        
+
         // Remove back to results button if it exists
         const backToResultsBtn = document.getElementById('backToResultsBtn');
         if (backToResultsBtn) {
             backToResultsBtn.remove();
         }
     }
-    
+
     function updateProgressBar() {
         const progress = ((quizState.currentQuestion + 1) / quizQuestions.length) * 100;
         document.getElementById('quizProgress').textContent = `${Math.round(progress)}%`;
@@ -410,7 +410,7 @@ function showToast(title, message, type = "info") {
         toastContainer.className = 'toast-container';
         document.body.appendChild(toastContainer);
     }
-    
+
     const toastId = `toast-${Date.now()}`;
     const icons = {
         success: "ri-checkbox-circle-fill",
@@ -418,7 +418,7 @@ function showToast(title, message, type = "info") {
         warning: "ri-alert-fill",
         info: "ri-information-fill"
     };
-    
+
     const toast = document.createElement('div');
     toast.id = toastId;
     toast.className = `toast ${type}`;
@@ -432,14 +432,14 @@ function showToast(title, message, type = "info") {
             <i class="ri-close-line"></i>
         </button>
     `;
-    
+
     toastContainer.appendChild(toast);
-    
+
     // Show toast
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         if (document.getElementById(toastId)) {

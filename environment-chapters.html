@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Environment Chapters – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+    <header id="site-header"></header>
+    <main class="container">
+        <section class="chapters-hero">
+            <div class="breadcrumb">
+                <a href="/environment-learning-path.html">Environment Learning Path</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Environment Chapters</span>
+            </div>
+
+            <div class="hero-content">
+                <h1 class="text-balance">
+                    <i class="ri-plant-line"></i> Environment Chapters
+                </h1>
+                <p class="lead text-pretty">
+                    Learn about our planet, ecosystems, and how to protect our environment for a better future.
+                </p>
+            </div>
+        </section>
+
+        <section class="chapters-grid" id="chaptersGrid">
+            <!-- Chapters will be dynamically loaded here -->
+        </section>
+
+        <section class="progress-overview">
+            <div class="card">
+                <h3>Overall Progress</h3>
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Chapters Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Total Chapters</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0%</span>
+                        <span class="stat-label">Overall Progress</span>
+                    </div>
+                </div>
+                <div class="overall-progress-bar">
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ENV_CHAPTERS = {
+                "6": [
+                    { number: 1, title: "Components of Environment", desc: "Understanding biotic and abiotic components", topics: ["Biotic", "Abiotic", "Interactions"], link: "/coming-soon.html" },
+                    { number: 2, title: "Natural Resources", desc: "Renewable and non-renewable resources", topics: ["Water", "Air", "Soil"], link: "/coming-soon.html" },
+                    { number: 3, title: "Waste Management", desc: "Types of waste and how to manage them", topics: ["Biodegradable", "Recycling", "Composting"], link: "/coming-soon.html" },
+                    { number: 4, title: "Pollution", desc: "Types, causes, and effects of pollution", topics: ["Air", "Water", "Noise"], link: "/coming-soon.html" },
+                    { number: 5, title: "Ecosystems", desc: "Basics of ecosystems and food chains", topics: ["Producers", "Consumers", "Decomposers"], link: "/coming-soon.html" }
+                ],
+                "7": [
+                    { number: 1, title: "Water: A Precious Resource", desc: "Importance and conservation of water", topics: ["Water Cycle", "Scarcity", "Conservation"], link: "/coming-soon.html" },
+                    { number: 2, title: "Forests: Our Lifeline", desc: "Importance of forests and wildlife", topics: ["Biodiversity", "Deforestation", "Conservation"], link: "/coming-soon.html" },
+                    { number: 3, title: "Wastewater Story", desc: "Sewage treatment and sanitation", topics: ["Sewage", "Treatment Plant", "Sanitation"], link: "/coming-soon.html" },
+                    { number: 4, title: "Climate Change", desc: "Global warming and its impact", topics: ["Greenhouse Effect", "Global Warming", "Action"], link: "/coming-soon.html" },
+                    { number: 5, title: "Disaster Management", desc: "Preparedness for natural disasters", topics: ["Earthquakes", "Floods", "Safety"], link: "/coming-soon.html" }
+                ],
+                "8": [
+                    { number: 1, title: "Conservation of Plants and Animals", desc: "Protecting biodiversity", topics: ["National Parks", "Sanctuaries", "Red Data Book"], link: "/coming-soon.html" },
+                    { number: 2, title: "Pollution of Air and Water", desc: "In-depth study of pollution", topics: ["Smog", "Acid Rain", "Purification"], link: "/coming-soon.html" },
+                    { number: 3, title: "Sustainable Development", desc: "Development without destruction", topics: ["Sustainability", "Goals", "Practices"], link: "/coming-soon.html" },
+                    { number: 4, title: "Energy Resources", desc: "Conventional and non-conventional energy", topics: ["Solar", "Wind", "Fossil Fuels"], link: "/coming-soon.html" },
+                    { number: 5, title: "Agriculture and Environment", desc: "Impact of farming on environment", topics: ["Pesticides", "Organic Farming", "Irrigation"], link: "/coming-soon.html" }
+                ],
+                "9": [
+                    { number: 1, title: "Natural Resources", desc: "Biogeochemical cycles", topics: ["Water Cycle", "Nitrogen Cycle", "Carbon Cycle"], link: "/coming-soon.html" },
+                    { number: 2, title: "Improvement in Food Resources", desc: "Sustainable agriculture", topics: ["Crop Variety", "Production", "Protection"], link: "/coming-soon.html" },
+                    { number: 3, title: "Why Do We Fall Ill?", desc: "Health and environment connection", topics: ["Diseases", "Hygiene", "Prevention"], link: "/coming-soon.html" },
+                    { number: 4, title: "Disaster Management", desc: "Man-made disasters and mitigation", topics: ["Fire", "Chemical", "First Aid"], link: "/coming-soon.html" },
+                    { number: 5, title: "Environmental Movements", desc: "Chipko, Narmada Bachao, etc.", topics: ["Movements", "Activists", "Impact"], link: "/coming-soon.html" }
+                ],
+                "10": [
+                    { number: 1, title: "Management of Natural Resources", desc: "Sustainable management", topics: ["3Rs", "Forests", "Water Harvesting"], link: "/coming-soon.html" },
+                    { number: 2, title: "Our Environment", desc: "Ecosystem and environmental problems", topics: ["Food Web", "Ozone Layer", "Garbage"], link: "/coming-soon.html" },
+                    { number: 3, title: "Sources of Energy", desc: "Renewable vs Non-renewable", topics: ["Solar", "Nuclear", "Biogas"], link: "/coming-soon.html" },
+                    { number: 4, title: "Consumer Rights", desc: "Eco-friendly consumerism", topics: ["Rights", "Responsibilities", "Eco-mark"], link: "/coming-soon.html" },
+                    { number: 5, title: "Sustainable Living", desc: "Practices for a greener life", topics: ["Carbon Footprint", "Lifestyle", "Choices"], link: "/coming-soon.html" }
+                ],
+                "11": [
+                    { number: 1, title: "Ecology", desc: "Organisms and populations", topics: ["Habitat", "Niche", "Adaptations"], link: "/coming-soon.html" },
+                    { number: 2, title: "Ecosystem", desc: "Structure and function", topics: ["Productivity", "Decomposition", "Energy Flow"], link: "/coming-soon.html" },
+                    { number: 3, title: "Biodiversity and Conservation", desc: "Levels and patterns of biodiversity", topics: ["Hotspots", "Extinction", "Conservation"], link: "/coming-soon.html" },
+                    { number: 4, title: "Environmental Issues", desc: "Global and local issues", topics: ["Pollution", "Global Warming", "Ozone Depletion"], link: "/coming-soon.html" },
+                    { number: 5, title: "Environmental Laws", desc: "Acts and policies", topics: ["Protection Act", "Policy", "Agencies"], link: "/coming-soon.html" }
+                ],
+                "12": [
+                    { number: 1, title: "Human Population and Environment", desc: "Population explosion and control", topics: ["Demography", "Health", "Rights"], link: "/coming-soon.html" },
+                    { number: 2, title: "Sustainable Development Goals", desc: "UN SDGs", topics: ["Goals", "Targets", "India's Progress"], link: "/coming-soon.html" },
+                    { number: 3, title: "Environmental Impact Assessment", desc: "Process and importance", topics: ["EIA", "Steps", "Case Studies"], link: "/coming-soon.html" },
+                    { number: 4, title: "Solid Waste Management", desc: "Urban waste issues", topics: ["Landfills", "Incineration", "Recycling"], link: "/coming-soon.html" },
+                    { number: 5, title: "Global Environmental Issues", desc: "Climate change negotiations", topics: ["Kyoto Protocol", "Paris Agreement", "COP"], link: "/coming-soon.html" }
+                ]
+            };
+
+            const user = getUser();
+            const userClass = user.class || "6";
+
+            // Update header
+            const heroTitle = document.querySelector('.hero-content h1');
+            if (heroTitle) {
+                heroTitle.innerHTML = `<i class="ri-plant-line"></i> Class ${userClass} Environment`;
+            }
+
+            const chapters = ENV_CHAPTERS[userClass] || ENV_CHAPTERS["6"];
+            const grid = document.getElementById('chaptersGrid');
+
+            if (grid) {
+                grid.innerHTML = chapters.map(ch => `
+            <div class="chapter-card">
+              <div class="chapter-number">${ch.number}</div>
+              <div class="chapter-content">
+                <h3>${ch.title}</h3>
+                <p>${ch.desc}</p>
+                <div class="chapter-topics">
+                  ${ch.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                </div>
+                <div class="chapter-progress">
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 0%"></div>
+                  </div>
+                  <span class="progress-text">0% Complete</span>
+                </div>
+              </div>
+              <a href="${ch.link}" class="chapter-btn">${ch.link.includes('coming-soon') ? 'Coming Soon' : 'Start Chapter'}</a>
+            </div>
+          `).join('');
+            }
+
+            // Update stats
+            const totalChaptersEl = document.querySelector('.stat-item:nth-child(2) .stat-number');
+            if (totalChaptersEl) totalChaptersEl.textContent = chapters.length;
+        });
+    </script>
+
+    <style>
+        .chapters-hero {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-fg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .hero-content h1 i {
+            color: var(--color-primary);
+        }
+
+        .hero-content .lead {
+            font-size: 1.125rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chapter-card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-primary);
+        }
+
+        .chapter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .chapter-card:hover::before {
+            opacity: 0.03;
+        }
+
+        .chapter-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .chapter-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .chapter-content p {
+            color: #64748b;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .chapter-topics {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .topic-tag {
+            background: var(--color-muted);
+            color: var(--color-fg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .chapter-progress {
+            margin-bottom: 1rem;
+        }
+
+        .chapter-progress .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-progress .progress {
+            height: 8px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .chapter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--color-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .chapter-btn:hover {
+            background: #128a3f;
+            transform: translateY(-2px);
+        }
+
+        .progress-overview {
+            margin-top: 2rem;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--color-muted);
+            border-radius: 0.75rem;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--color-fg);
+        }
+
+        .overall-progress-bar {
+            margin-top: 1rem;
+        }
+
+        .overall-progress-bar .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+        }
+
+        .overall-progress-bar .progress {
+            height: 12px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .progress-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .chapter-card {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chapter-topics {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .topic-tag {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</body>
+
+</html>

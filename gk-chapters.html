@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GK Chapters – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+    <header id="site-header"></header>
+    <main class="container">
+        <section class="chapters-hero">
+            <div class="breadcrumb">
+                <a href="/gk-learning-path.html">GK Learning Path</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>GK Chapters</span>
+            </div>
+
+            <div class="hero-content">
+                <h1 class="text-balance">
+                    <i class="ri-question-line"></i> GK Chapters
+                </h1>
+                <p class="lead text-pretty">
+                    Enhance your general knowledge about India, the world, science, and current affairs.
+                </p>
+            </div>
+        </section>
+
+        <section class="chapters-grid" id="chaptersGrid">
+            <!-- Chapters will be dynamically loaded here -->
+        </section>
+
+        <section class="progress-overview">
+            <div class="card">
+                <h3>Overall Progress</h3>
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Chapters Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Total Chapters</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0%</span>
+                        <span class="stat-label">Overall Progress</span>
+                    </div>
+                </div>
+                <div class="overall-progress-bar">
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const GK_CHAPTERS = {
+                "6": [
+                    { number: 1, title: "India: Our Country", desc: "States, capitals, and national symbols", topics: ["States", "Capitals", "Symbols"], link: "/coming-soon.html" },
+                    { number: 2, title: "World Geography", desc: "Continents, oceans, and major countries", topics: ["Continents", "Oceans", "Countries"], link: "/coming-soon.html" },
+                    { number: 3, title: "Science and Technology", desc: "Inventions, discoveries, and famous scientists", topics: ["Inventions", "Scientists", "Space"], link: "/coming-soon.html" },
+                    { number: 4, title: "Sports and Games", desc: "Famous sports, players, and tournaments", topics: ["Cricket", "Olympics", "Players"], link: "/coming-soon.html" },
+                    { number: 5, title: "Current Affairs", desc: "Recent events and news", topics: ["National", "International", "Awards"], link: "/coming-soon.html" }
+                ],
+                "7": [
+                    { number: 1, title: "Indian History", desc: "Famous rulers, monuments, and events", topics: ["Mughals", "Monuments", "Freedom"], link: "/coming-soon.html" },
+                    { number: 2, title: "World Wonders", desc: "Seven wonders and other landmarks", topics: ["Wonders", "Landmarks", "Heritage"], link: "/coming-soon.html" },
+                    { number: 3, title: "Human Body", desc: "Organs, diseases, and health", topics: ["Organs", "Vitamins", "Diseases"], link: "/coming-soon.html" },
+                    { number: 4, title: "Literature and Arts", desc: "Famous books, authors, and art forms", topics: ["Books", "Authors", "Dance"], link: "/coming-soon.html" },
+                    { number: 5, title: "Environment", desc: "Ecology, pollution, and conservation", topics: ["Ecology", "Pollution", "Conservation"], link: "/coming-soon.html" }
+                ],
+                "8": [
+                    { number: 1, title: "Indian Constitution", desc: "Rights, duties, and governance", topics: ["Rights", "Duties", "Parliament"], link: "/coming-soon.html" },
+                    { number: 2, title: "United Nations", desc: "Organs, agencies, and functions", topics: ["UN", "WHO", "UNESCO"], link: "/coming-soon.html" },
+                    { number: 3, title: "Space Exploration", desc: "Missions, satellites, and astronauts", topics: ["ISRO", "NASA", "Missions"], link: "/coming-soon.html" },
+                    { number: 4, title: "Economics Basics", desc: "Currency, banking, and trade", topics: ["Currency", "Banks", "Trade"], link: "/coming-soon.html" },
+                    { number: 5, title: "Famous Personalities", desc: "Leaders, scientists, and artists", topics: ["Leaders", "Scientists", "Artists"], link: "/coming-soon.html" }
+                ],
+                "9": [
+                    { number: 1, title: "Indian Geography", desc: "Rivers, mountains, and climate", topics: ["Rivers", "Mountains", "Climate"], link: "/coming-soon.html" },
+                    { number: 2, title: "World History", desc: "Wars, revolutions, and civilizations", topics: ["Wars", "Revolutions", "Civilizations"], link: "/coming-soon.html" },
+                    { number: 3, title: "Information Technology", desc: "Computers, internet, and AI", topics: ["Computer", "Internet", "AI"], link: "/coming-soon.html" },
+                    { number: 4, title: "Awards and Honours", desc: "Nobel, Bharat Ratna, and Oscars", topics: ["Nobel", "Bharat Ratna", "Oscars"], link: "/coming-soon.html" },
+                    { number: 5, title: "Sports Records", desc: "World records and achievements", topics: ["Records", "Olympics", "Cricket"], link: "/coming-soon.html" }
+                ],
+                "10": [
+                    { number: 1, title: "Indian Economy", desc: "Sectors, development, and planning", topics: ["Sectors", "GDP", "Planning"], link: "/coming-soon.html" },
+                    { number: 2, title: "International Relations", desc: "India's relations with other countries", topics: ["Neighbors", "USA", "Russia"], link: "/coming-soon.html" },
+                    { number: 3, title: "Environmental Issues", desc: "Global warming, climate change, treaties", topics: ["Warming", "Treaties", "Summits"], link: "/coming-soon.html" },
+                    { number: 4, title: "Science in Everyday Life", desc: "Physics, chemistry, and biology applications", topics: ["Physics", "Chemistry", "Biology"], link: "/coming-soon.html" },
+                    { number: 5, title: "Current Events", desc: "Major national and international events", topics: ["Politics", "Sports", "Science"], link: "/coming-soon.html" }
+                ],
+                "11": [
+                    { number: 1, title: "Indian Polity", desc: "Constitution, judiciary, and executive", topics: ["Constitution", "Courts", "President"], link: "/coming-soon.html" },
+                    { number: 2, title: "World Organizations", desc: "WTO, IMF, World Bank", topics: ["WTO", "IMF", "World Bank"], link: "/coming-soon.html" },
+                    { number: 3, title: "Scientific Discoveries", desc: "Major breakthroughs in science", topics: ["Physics", "Medicine", "Space"], link: "/coming-soon.html" },
+                    { number: 4, title: "Art and Culture", desc: "Indian heritage, music, and dance", topics: ["Heritage", "Music", "Dance"], link: "/coming-soon.html" },
+                    { number: 5, title: "General Awareness", desc: "Banking, insurance, and finance", topics: ["Banking", "Insurance", "Finance"], link: "/coming-soon.html" }
+                ],
+                "12": [
+                    { number: 1, title: "Current Affairs Yearly", desc: "Major events of the year", topics: ["Events", "People", "Places"], link: "/coming-soon.html" },
+                    { number: 2, title: "Global Issues", desc: "Terrorism, poverty, and health", topics: ["Terrorism", "Poverty", "Health"], link: "/coming-soon.html" },
+                    { number: 3, title: "Science and Tech Updates", desc: "Latest in technology and space", topics: ["Tech", "Space", "AI"], link: "/coming-soon.html" },
+                    { number: 4, title: "Economic Survey", desc: "Key highlights of Indian economy", topics: ["Survey", "Budget", "Schemes"], link: "/coming-soon.html" },
+                    { number: 5, title: "Personality Development", desc: "Soft skills and leadership", topics: ["Skills", "Leadership", "Communication"], link: "/coming-soon.html" }
+                ]
+            };
+
+            const user = getUser();
+            const userClass = user.class || "6";
+
+            // Update header
+            const heroTitle = document.querySelector('.hero-content h1');
+            if (heroTitle) {
+                heroTitle.innerHTML = `<i class="ri-question-line"></i> Class ${userClass} GK`;
+            }
+
+            const chapters = GK_CHAPTERS[userClass] || GK_CHAPTERS["6"];
+            const grid = document.getElementById('chaptersGrid');
+
+            if (grid) {
+                grid.innerHTML = chapters.map(ch => `
+            <div class="chapter-card">
+              <div class="chapter-number">${ch.number}</div>
+              <div class="chapter-content">
+                <h3>${ch.title}</h3>
+                <p>${ch.desc}</p>
+                <div class="chapter-topics">
+                  ${ch.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                </div>
+                <div class="chapter-progress">
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 0%"></div>
+                  </div>
+                  <span class="progress-text">0% Complete</span>
+                </div>
+              </div>
+              <a href="${ch.link}" class="chapter-btn">${ch.link.includes('coming-soon') ? 'Coming Soon' : 'Start Chapter'}</a>
+            </div>
+          `).join('');
+            }
+
+            // Update stats
+            const totalChaptersEl = document.querySelector('.stat-item:nth-child(2) .stat-number');
+            if (totalChaptersEl) totalChaptersEl.textContent = chapters.length;
+        });
+    </script>
+
+    <style>
+        .chapters-hero {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-fg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .hero-content h1 i {
+            color: var(--color-primary);
+        }
+
+        .hero-content .lead {
+            font-size: 1.125rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chapter-card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-primary);
+        }
+
+        .chapter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .chapter-card:hover::before {
+            opacity: 0.03;
+        }
+
+        .chapter-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .chapter-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .chapter-content p {
+            color: #64748b;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .chapter-topics {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .topic-tag {
+            background: var(--color-muted);
+            color: var(--color-fg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .chapter-progress {
+            margin-bottom: 1rem;
+        }
+
+        .chapter-progress .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-progress .progress {
+            height: 8px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .chapter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--color-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .chapter-btn:hover {
+            background: #128a3f;
+            transform: translateY(-2px);
+        }
+
+        .progress-overview {
+            margin-top: 2rem;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--color-muted);
+            border-radius: 0.75rem;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--color-fg);
+        }
+
+        .overall-progress-bar {
+            margin-top: 1rem;
+        }
+
+        .overall-progress-bar .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+        }
+
+        .overall-progress-bar .progress {
+            height: 12px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .progress-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .chapter-card {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chapter-topics {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .topic-tag {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</body>
+
+</html>

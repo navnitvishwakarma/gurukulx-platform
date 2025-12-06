@@ -1,48 +1,61 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Register • GuruKulX</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <script defer src="/js/main.js"></script>
-  </head>
-  <body>
-    <header id="site-header"></header>
-    <main class="container narrow">
-      <section class="auth card hover-raise">
-        <h1>Create Account</h1>
-        <form id="registerForm" class="form">
-          <div class="form-row">
-            <label for="reg-username">Username</label>
-            <input id="reg-username" name="reg-username" required />
-          </div>
-          <div class="form-row">
-            <label for="reg-password">Password</label>
-            <input id="reg-password" name="reg-password" type="password" required />
-          </div>
-          <div class="form-row">
-            <label for="reg-name">Full Name</label>
-            <input id="reg-name" name="reg-name" />
-          </div>
-          <div class="form-row">
-            <label for="reg-class">Class</label>
-            <input id="reg-class" name="reg-class" placeholder="e.g., 6" />
-          </div>
-          <div class="form-row">
-            <label for="reg-role">Role</label>
-            <select id="reg-role" name="reg-role">
-              <option value="student" selected>Student</option>
-              <option value="teacher">Teacher</option>
-            </select>
-          </div>
-          <button class="btn btn-primary" type="submit">Register</button>
-        </form>
-      </section>
-    </main>
-    <footer id="site-footer"></footer>
-  </body>
-  </html>
 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register • GuruKulX</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script defer src="/js/main.js"></script>
+</head>
 
+<body>
+  <header id="site-header"></header>
+  <main class="container narrow">
+    <section class="auth card hover-raise">
+      <h1>Create Account</h1>
+      <form id="registerForm" class="form">
+        <div class="form-row">
+          <label for="reg-username">Username</label>
+          <input id="reg-username" name="reg-username" required />
+        </div>
+        <div class="form-row">
+          <label for="reg-password">Password</label>
+          <input id="reg-password" name="reg-password" type="password" required />
+        </div>
+        <div class="form-row">
+          <label for="reg-name">Full Name</label>
+          <input id="reg-name" name="reg-name" />
+        </div>
+        <div class="form-row" id="class-row">
+          <label for="reg-class">Class</label>
+          <input id="reg-class" name="reg-class" placeholder="e.g., 6" />
+        </div>
+        <div class="form-row">
+          <label for="reg-role">Role</label>
+          <select id="reg-role" name="reg-role">
+            <option value="student" selected>Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+        </div>
+        <div class="form-row" id="subject-row" style="display: none;">
+          <label for="reg-subject">Subject</label>
+          <select id="reg-subject" name="reg-subject">
+            <option value="" disabled selected>Select a Subject</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science</option>
+            <option value="English">English</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Social Science">Social Science</option>
+            <option value="Hindi">Hindi</option>
+            <option value="General Knowledge">General Knowledge</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+      </form>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+</body>
 
+</html>

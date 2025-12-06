@@ -1,112 +1,156 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Schedule Class • GuruKulX</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
-    <script defer src="/js/main.js"></script>
-    <style>
-      .schedule-form { max-width: 720px; margin: 1rem auto; }
-      .schedule-list .item { display:flex; justify-content:space-between; align-items:center; padding:.6rem .8rem; border-top:1px solid var(--color-muted); }
-      .schedule-list .item:first-child { border-top:none; }
-    </style>
-  </head>
-  <body data-page="teacher-schedule">
-    <header id="site-header"></header>
-    <main class="container">
-      <section class="card schedule-form">
-        <h1>Schedule Class</h1>
-        <form id="scheduleForm" class="form">
-          <div class="form-row">
-            <label for="sched-class">Class</label>
-            <select id="sched-class" required></select>
-          </div>
-          <div class="form-row">
-            <label for="sched-subject">Subject</label>
-            <select id="sched-subject" required>
-              <option>Mathematics</option>
-              <option>Science</option>
-              <option>English</option>
-              <option>Social Studies</option>
-              <option>Computer Science</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label for="sched-date">Date</label>
-            <input type="date" id="sched-date" required/>
-          </div>
-          <div class="form-row">
-            <label for="sched-time">Time</label>
-            <input type="time" id="sched-time" required/>
-          </div>
-          <div class="form-row">
-            <label for="sched-notes">Notes</label>
-            <textarea id="sched-notes" placeholder="Optional details"></textarea>
-          </div>
-          <div class="form-row">
-            <button class="btn btn-primary" type="submit">Add to Schedule</button>
-          </div>
-        </form>
-      </section>
-      <section class="card schedule-form">
-        <h2>Upcoming Classes</h2>
-        <div id="scheduleList" class="schedule-list"></div>
-      </section>
-    </main>
-    <footer id="site-footer"></footer>
-    <script>
-      const SCHED_LS = 'gx_schedule';
-      document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => initSchedule(), 100);
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule Class • GuruKulX</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+  <script defer src="/js/main.js"></script>
+  <style>
+    .schedule-form {
+      max-width: 720px;
+      margin: 1rem auto;
+    }
+
+    .schedule-list .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .6rem .8rem;
+      border-top: 1px solid var(--color-muted);
+    }
+
+    .schedule-list .item:first-child {
+      border-top: none;
+    }
+  </style>
+</head>
+
+<body data-page="teacher-schedule">
+  <header id="site-header"></header>
+  <main class="container">
+    <section class="card schedule-form">
+      <h1>Schedule Class</h1>
+      <form id="scheduleForm" class="form">
+        <div class="form-row">
+          <label for="sched-class">Class</label>
+          <select id="sched-class" required></select>
+        </div>
+        <div class="form-row">
+          <label for="sched-subject">Subject</label>
+          <select id="sched-subject" required>
+            <option>Mathematics</option>
+            <option>Science</option>
+            <option>English</option>
+            <option>Social Studies</option>
+            <option>Computer Science</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="sched-date">Date</label>
+          <input type="date" id="sched-date" required />
+        </div>
+        <div class="form-row">
+          <label for="sched-time">Time</label>
+          <input type="time" id="sched-time" required />
+        </div>
+        <div class="form-row">
+          <label for="sched-notes">Notes</label>
+          <textarea id="sched-notes" placeholder="Optional details"></textarea>
+        </div>
+        <div class="form-row">
+          <button class="btn btn-primary" type="submit">Add to Schedule</button>
+        </div>
+      </form>
+    </section>
+    <section class="card schedule-form">
+      <h2>Upcoming Classes</h2>
+      <div id="scheduleList" class="schedule-list"></div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+  <script>
+    const SCHED_LS = 'gx_schedule';
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => initSchedule(), 100);
+    });
+    function initSchedule() {
+      // classes
+      const classes = JSON.parse(localStorage.getItem('gx_classes') || '[]');
+      const sel = document.getElementById('sched-class');
+      sel.innerHTML = classes.map(c => `<option value="${c.name}">${c.fullName || ('Grade ' + c.name)}</option>`).join('');
+
+      // form
+      document.getElementById('scheduleForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const class_name = document.getElementById('sched-class').value;
+        const subject = document.getElementById('sched-subject').value;
+        const date = document.getElementById('sched-date').value;
+        const time = document.getElementById('sched-time').value;
+        const notes = document.getElementById('sched-notes').value.trim();
+
+        try {
+          const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
+          const token = localStorage.getItem('GX_TOKEN');
+
+          const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/schedule`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ class_name, subject, date, time, notes })
+          });
+
+          if (res.ok) {
+            const item = {
+              id: Date.now(),
+              class: class_name,
+              subject,
+              date,
+              time,
+              notes
+            };
+            const list = JSON.parse(localStorage.getItem(SCHED_LS) || '[]');
+            list.push(item);
+            localStorage.setItem(SCHED_LS, JSON.stringify(list));
+            renderSchedule();
+            alert('Class scheduled and students notified.');
+            e.target.reset();
+          } else {
+            const err = await res.json();
+            alert('Failed to schedule class: ' + (err.error || 'Unknown error'));
+          }
+        } catch (error) {
+          console.error(error);
+          alert('Error scheduling class');
+        }
       });
-      function initSchedule(){
-        // classes
-        const classes = JSON.parse(localStorage.getItem('gx_classes')||'[]');
-        const sel = document.getElementById('sched-class');
-        sel.innerHTML = classes.map(c=>`<option value="${c.name}">${c.fullName||('Grade '+c.name)}</option>`).join('');
-        // form
-        document.getElementById('scheduleForm').addEventListener('submit', (e)=>{
-          e.preventDefault();
-          const item = {
-            id: Date.now(),
-            class: document.getElementById('sched-class').value,
-            subject: document.getElementById('sched-subject').value,
-            date: document.getElementById('sched-date').value,
-            time: document.getElementById('sched-time').value,
-            notes: document.getElementById('sched-notes').value.trim()
-          };
-          const list = JSON.parse(localStorage.getItem(SCHED_LS)||'[]');
-          list.push(item);
-          localStorage.setItem(SCHED_LS, JSON.stringify(list));
-          renderSchedule();
-          alert('Class scheduled.');
-          e.target.reset();
-        });
-        renderSchedule();
-      }
-      function renderSchedule(){
-        const root = document.getElementById('scheduleList');
-        const list = JSON.parse(localStorage.getItem(SCHED_LS)||'[]').sort((a,b)=> new Date(a.date+' '+a.time)-new Date(b.date+' '+b.time));
-        if(!list.length){ root.innerHTML = '<div class="empty-state"><i class="ri-calendar-check-line"></i><p>No upcoming classes</p></div>'; return; }
-        root.innerHTML = list.map(it=>`
+      renderSchedule();
+    }
+    function renderSchedule() {
+      const root = document.getElementById('scheduleList');
+      const list = JSON.parse(localStorage.getItem(SCHED_LS) || '[]').sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+      if (!list.length) { root.innerHTML = '<div class="empty-state"><i class="ri-calendar-check-line"></i><p>No upcoming classes</p></div>'; return; }
+      root.innerHTML = list.map(it => `
           <div class="item">
             <div>
               <strong>${it.subject}</strong> • Grade ${it.class}
-              <div class="muted">${it.date} at ${it.time}${it.notes? ' • '+it.notes:''}</div>
+              <div class="muted">${it.date} at ${it.time}${it.notes ? ' • ' + it.notes : ''}</div>
             </div>
             <button class="btn btn-small" onclick="deleteSchedule(${it.id})">Delete</button>
           </div>
         `).join('');
-      }
-      function deleteSchedule(id){
-        const list = JSON.parse(localStorage.getItem(SCHED_LS)||'[]').filter(i=>i.id!==id);
-        localStorage.setItem(SCHED_LS, JSON.stringify(list));
-        renderSchedule();
-      }
-    </script>
-  </body>
+    }
+    function deleteSchedule(id) {
+      const list = JSON.parse(localStorage.getItem(SCHED_LS) || '[]').filter(i => i.id !== id);
+      localStorage.setItem(SCHED_LS, JSON.stringify(list));
+      renderSchedule();
+    }
+  </script>
+</body>
+
 </html>
-
-

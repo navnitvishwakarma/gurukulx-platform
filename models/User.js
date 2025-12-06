@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema({
     trim: true,
     maxlength: 20
   },
+  subject: {
+    type: String,
+    trim: true,
+    maxlength: 50
+  },
   email: {
     type: String,
     trim: true,
@@ -67,7 +72,11 @@ const userSchema = new mongoose.Schema({
     badges: [{
       type: String,
       trim: true
-    }]
+    }],
+    lastVisit: {
+      type: String,
+      default: null
+    }
   },
   isActive: {
     type: Boolean,
@@ -78,9 +87,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  
+
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -91,12 +100,12 @@ userSchema.pre('save', async function(next) {
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Get public profile (without password)
-userSchema.methods.getPublicProfile = function() {
+userSchema.methods.getPublicProfile = function () {
   const userObject = this.toObject();
   delete userObject.password;
   return userObject;

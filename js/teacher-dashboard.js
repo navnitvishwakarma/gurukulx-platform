@@ -15,6 +15,12 @@ const TEACHER_LS = {
 document.addEventListener("DOMContentLoaded", () => {
   // Wait for main.js to initialize
   setTimeout(() => {
+    // Security check
+    const user = getUser();
+    if (!user || user.role !== 'teacher') {
+      window.location.href = '/index.html';
+      return;
+    }
     initTeacherDashboard();
   }, 100);
 });
@@ -25,202 +31,218 @@ function initTeacherDashboard() {
   initEventListeners();
   renderTeacherDashboard();
   initCharts();
-  
+
   // Set current date
   setDashboardDate();
 }
 
-function initTeacherData() {
-  // Initialize teacher-specific data if not exists
-  if (!localStorage.getItem(TEACHER_LS.announcements)) {
-    localStorage.setItem(TEACHER_LS.announcements, JSON.stringify([]));
-  }
-  
-  if (!localStorage.getItem(TEACHER_LS.notifications)) {
-    // Sample notifications
-    const notifications = [
-      {
-        id: 1,
-        title: "New Assignment Submitted",
-        message: "Aditi submitted the Science homework",
-        time: new Date().toISOString(),
-        type: "submission",
-        read: false
-      },
-      {
-        id: 2,
-        title: "Class Performance Update",
-        message: "Grade 10 average score improved by 12%",
-        time: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        type: "performance",
-        read: true
-      }
-    ];
-    localStorage.setItem(TEACHER_LS.notifications, JSON.stringify(notifications));
-  }
-  
-  if (!localStorage.getItem(TEACHER_LS.activities)) {
-    // Sample activities
-    const activities = [
-      {
-        id: 1,
-        title: "Assignment Created",
-        details: "Math Quiz for Grade 8",
-        time: new Date().toISOString(),
-        type: "assignment"
-      },
-      {
-        id: 2,
-        title: "Announcement Sent",
-        details: "Parent-Teacher meeting notice",
-        time: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-        type: "announcement"
-      }
-    ];
-    localStorage.setItem(TEACHER_LS.activities, JSON.stringify(activities));
-  }
-  
-  if (!localStorage.getItem(TEACHER_LS.deadlines)) {
-    localStorage.setItem(TEACHER_LS.deadlines, JSON.stringify([]));
-  }
-  
-  // Set default view preferences if not set
-  if (!localStorage.getItem(TEACHER_LS.analyticsView)) {
-    localStorage.setItem(TEACHER_LS.analyticsView, "weekly");
-  }
-  
-  if (!localStorage.getItem(TEACHER_LS.classFilter)) {
-    localStorage.setItem(TEACHER_LS.classFilter, "all");
-  }
-  
-  if (!localStorage.getItem(TEACHER_LS.performanceFilter)) {
-    localStorage.setItem(TEACHER_LS.performanceFilter, "score");
+async function initTeacherData() {
+  try {
+    const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
+    const token = localStorage.getItem('GX_TOKEN');
+
+    if (!token) return;
+
+    // Fetch students (from leaderboard/users endpoint)
+    const usersRes = await fetch(`${apiBase.replace(/\/$/, '')}/api/leaderboard`);
+    if (usersRes.ok) {
+      const users = await usersRes.json();
+      // Filter for students only and map to expected format
+      const students = users.map(u => ({
+        name: u.name,
+        class: u.profile?.class || u.class || "N/A",
+        score: u.profile?.score || 0,
+        progress: u.profile?.progress || 0,
+        badges: u.profile?.badges || []
+      }));
+      localStorage.setItem(LS.students, JSON.stringify(students));
+    }
+
+    // Fetch assignments
+    const assignRes = await fetch(`${apiBase.replace(/\/$/, '')}/api/assignments`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (assignRes.ok) {
+      const assignments = await assignRes.json();
+      // Map to local format if needed, or store directly
+      const mappedAssignments = assignments.map(a => ({
+        id: a._id,
+        class: a.class_name,
+        subject: a.subject,
+        game: a.game,
+        due: a.due_date,
+        notes: a.notes
+      }));
+      localStorage.setItem(LS.assignments, JSON.stringify(mappedAssignments));
+    }
+
+    // Fetch notifications
+    const notifRes = await fetch(`${apiBase.replace(/\/$/, '')}/api/notifications`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (notifRes.ok) {
+      const notifications = await notifRes.json();
+      localStorage.setItem(TEACHER_LS.notifications, JSON.stringify(notifications));
+    }
+
+    // Initialize other defaults
+    if (!localStorage.getItem(TEACHER_LS.announcements)) {
+      localStorage.setItem(TEACHER_LS.announcements, JSON.stringify([]));
+    }
+    if (!localStorage.getItem(TEACHER_LS.activities)) {
+      localStorage.setItem(TEACHER_LS.activities, JSON.stringify([]));
+    }
+    if (!localStorage.getItem(TEACHER_LS.analyticsView)) {
+      localStorage.setItem(TEACHER_LS.analyticsView, "weekly");
+    }
+    if (!localStorage.getItem(TEACHER_LS.classFilter)) {
+      localStorage.setItem(TEACHER_LS.classFilter, "all");
+    }
+    if (!localStorage.getItem(TEACHER_LS.performanceFilter)) {
+      localStorage.setItem(TEACHER_LS.performanceFilter, "score");
+    }
+
+    // Refresh UI
+    renderTeacherDashboard();
+
+  } catch (error) {
+    console.error("Failed to init teacher data:", error);
   }
 }
 
 function initEventListeners() {
   // Refresh dashboard
-  document.getElementById("refreshDashboard").addEventListener("click", refreshDashboard);
-  
+  const refreshBtn = document.getElementById("refreshDashboard");
+  if (refreshBtn) refreshBtn.addEventListener("click", refreshDashboard);
+
   // Class filter
-  document.getElementById("classFilter").addEventListener("change", (e) => {
-    localStorage.setItem(TEACHER_LS.classFilter, e.target.value);
-    renderClassList();
-    renderStudentList();
-    updateCharts();
-  });
-  
+  const classFilter = document.getElementById("classFilter");
+  if (classFilter) {
+    classFilter.addEventListener("change", (e) => {
+      localStorage.setItem(TEACHER_LS.classFilter, e.target.value);
+      renderClassList();
+      renderStudentList();
+      updateCharts();
+    });
+  }
+
   // Performance filter
-  document.getElementById("performanceFilter").addEventListener("change", (e) => {
-    localStorage.setItem(TEACHER_LS.performanceFilter, e.target.value);
-    renderStudentList();
-  });
-  
-  // Rows filter
-  document.getElementById("rowsFilter").addEventListener("change", renderStudentList);
-  
+  // Performance filter & Rows filter - Removed in UI update
+
   // Student search
   document.getElementById("studentSearch").addEventListener("input", debounce(renderStudentList, 300));
-  
+
   // Refresh students
-  document.getElementById("refreshStudents").addEventListener("click", renderStudentList);
-  
+  document.getElementById("refreshStudents").addEventListener("click", () => {
+    renderStudentList();
+    renderUnderPerformingStudentList();
+  });
+
   // View all students
   document.getElementById("viewAllStudents").addEventListener("click", () => {
     // In a real app, this would navigate to a student management page
     showToast("Info", "Student management page would open here", "info");
   });
-  
+
+  // View all under performing students
+  const viewAllUnderPerformingBtn = document.getElementById("viewAllUnderPerforming");
+  if (viewAllUnderPerformingBtn) {
+    viewAllUnderPerformingBtn.addEventListener("click", () => {
+      showToast("Info", "Under performing students list would open here", "info");
+    });
+  }
+
   // Expand leaderboard
-  document.getElementById("expandLeaderboard").addEventListener("click", () => {
-    // In a real app, this would expand the leaderboard or open a modal
-    showToast("Info", "Expanded leaderboard view would open here", "info");
-  });
-  
+  const expandLeaderboardBtn = document.getElementById("expandLeaderboard");
+  if (expandLeaderboardBtn) {
+    expandLeaderboardBtn.addEventListener("click", () => {
+      // In a real app, this would expand the leaderboard or open a modal
+      showToast("Info", "Expanded leaderboard view would open here", "info");
+    });
+  }
+
   // Customize actions
-  document.getElementById("customizeActions").addEventListener("click", () => {
-    showToast("Info", "Quick actions customization would open here", "info");
-  });
-  
+  const customizeActionsBtn = document.getElementById("customizeActions");
+  if (customizeActionsBtn) {
+    customizeActionsBtn.addEventListener("click", () => {
+      showToast("Info", "Quick actions customization would open here", "info");
+    });
+  }
+
   // View all deadlines
   document.getElementById("viewAllDeadlines").addEventListener("click", () => {
     // In a real app, this would navigate to a deadlines page
     showToast("Info", "All deadlines page would open here", "info");
   });
-  
+
+  // Clear all notifications
+  const clearAllNotifsBtn = document.getElementById("clearAllNotifications");
+  if (clearAllNotifsBtn) {
+    clearAllNotifsBtn.addEventListener("click", clearAllNotifications);
+  }
+
   // View options for analytics
   document.querySelectorAll(".view-option").forEach(option => {
     option.addEventListener("click", (e) => {
       const view = e.target.dataset.view;
       localStorage.setItem(TEACHER_LS.analyticsView, view);
-      
+
       // Update active state
       document.querySelectorAll(".view-option").forEach(opt => {
         opt.classList.remove("active");
       });
       e.target.classList.add("active");
-      
+
       updateCharts();
     });
   });
-  
+
   // Chart type buttons
   document.querySelectorAll(".chart-action-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const chartId = e.target.dataset.chart;
       const chartType = e.target.dataset.type;
-      
+
       // Update active state
       document.querySelectorAll(`[data-chart="${chartId}"]`).forEach(b => {
         b.classList.remove("active");
       });
       e.target.classList.add("active");
-      
+
       // Change chart type
       changeChartType(chartId, chartType);
     });
   });
-  
+
   // Export analytics
   document.getElementById("exportAnalytics").addEventListener("click", exportAnalytics);
-  
+
   // Export class data
-  document.getElementById("exportClassData").addEventListener("click", exportClassData);
-  
+  const exportClassDataBtn = document.getElementById("exportClassData");
+  if (exportClassDataBtn) {
+    exportClassDataBtn.addEventListener("click", exportClassData);
+  }
+
   // Activity filter
-  document.getElementById("activityFilter").addEventListener("change", renderRecentActivity);
-  
-  // View all activity
-  document.getElementById("viewAllActivity").addEventListener("click", () => {
-    // In a real app, this would navigate to an activity log page
-    showToast("Info", "Activity log page would open here", "info");
-  });
-  
-  // Mark all notifications as read
-  document.getElementById("markAllRead").addEventListener("click", markAllNotificationsAsRead);
-  
-  // Notification settings
-  document.getElementById("notificationSettings").addEventListener("click", () => {
-    showToast("Info", "Notification settings would open here", "info");
-  });
-  
+  // Activity filter & Notification controls - Removed in UI update
+
   // Announcement modal
   document.getElementById("sendAnnouncement").addEventListener("click", openAnnouncementModal);
   document.getElementById("cancelAnnouncement").addEventListener("click", closeAnnouncementModal);
   document.querySelector(".modal-close").addEventListener("click", closeAnnouncementModal);
   document.getElementById("announcementForm").addEventListener("submit", handleAnnouncementSubmit);
-  
+
   // Tab buttons
   document.querySelectorAll(".tab-btn").forEach(tab => {
     tab.addEventListener("click", (e) => {
       const tabName = e.target.dataset.tab;
-      
+
       // Update active tab
       document.querySelectorAll(".tab-btn").forEach(t => {
         t.classList.remove("active");
       });
       e.target.classList.add("active");
-      
+
       // Show corresponding content
       document.querySelectorAll(".tab-content").forEach(content => {
         content.classList.remove("active");
@@ -228,7 +250,7 @@ function initEventListeners() {
       document.getElementById(`${tabName}Tab`).classList.add("active");
     });
   });
-  
+
   // Close modal when clicking outside
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("modal")) {
@@ -241,19 +263,21 @@ function renderTeacherDashboard() {
   // Update teacher name
   const user = getUser();
   document.getElementById("teacherName").textContent = user.name || "Teacher";
-  
+
   // Update stats
   updateDashboardStats();
-  
+
   // Render lists
-  renderClassList();
+  // Render lists
+  // renderClassList(); // Removed
   renderStudentList();
-  renderSubjectList();
-  renderTeacherScoreboard();
+  renderUnderPerformingStudentList();
+  // renderSubjectList(); // Removed
+  // renderTeacherScoreboard(); // Removed in UI update
   renderRecentActivity();
   renderNotifications();
   renderUpcomingDeadlines();
-  
+
   // Update class average progress
   updateClassAverageProgress();
 }
@@ -262,114 +286,71 @@ function updateDashboardStats() {
   const students = getJSON(LS.students, []);
   const assignments = getJSON(LS.assignments, []);
   const classes = getJSON(LS.classes, []);
-  
+
   // Update counts
   document.getElementById("studentCount").textContent = students.length;
   document.getElementById("classCount").textContent = classes.length;
   document.getElementById("assignmentCount").textContent = assignments.length;
-  
+
   // Calculate active sessions (simulated)
-  const activeSessions = Math.min(students.length, Math.floor(Math.random() * 10) + 5);
-  document.getElementById("activeSessions").textContent = activeSessions;
-  
+  // Calculate active sessions (simulated)
+  // const activeSessions = Math.min(students.length, Math.floor(Math.random() * 10) + 5);
+  // const activeSessionsEl = document.getElementById("activeSessions");
+  // if (activeSessionsEl) activeSessionsEl.textContent = activeSessions;
+
   // Calculate top student score
   const topStudent = [...students].sort((a, b) => b.score - a.score)[0];
   const topScore = topStudent ? topStudent.score : 0;
   document.getElementById("topStudentScore").textContent = topScore;
-  
+
   // Calculate average score
   const avgScore = students.length ? Math.round(students.reduce((sum, student) => sum + student.score, 0) / students.length) : 0;
   document.getElementById("avgScore").textContent = avgScore;
-  
+
   // Calculate total badges (simulated)
   const totalBadges = students.length * 2; // Simulated
   document.getElementById("totalBadges").textContent = totalBadges;
-  
+
   // Calculate completion rate (simulated)
   const completionRate = Math.min(100, Math.round(avgScore / 10)); // Simulated
   document.getElementById("completionRate").textContent = `${completionRate}%`;
-  
+
   // Update changes (simulated)
-  document.getElementById("topScoreChange").querySelector("span").textContent = "5%";
-  document.getElementById("avgScoreChange").querySelector("span").textContent = "2%";
-  document.getElementById("badgesChange").querySelector("span").textContent = "3";
-  document.getElementById("completionChange").querySelector("span").textContent = "3%";
+  // Removed in UI update
+  // document.getElementById("topScoreChange").querySelector("span").textContent = "5%";
+  // document.getElementById("avgScoreChange").querySelector("span").textContent = "2%";
+  // document.getElementById("badgesChange").querySelector("span").textContent = "3";
+  // document.getElementById("completionChange").querySelector("span").textContent = "3%";
 }
 
 function renderClassList() {
-  const classes = getJSON(LS.classes, []);
-  const students = getJSON(LS.students, []);
-  const classFilter = localStorage.getItem(TEACHER_LS.classFilter) || "all";
-  
-  // Filter classes if needed
-  let filteredClasses = classes;
-  if (classFilter !== "all") {
-    filteredClasses = classes.filter(c => c.name === classFilter);
-  }
-  
-  // Count students per class
-  const classCounts = {};
-  students.forEach(student => {
-    if (student.class) {
-      classCounts[student.class] = (classCounts[student.class] || 0) + 1;
-    }
-  });
-  
-  // Calculate average score per class
-  const classScores = {};
-  const classScoreCounts = {};
-  students.forEach(student => {
-    if (student.class && student.score) {
-      classScores[student.class] = (classScores[student.class] || 0) + student.score;
-      classScoreCounts[student.class] = (classScoreCounts[student.class] || 0) + 1;
-    }
-  });
-  
-  const classList = document.getElementById("classList");
-  classList.innerHTML = filteredClasses.map(cls => {
-    const studentCount = classCounts[cls.name] || 0;
-    const avgScore = classScoreCounts[cls.name] 
-      ? Math.round(classScores[cls.name] / classScoreCounts[cls.name]) 
-      : 0;
-    
-    return `
-      <li>
-        <div>
-          <strong>${cls.fullName || `Grade ${cls.name}`}</strong>
-          <span class="muted">${studentCount} students</span>
-        </div>
-        <div>
-          <span class="badge">Avg: ${avgScore}</span>
-        </div>
-      </li>
-    `;
-  }).join("") || `<li class="empty-state">No classes found</li>`;
+  // Removed in UI update
 }
 
 function renderStudentList() {
   const students = getJSON(LS.students, []);
   const currentName = (getUser()?.name) || "You";
-  const classFilter = localStorage.getItem(TEACHER_LS.classFilter) || "all";
-  const performanceFilter = localStorage.getItem(TEACHER_LS.performanceFilter) || "score";
-  const rowsFilter = parseInt(document.getElementById("rowsFilter").value) || 10;
+  const classFilter = "all"; // Default to all since filter UI is removed
+  const performanceFilter = "score"; // Default to score since filter UI is removed
+  const rowsFilter = 10;
   const searchTerm = document.getElementById("studentSearch").value.toLowerCase();
-  
+
   // Filter students
   // Exclude the currently logged-in user and placeholder 'You'
   let filteredStudents = students.filter(s => s.name !== currentName && s.name !== 'You');
-  
+
   // Filter by class
   if (classFilter !== "all") {
     filteredStudents = filteredStudents.filter(student => student.class === classFilter);
   }
-  
+
   // Filter by search term
   if (searchTerm) {
-    filteredStudents = filteredStudents.filter(student => 
+    filteredStudents = filteredStudents.filter(student =>
       student.name.toLowerCase().includes(searchTerm)
     );
   }
-  
+
   // Sort students
   switch (performanceFilter) {
     case "score":
@@ -386,14 +367,14 @@ function renderStudentList() {
       filteredStudents.sort((a, b) => a.class - b.class);
       break;
   }
-  
+
   // Limit rows
   filteredStudents = filteredStudents.slice(0, rowsFilter);
-  
+
   const studentList = document.getElementById("studentList");
   studentList.innerHTML = filteredStudents.map(student => {
     const progress = student.progress || Math.min(100, Math.round(student.score / 10)); // Simulated progress
-    
+
     return `
       <li>
         <div>
@@ -409,79 +390,62 @@ function renderStudentList() {
   }).join("") || `<li class="empty-state">No students found</li>`;
 }
 
-function renderSubjectList() {
-  // Sample subjects data - in a real app, this would come from your data
-  const subjects = [
-    { name: "Mathematics", completion: 75, avgScore: 82 },
-    { name: "Science", completion: 68, avgScore: 78 },
-    { name: "English", completion: 85, avgScore: 88 },
-    { name: "Social Studies", completion: 62, avgScore: 72 },
-    { name: "Computer Science", completion: 90, avgScore: 92 }
-  ];
-  
-  const subjectList = document.getElementById("subjectList");
-  subjectList.innerHTML = subjects.map(subject => `
-    <li>
-      <div>
-        <strong>${subject.name}</strong>
-        <div class="progress-wrap">
-          <div class="progress-label">
-            <span>Completion</span>
-            <span>${subject.completion}%</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress" style="width: ${subject.completion}%"></div>
-          </div>
+function renderUnderPerformingStudentList() {
+  const students = getJSON(LS.students, []);
+  const currentName = (getUser()?.name) || "You";
+
+  // Filter students
+  // Exclude the currently logged-in user and placeholder 'You'
+  let filteredStudents = students.filter(s => s.name !== currentName && s.name !== 'You');
+
+  // Sort by score ascending (lowest first)
+  filteredStudents.sort((a, b) => a.score - b.score);
+
+  // Limit to 10
+  filteredStudents = filteredStudents.slice(0, 10);
+
+  const listContainer = document.getElementById("underPerformingStudentList");
+  if (!listContainer) return;
+
+  listContainer.innerHTML = filteredStudents.map(student => {
+    const progress = student.progress || Math.min(100, Math.round(student.score / 10)); // Simulated progress
+
+    return `
+      <li>
+        <div>
+          <strong>${escapeHTML(student.name)}</strong>
+          <span class="muted">Grade ${student.class || "N/A"}</span>
         </div>
-      </div>
-      <div>
-        <span class="badge">Avg: ${subject.avgScore}</span>
-      </div>
-    </li>
-  `).join("");
+        <div>
+          <span class="badge warning">Score: ${student.score}</span>
+          <span class="badge">Progress: ${progress}%</span>
+        </div>
+      </li>
+    `;
+  }).join("") || `<li class="empty-state">No students found</li>`;
+}
+
+function renderSubjectList() {
+  // Removed in UI update
 }
 
 function renderTeacherScoreboard() {
-  const students = getJSON(LS.students, []);
-  const currentName = (getUser()?.name) || "You";
-  const filtered = students.filter(s => s.name !== currentName && s.name !== 'You');
-  const topStudents = [...filtered].sort((a, b) => b.score - a.score).slice(0, 5);
-  
-  const scoreboard = document.getElementById("teacherScoreboard");
-  scoreboard.innerHTML = `
-    <div class="row header">
-      <div class="rank">#</div>
-      <div>Student</div>
-      <div>Score</div>
-    </div>
-    ${topStudents.map((student, index) => `
-      <div class="row">
-        <div class="rank">${index + 1}</div>
-        <div>${escapeHTML(student.name)}</div>
-        <div>${student.score}</div>
-      </div>
-    `).join("")}
-  `;
-  
-  // Update top count badge
-  document.getElementById("topCount").textContent = topStudents.length;
+  // Removed in UI update
 }
 
 function renderRecentActivity() {
   const activities = getJSON(TEACHER_LS.activities, []);
-  const activityFilter = document.getElementById("activityFilter").value;
-  
   // Filter activities
   let filteredActivities = activities;
-  if (activityFilter !== "all") {
-    filteredActivities = activities.filter(activity => activity.type === activityFilter);
-  }
-  
+  // if (activityFilter !== "all") {
+  //   filteredActivities = activities.filter(activity => activity.type === activityFilter);
+  // }
+
   // Sort by time (newest first)
   filteredActivities.sort((a, b) => new Date(b.time) - new Date(a.time));
-  
+
   const activityFeed = document.getElementById("recentActivity");
-  
+
   if (filteredActivities.length === 0) {
     activityFeed.innerHTML = `
       <div class="empty-activity">
@@ -491,11 +455,11 @@ function renderRecentActivity() {
     `;
     return;
   }
-  
+
   activityFeed.innerHTML = filteredActivities.map(activity => {
     const timeAgo = getTimeAgo(new Date(activity.time));
     const icon = getActivityIcon(activity.type);
-    
+
     return `
       <div class="activity-item">
         <div class="activity-icon">
@@ -514,9 +478,9 @@ function renderRecentActivity() {
 function renderNotifications() {
   const notifications = getJSON(TEACHER_LS.notifications, []);
   const unreadCount = notifications.filter(n => !n.read).length;
-  
+
   const notificationsList = document.getElementById("notificationsList");
-  
+
   if (notifications.length === 0) {
     notificationsList.innerHTML = `
       <div class="empty-state">
@@ -526,12 +490,12 @@ function renderNotifications() {
     `;
     return;
   }
-  
+
   notificationsList.innerHTML = notifications.map(notification => {
     const timeAgo = getTimeAgo(new Date(notification.time));
     const icon = getNotificationIcon(notification.type);
     const unreadClass = notification.read ? "" : "unread";
-    
+
     return `
       <div class="notification-item ${unreadClass}">
         <div class="notification-icon">
@@ -559,9 +523,9 @@ function renderUpcomingDeadlines() {
     })
     .sort((a, b) => new Date(a.due) - new Date(b.due))
     .slice(0, 5);
-  
+
   const deadlinesList = document.getElementById("upcomingDeadlines");
-  
+
   if (upcomingDeadlines.length === 0) {
     deadlinesList.innerHTML = `
       <div class="empty-state">
@@ -571,11 +535,11 @@ function renderUpcomingDeadlines() {
     `;
     return;
   }
-  
+
   deadlinesList.innerHTML = upcomingDeadlines.map(assignment => {
     const dueDate = new Date(assignment.due);
     const timeLeft = getTimeUntil(dueDate);
-    
+
     return `
       <div class="deadline-item">
         <div class="deadline-info">
@@ -595,43 +559,44 @@ function renderUpcomingDeadlines() {
 function updateClassAverageProgress() {
   const students = getJSON(LS.students, []);
   const classFilter = localStorage.getItem(TEACHER_LS.classFilter) || "all";
-  
+
   // Filter students by class if needed
   let filteredStudents = students;
   if (classFilter !== "all") {
     filteredStudents = students.filter(student => student.class === classFilter);
   }
-  
+
   // Calculate average progress (simulated based on score)
-  const avgProgress = filteredStudents.length 
+  const avgProgress = filteredStudents.length
     ? Math.min(100, Math.round(filteredStudents.reduce((sum, student) => sum + (student.progress || student.score / 10), 0) / filteredStudents.length))
     : 0;
-  
-  document.getElementById("classAverageScore").textContent = `${avgProgress}%`;
-  document.getElementById("classAverageProgress").style.width = `${avgProgress}%`;
+
+  const scoreEl = document.getElementById("classAverageScore");
+  const progressEl = document.getElementById("classAverageProgress");
+
+  if (scoreEl) scoreEl.textContent = `${avgProgress}%`;
+  if (progressEl) progressEl.style.width = `${avgProgress}%`;
 }
 
 function initCharts() {
-  createClassPerformanceChart();
-  createSubjectPerformanceChart();
-  createProgressOverTimeChart();
-  createCompletionChart();
+  if (typeof createClassPerformanceChart === 'function') createClassPerformanceChart();
+  if (typeof createStudentProgressChart === 'function') createStudentProgressChart();
 }
 
 function createClassPerformanceChart() {
   const classes = getJSON(LS.classes, []);
   const students = getJSON(LS.students, []);
-  
+
   // Calculate average scores per class
   const classAverages = {};
   const classStudentCounts = {};
-  
+
   // Initialize class data
   classes.forEach(cls => {
     classAverages[cls.name] = 0;
     classStudentCounts[cls.name] = 0;
   });
-  
+
   // Sum scores and count students per class
   students.forEach(student => {
     if (student.class && classAverages.hasOwnProperty(student.class)) {
@@ -641,12 +606,12 @@ function createClassPerformanceChart() {
       classStudentCounts[student.class] += 1;
     }
   });
-  
+
   // Calculate averages
   const classNames = [];
   const classDisplayNames = [];
   const averageScores = [];
-  
+
   classes.forEach(cls => {
     const count = classStudentCounts[cls.name];
     if (count > 0) {
@@ -655,21 +620,26 @@ function createClassPerformanceChart() {
       averageScores.push(Math.round(classAverages[cls.name] / count));
     }
   });
-  
+
   // Create chart
-  const ctx = document.getElementById('classPerformanceChart').getContext('2d');
-  window.classPerformanceChart = new Chart(ctx, {
-    type: 'line',
+  const el = document.getElementById('classPerformanceChart');
+  if (!el || !window.Chart) return;
+
+  // Destroy existing chart if it exists
+  const existingChart = Chart.getChart(el);
+  if (existingChart) existingChart.destroy();
+
+  const ctx = el.getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
     data: {
       labels: classDisplayNames,
       datasets: [{
         label: 'Average Score (%)',
         data: averageScores,
-        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+        backgroundColor: 'rgba(22, 163, 74, 0.6)',
         borderColor: 'rgba(22, 163, 74, 1)',
-        borderWidth: 2,
-        tension: 0.3,
-        fill: true
+        borderWidth: 2
       }]
     },
     options: {
@@ -697,7 +667,7 @@ function createClassPerformanceChart() {
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               return `Score: ${context.raw}%`;
             }
           }
@@ -705,7 +675,7 @@ function createClassPerformanceChart() {
       }
     }
   });
-  
+
   // Update class performance stats
   updateClassPerformanceStats(classDisplayNames, averageScores);
 }
@@ -714,28 +684,28 @@ function createSubjectPerformanceChart() {
   // Get real student data
   const students = getJSON(LS.students, []);
   const assignments = getJSON(LS.assignments, []);
-  
+
   // Calculate subject performance based on actual data
   const subjectStats = {};
   const subjectCounts = {};
-  
+
   // Initialize subject data
   const subjects = ['Mathematics', 'Science', 'English', 'Social Studies', 'Computer Science', 'Environment', 'GK'];
   subjects.forEach(subject => {
     subjectStats[subject] = 0;
     subjectCounts[subject] = 0;
   });
-  
+
   // Calculate performance based on student scores and assignments
   students.forEach(student => {
     const studentScore = student.score || 0;
     const scorePercent = Math.min(100, Math.round((studentScore / 1000) * 100));
-    
+
     // Distribute score across subjects based on available assignments
-    const studentAssignments = assignments.filter(assignment => 
+    const studentAssignments = assignments.filter(assignment =>
       assignment.class === student.class || assignment.class === 'all'
     );
-    
+
     if (studentAssignments.length > 0) {
       const scorePerSubject = scorePercent / studentAssignments.length;
       studentAssignments.forEach(assignment => {
@@ -754,7 +724,7 @@ function createSubjectPerformanceChart() {
       });
     }
   });
-  
+
   // Calculate averages
   const performance = [];
   const labels = [];
@@ -765,13 +735,13 @@ function createSubjectPerformanceChart() {
       labels.push(subject);
     }
   });
-  
+
   // If no real data, use fallback
   if (performance.length === 0) {
     performance.push(75, 70, 80, 65, 85, 60, 55);
     labels.push(...subjects);
   }
-  
+
   const ctx = document.getElementById('subjectPerformanceChart').getContext('2d');
   window.subjectPerformanceChart = new Chart(ctx, {
     type: 'doughnut',
@@ -813,7 +783,7 @@ function createSubjectPerformanceChart() {
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               return `${context.label}: ${context.raw}%`;
             }
           }
@@ -821,7 +791,7 @@ function createSubjectPerformanceChart() {
       }
     }
   });
-  
+
   // Update subject performance summary
   const avgPerformance = Math.round(performance.reduce((a, b) => a + b, 0) / performance.length);
   const bestSubject = labels[performance.indexOf(Math.max(...performance))];
@@ -834,16 +804,16 @@ function createSubjectPerformanceChart() {
 function createProgressOverTimeChart() {
   // Get real student data
   const students = getJSON(LS.students, []);
-  
+
   // Calculate progress over time based on student scores
   const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'];
   let progress = [];
-  
+
   if (students.length > 0) {
     // Calculate average progress for each week based on student scores
     const maxScore = Math.max(...students.map(s => s.score || 0));
     const baseProgress = maxScore > 0 ? Math.min(100, Math.round((maxScore / 1000) * 100)) : 50;
-    
+
     // Simulate progress over time with some variation
     progress = weeks.map((week, index) => {
       const weekProgress = Math.min(100, baseProgress + (index * 5) + Math.random() * 10 - 5);
@@ -853,7 +823,7 @@ function createProgressOverTimeChart() {
     // Fallback data if no students
     progress = [45, 52, 60, 68, 75, 82];
   }
-  
+
   const ctx = document.getElementById('progressOverTimeChart').getContext('2d');
   window.progressOverTimeChart = new Chart(ctx, {
     type: 'line',
@@ -894,7 +864,7 @@ function createProgressOverTimeChart() {
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               return `Progress: ${context.raw}%`;
             }
           }
@@ -902,7 +872,7 @@ function createProgressOverTimeChart() {
       }
     }
   });
-  
+
   // Update progress over time summary
   const progressIncrease = progress[progress.length - 1] - progress[0];
   document.getElementById('progressOverTimeSummary').innerHTML = `
@@ -915,20 +885,20 @@ function createCompletionChart() {
   // Get real student data
   const students = getJSON(LS.students, []);
   const assignments = getJSON(LS.assignments, []);
-  
+
   let data = [65, 25, 10]; // Default fallback
   const statuses = ['Completed', 'In Progress', 'Not Started'];
   const colors = ['#16a34a', '#0ea5e9', '#94a3b8'];
-  
+
   if (students.length > 0 && assignments.length > 0) {
     // Calculate completion rates based on student progress
     let completed = 0;
     let inProgress = 0;
     let notStarted = 0;
-    
+
     students.forEach(student => {
       const studentProgress = student.progress || Math.min(100, Math.round((student.score || 0) / 10));
-      
+
       if (studentProgress >= 80) {
         completed++;
       } else if (studentProgress >= 30) {
@@ -937,7 +907,7 @@ function createCompletionChart() {
         notStarted++;
       }
     });
-    
+
     const total = students.length;
     data = [
       Math.round((completed / total) * 100),
@@ -945,7 +915,7 @@ function createCompletionChart() {
       Math.round((notStarted / total) * 100)
     ];
   }
-  
+
   const ctx = document.getElementById('completionChart').getContext('2d');
   window.completionChart = new Chart(ctx, {
     type: 'doughnut',
@@ -971,7 +941,7 @@ function createCompletionChart() {
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               return `${context.label}: ${context.raw}%`;
             }
           }
@@ -979,7 +949,7 @@ function createCompletionChart() {
       }
     }
   });
-  
+
   // Update completion chart summary
   document.getElementById('completionChartSummary').innerHTML = `
     <p><strong>${data[0]}%</strong> of activities have been completed</p>
@@ -1001,11 +971,11 @@ function changeChartType(chartId, chartType) {
 function updateClassPerformanceStats(classNames, averageScores) {
   const statsContainer = document.getElementById('classPerformanceSummary');
   if (!statsContainer) return;
-  
+
   // Find best and worst performing classes
   let bestClass = { name: '', score: 0 };
   let worstClass = { name: '', score: 100 };
-  
+
   classNames.forEach((className, index) => {
     const score = averageScores[index];
     if (score > bestClass.score) {
@@ -1015,12 +985,12 @@ function updateClassPerformanceStats(classNames, averageScores) {
       worstClass = { name: className, score: score };
     }
   });
-  
+
   // Calculate overall average
-  const overallAverage = averageScores.length > 0 
-    ? Math.round(averageScores.reduce((sum, score) => sum + score, 0) / averageScores.length) 
+  const overallAverage = averageScores.length > 0
+    ? Math.round(averageScores.reduce((sum, score) => sum + score, 0) / averageScores.length)
     : 0;
-  
+
   statsContainer.innerHTML = `
     <p>Overall class average: <strong>${overallAverage}%</strong></p>
     <p>Highest performing class: <strong>${bestClass.name}</strong> (${bestClass.score}%)</p>
@@ -1029,70 +999,147 @@ function updateClassPerformanceStats(classNames, averageScores) {
 }
 
 function exportAnalytics() {
-  // In a real application, this would export analytics data
   showToast("Export Started", "Preparing analytics data for export...", "info");
-  
-  // Simulate export process
-  setTimeout(() => {
-    showToast("Export Complete", "Analytics data has been exported successfully", "success");
-  }, 2000);
+
+  const students = getJSON(LS.students, []);
+  if (!students.length) {
+    showToast("Export Failed", "No student data to export", "error");
+    return;
+  }
+
+  // Create CSV content
+  const headers = ["Name", "Class", "Score", "Progress", "Badges"];
+  const rows = students.map(s => [
+    `"${s.name}"`,
+    `"${s.class}"`,
+    s.score,
+    `${s.progress}%`,
+    `"${s.badges.join(', ')}"`
+  ]);
+
+  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  downloadCSV(csvContent, `analytics_export_${new Date().toISOString().slice(0, 10)}.csv`);
+
+  showToast("Export Complete", "Analytics data has been exported successfully", "success");
 }
 
 function exportClassData() {
-  // In a real application, this would export class data
   showToast("Export Started", "Preparing class data for export...", "info");
-  
-  // Simulate export process
-  setTimeout(() => {
-    showToast("Export Complete", "Class data has been exported successfully", "success");
-  }, 2000);
+
+  const students = getJSON(LS.students, []);
+  if (!students.length) {
+    showToast("Export Failed", "No class data to export", "error");
+    return;
+  }
+
+  // Group by class
+  const classData = {};
+  students.forEach(s => {
+    if (!classData[s.class]) classData[s.class] = { count: 0, totalScore: 0 };
+    classData[s.class].count++;
+    classData[s.class].totalScore += s.score;
+  });
+
+  const headers = ["Class", "Students", "Average Score"];
+  const rows = Object.keys(classData).map(cls => [
+    `"${cls}"`,
+    classData[cls].count,
+    Math.round(classData[cls].totalScore / classData[cls].count)
+  ]);
+
+  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  downloadCSV(csvContent, `class_data_export_${new Date().toISOString().slice(0, 10)}.csv`);
+
+  showToast("Export Complete", "Class data has been exported successfully", "success");
+}
+
+function downloadCSV(content, filename) {
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement("a");
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }
 
 function openAnnouncementModal() {
-  document.getElementById('announcementModal').classList.add('active');
+  const modal = document.getElementById('announcementModal');
+  modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
 }
 
 function closeAnnouncementModal() {
-  document.getElementById('announcementModal').classList.remove('active');
+  const modal = document.getElementById('announcementModal');
+  modal.classList.remove('active');
+  modal.setAttribute('aria-hidden', 'true');
   document.getElementById('announcementForm').reset();
 }
 
-function handleAnnouncementSubmit(e) {
+async function handleAnnouncementSubmit(e) {
   e.preventDefault();
-  
+
   const title = document.getElementById('announcementTitle').value;
   const message = document.getElementById('announcementMessage').value;
-  const recipients = Array.from(document.getElementById('announcementRecipients').selectedOptions)
-    .map(option => option.value);
-  
-  // Save announcement (in a real app, this would be sent to a server)
-  const announcements = getJSON(TEACHER_LS.announcements, []);
-  announcements.push({
-    id: Date.now(),
-    title,
-    message,
-    recipients,
-    date: new Date().toISOString()
-  });
-  localStorage.setItem(TEACHER_LS.announcements, JSON.stringify(announcements));
-  
-  // Add to activity feed
-  const activities = getJSON(TEACHER_LS.activities, []);
-  activities.unshift({
-    id: Date.now(),
-    title: "Announcement Sent",
-    details: title,
-    time: new Date().toISOString(),
-    type: "announcement"
-  });
-  localStorage.setItem(TEACHER_LS.activities, JSON.stringify(activities));
-  
-  // Show success message
-  showToast("Announcement Sent", "Your announcement has been sent successfully", "success");
-  
-  // Close modal and reset form
-  closeAnnouncementModal();
-  renderRecentActivity();
+  const recipientsSelect = document.getElementById('announcementRecipients');
+
+  // Get selected value and map it to backend expected format
+  let recipients = recipientsSelect.value;
+  if (recipients !== 'all') {
+    // Extract number from "grade6" -> "6"
+    recipients = recipients.replace('grade', '');
+  }
+
+  try {
+    const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
+    const token = localStorage.getItem('GX_TOKEN');
+
+    const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/announcements`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ title, message, recipients })
+    });
+
+    if (res.ok) {
+      // Save locally for history (optional, but good for offline/cache)
+      const announcements = getJSON(TEACHER_LS.announcements, []);
+      announcements.push({
+        id: Date.now(),
+        title,
+        message,
+        recipients,
+        date: new Date().toISOString()
+      });
+      localStorage.setItem(TEACHER_LS.announcements, JSON.stringify(announcements));
+
+      // Add to activity feed
+      const activities = getJSON(TEACHER_LS.activities, []);
+      activities.unshift({
+        id: Date.now(),
+        title: "Announcement Sent",
+        details: title,
+        time: new Date().toISOString(),
+        type: "announcement"
+      });
+      localStorage.setItem(TEACHER_LS.activities, JSON.stringify(activities));
+
+      showToast("Announcement Sent", "Your announcement has been sent successfully", "success");
+      closeAnnouncementModal();
+      renderRecentActivity();
+    } else {
+      throw new Error("Failed to send announcement");
+    }
+  } catch (error) {
+    console.error(error);
+    showToast("Error", "Failed to send announcement", "error");
+  }
 }
 
 function markAllNotificationsAsRead() {
@@ -1101,14 +1148,41 @@ function markAllNotificationsAsRead() {
     notification.read = true;
   });
   localStorage.setItem(TEACHER_LS.notifications, JSON.stringify(notifications));
-  
+
   renderNotifications();
   showToast("Notifications Updated", "All notifications marked as read", "success");
 }
 
+async function clearAllNotifications() {
+  if (!confirm("Are you sure you want to clear all notifications?")) return;
+
+  try {
+    const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
+    const token = localStorage.getItem('GX_TOKEN');
+
+    const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/notifications`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (res.ok) {
+      localStorage.setItem(TEACHER_LS.notifications, JSON.stringify([]));
+      renderNotifications();
+      showToast("Success", "All notifications cleared", "success");
+    } else {
+      throw new Error("Failed to clear notifications");
+    }
+  } catch (error) {
+    console.error(error);
+    showToast("Error", "Failed to clear notifications", "error");
+  }
+}
+
 function refreshDashboard() {
   showLoadingOverlay();
-  
+
   // Simulate data refresh
   setTimeout(() => {
     renderTeacherDashboard();
@@ -1140,7 +1214,7 @@ function showToast(title, message, type = "info") {
     warning: "ri-alert-fill",
     info: "ri-information-fill"
   };
-  
+
   const toast = document.createElement('div');
   toast.id = toastId;
   toast.className = `toast ${type}`;
@@ -1154,14 +1228,14 @@ function showToast(title, message, type = "info") {
       <i class="ri-close-line"></i>
     </button>
   `;
-  
+
   toastContainer.appendChild(toast);
-  
+
   // Show toast
   setTimeout(() => {
     toast.classList.add('show');
   }, 10);
-  
+
   // Auto remove after 5 seconds
   setTimeout(() => {
     if (document.getElementById(toastId)) {
@@ -1182,13 +1256,13 @@ function getTimeAgo(date) {
   const diffMins = Math.floor(diffMs / (1000 * 60));
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
+
   if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins} min ago`;
   if (diffHours < 24) return `${diffHours} hr ago`;
   if (diffDays === 1) return "Yesterday";
   if (diffDays < 7) return `${diffDays} days ago`;
-  
+
   return date.toLocaleDateString();
 }
 
@@ -1196,7 +1270,7 @@ function getTimeUntil(date) {
   const now = new Date();
   const diffMs = date - now;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
+
   if (diffDays < 0) return "Overdue";
   if (diffDays === 0) return "Due today";
   if (diffDays === 1) return "Due tomorrow";
@@ -1210,7 +1284,7 @@ function getActivityIcon(type) {
     submission: "ri-file-upload-line",
     achievement: "ri-medal-line"
   };
-  
+
   return icons[type] || "ri-notification-line";
 }
 
@@ -1221,7 +1295,7 @@ function getNotificationIcon(type) {
     announcement: "ri-megaphone-line",
     system: "ri-settings-3-line"
   };
-  
+
   return icons[type] || "ri-notification-line";
 }
 

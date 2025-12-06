@@ -1,162 +1,161 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>My Profile • GuruKulX</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/profile.css" />
-    <script defer src="/js/main.js"></script>
-    <script defer src="/js/profile.js"></script>
-  </head>
-  <body data-page="profile">
-    <header id="site-header"></header>
-    <main class="container">
-      <div class="profile-header">
-        <h1>My Profile</h1>
-        <button id="editProfileBtn" class="btn">
-          <i class="ri-edit-line"></i> Edit Profile
-        </button>
-      </div>
 
-      <section class="grid grid-2-1">
-        <div class="card">
-          <div class="profile-card">
-            <div class="avatar-container">
-              <img class="avatar xl" src="/assets/images/avatar.png" alt="Profile avatar"/>
-              <div class="avatar-upload">
-                <label for="avatarUpload" class="btn btn-small">
-                  <i class="ri-camera-line"></i>
-                </label>
-                <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
-              </div>
-            </div>
-            <h2 id="profileName">Learner</h2>
-            <p class="profile-class" id="profileClass">Grade Not Selected</p>
-            <p class="muted">Level <span id="profileLevel">1</span> • XP <span id="profileXP">0</span></p>
-            
-            <div class="progress-wrap">
-              <div class="progress-label">
-                <span>Progress to Next Level</span>
-                <span id="progressPercent">0%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress" id="profileProgress" style="width: 0%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile • GuruKulX</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/profile.css" />
+  <script defer src="/js/main.js"></script>
+  <script defer src="/js/profile.js"></script>
+</head>
 
-        <div class="card">
-          <h2>Streaks & Achievements</h2>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <i class="ri-fire-line"></i>
-              <div class="stat-content">
-                <div class="stat-value" id="profileStreak">0</div>
-                <div class="stat-label">Day Streak</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <i class="ri-trophy-line"></i>
-              <div class="stat-content">
-                <div class="stat-value" id="profileScore">0</div>
-                <div class="stat-label">Total Score</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <i class="ri-medal-line"></i>
-              <div class="stat-content">
-                <div class="stat-value" id="badgeCount">0</div>
-                <div class="stat-label">Badges Earned</div>
-              </div>
-            </div>
-            <div class="stat-card">
-              <i class="ri-time-line"></i>
-              <div class="stat-content">
-                <div class="stat-value">—</div>
-                <div class="stat-label">Playtime</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="grid grid-2">
-        <div class="card">
-          <div class="card-header">
-            <h2>Badges</h2>
-            <span class="badge-count" id="totalBadges">0/8</span>
-          </div>
-          <div id="badgeGrid" class="badge-grid"></div>
-        </div>
-
-        <div class="card">
-          <h2>Recent Activity</h2>
-          <div id="recentActivity" class="activity-list">
-            <div class="empty-activity">
-              <i class="ri-history-line"></i>
-              <p>No recent activity yet</p>
-              <p>Start playing games to see your activity here!</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Performance Overview</h2>
-        <div class="performance-grid">
-          <div class="performance-card">
-            <h3>Leaderboard Rank</h3>
-            <div class="performance-value" id="leaderboardRank">—</div>
-            <p>Your position globally</p>
-          </div>
-          <div class="performance-card">
-            <h3>Class Rank</h3>
-            <div class="performance-value" id="classRank">—</div>
-            <p>Your position in class</p>
-          </div>
-          <div class="performance-card">
-            <h3>Completion Rate</h3>
-            <div class="performance-value" id="completionRate">0%</div>
-            <p>Activities completed</p>
-          </div>
-        </div>
-      </section>
-    </main>
-    <footer id="site-footer"></footer>
-
-    <!-- Edit Profile Modal -->
-    <div id="editProfileModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>Edit Profile</h2>
-          <button class="modal-close">&times;</button>
-        </div>
-        <form id="editProfileForm" class="form">
-          <div class="form-row">
-            <label for="editName">Name</label>
-            <input type="text" id="editName" required>
-          </div>
-          <div class="form-row">
-            <label for="editClass">Class</label>
-            <select id="editClass">
-              <option value="">Select Class</option>
-              <option value="6">Grade 6</option>
-              <option value="7">Grade 7</option>
-              <option value="8">Grade 8</option>
-              <option value="9">Grade 9</option>
-              <option value="10">Grade 10</option>
-              <option value="11">Grade 11</option>
-              <option value="12">Grade 12</option>
-            </select>
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-          </div>
-        </form>
-      </div>
+<body data-page="profile">
+  <header id="site-header"></header>
+  <main class="container">
+    <div class="profile-header">
+      <h1>My Profile</h1>
+      <button id="editProfileBtn" class="btn">
+        <i class="ri-edit-line"></i> Edit Profile
+      </button>
     </div>
-  </body>
+
+    <section class="grid grid-2-1">
+      <div class="card">
+        <div class="profile-card">
+          <div class="avatar-container">
+            <img class="avatar xl" src="/assets/images/avatar.png" alt="Profile avatar" />
+            <div class="avatar-upload">
+              <label for="avatarUpload" class="btn btn-small">
+                <i class="ri-camera-line"></i>
+              </label>
+              <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+            </div>
+          </div>
+          <h2 id="profileName">Learner</h2>
+          <p class="profile-class" id="profileClass">Grade Not Selected</p>
+          <p class="muted">Level <span id="profileLevel">1</span> • XP <span id="profileXP">0</span></p>
+
+          <div class="progress-wrap">
+            <div class="progress-label">
+              <span>Progress to Next Level</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress" id="profileProgress" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Streaks & Achievements</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i class="ri-fire-line"></i>
+            <div class="stat-content">
+              <div class="stat-value" id="profileStreak">0</div>
+              <div class="stat-label">Day Streak</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="ri-trophy-line"></i>
+            <div class="stat-content">
+              <div class="stat-value" id="profileScore">0</div>
+              <div class="stat-label">Total Score</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="ri-medal-line"></i>
+            <div class="stat-content">
+              <div class="stat-value" id="badgeCount">0</div>
+              <div class="stat-label">Badges Earned</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="ri-time-line"></i>
+            <div class="stat-content">
+              <div class="stat-value">—</div>
+              <div class="stat-label">Playtime</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h2>Badges</h2>
+          <span class="badge-count" id="totalBadges">0/8</span>
+        </div>
+        <div id="badgeGrid" class="badge-grid"></div>
+      </div>
+
+      <div class="card">
+        <h2>Subject Wise Performance</h2>
+        <div id="subjectPerformance" class="subject-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Performance Overview</h2>
+      <div class="performance-grid">
+        <div class="performance-card">
+          <h3>Leaderboard Rank</h3>
+          <div class="performance-value" id="leaderboardRank">—</div>
+          <p>Your position globally</p>
+        </div>
+        <div class="performance-card">
+          <h3>Class Rank</h3>
+          <div class="performance-value" id="classRank">—</div>
+          <p>Your position in class</p>
+        </div>
+        <div class="performance-card">
+          <h3>Completion Rate</h3>
+          <div class="performance-value" id="completionRate">0%</div>
+          <p>Activities completed</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Profile</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="editProfileForm" class="form">
+        <div class="form-row">
+          <label for="editName">Name</label>
+          <input type="text" id="editName" required>
+        </div>
+        <div class="form-row">
+          <label for="editClass">Class</label>
+          <select id="editClass">
+            <option value="">Select Class</option>
+            <option value="6">Grade 6</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
 </html>

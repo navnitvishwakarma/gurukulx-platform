@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Science Chapters – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+    <header id="site-header"></header>
+    <main class="container">
+        <section class="chapters-hero">
+            <div class="breadcrumb">
+                <a href="/ss-learning-path.html">Social Science Learning Path</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Social Science Chapters</span>
+            </div>
+
+            <div class="hero-content">
+                <h1 class="text-balance">
+                    <i class="ri-earth-line"></i> Social Science Chapters
+                </h1>
+                <p class="lead text-pretty">
+                    Explore history, geography, and civics through structured chapters and interactive lessons.
+                </p>
+            </div>
+        </section>
+
+        <section class="chapters-grid" id="chaptersGrid">
+            <!-- Chapters will be dynamically loaded here -->
+        </section>
+
+        <section class="progress-overview">
+            <div class="card">
+                <h3>Overall Progress</h3>
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Chapters Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Total Chapters</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0%</span>
+                        <span class="stat-label">Overall Progress</span>
+                    </div>
+                </div>
+                <div class="overall-progress-bar">
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const SS_CHAPTERS = {
+                "6": [
+                    { number: 1, title: "The Earth in the Solar System", desc: "Geography: Understanding our place in the universe", topics: ["Solar System", "Planets", "Earth"], link: "/coming-soon.html" },
+                    { number: 2, title: "Globe: Latitudes and Longitudes", desc: "Geography: Locating places on Earth", topics: ["Globe", "Latitude", "Longitude"], link: "/coming-soon.html" },
+                    { number: 3, title: "What, Where, How and When?", desc: "History: Introduction to studying the past", topics: ["Sources", "Dates", "Archaeology"], link: "/coming-soon.html" },
+                    { number: 4, title: "On the Trail of the Earliest People", desc: "History: Early human life and settlements", topics: ["Hunter-Gatherers", "Stone Age", "Fire"], link: "/coming-soon.html" },
+                    { number: 5, title: "Understanding Diversity", desc: "Civics: Appreciating differences in society", topics: ["Diversity", "Culture", "Unity"], link: "/coming-soon.html" },
+                    { number: 6, title: "Diversity and Discrimination", desc: "Civics: Prejudice, stereotypes, and equality", topics: ["Inequality", "Constitution", "Rights"], link: "/coming-soon.html" }
+                ],
+                "7": [
+                    { number: 1, title: "Environment", desc: "Geography: Components of environment", topics: ["Natural", "Human-made", "Ecosystem"], link: "/coming-soon.html" },
+                    { number: 2, title: "Inside Our Earth", desc: "Geography: Interior of the Earth and rocks", topics: ["Crust", "Mantle", "Core"], link: "/coming-soon.html" },
+                    { number: 3, title: "Tracing Changes Through a Thousand Years", desc: "History: Medieval period overview", topics: ["Maps", "Sources", "New Groups"], link: "/coming-soon.html" },
+                    { number: 4, title: "New Kings and Kingdoms", desc: "History: Rise of new dynasties", topics: ["Cholas", "Administration", "Temples"], link: "/coming-soon.html" },
+                    { number: 5, title: "On Equality", desc: "Civics: Equality in Indian democracy", topics: ["Voting", "Dignity", "Constitution"], link: "/coming-soon.html" }
+                ],
+                "8": [
+                    { number: 1, title: "Resources", desc: "Geography: Types and conservation of resources", topics: ["Natural", "Human", "Sustainable"], link: "/coming-soon.html" },
+                    { number: 2, title: "Land, Soil, Water, Natural Vegetation", desc: "Geography: Critical natural resources", topics: ["Conservation", "Distribution", "Wildlife"], link: "/coming-soon.html" },
+                    { number: 3, title: "How, When and Where", desc: "History: Modern Indian history introduction", topics: ["Dates", "Records", "Colonialism"], link: "/coming-soon.html" },
+                    { number: 4, title: "From Trade to Territory", desc: "History: Establishment of Company power", topics: ["East India Company", "Battles", "Expansion"], link: "/coming-soon.html" },
+                    { number: 5, title: "The Indian Constitution", desc: "Civics: Key features of the Constitution", topics: ["Federalism", "Rights", "Secularism"], link: "/coming-soon.html" }
+                ],
+                "9": [
+                    { number: 1, title: "India - Size and Location", desc: "Geography: India's physical setting", topics: ["Location", "Size", "Neighbors"], link: "/coming-soon.html" },
+                    { number: 2, title: "Physical Features of India", desc: "Geography: Major physiographic divisions", topics: ["Himalayas", "Plains", "Plateau"], link: "/coming-soon.html" },
+                    { number: 3, title: "The French Revolution", desc: "History: Causes and impact of the revolution", topics: ["Society", "Outbreak", "Legacy"], link: "/coming-soon.html" },
+                    { number: 4, title: "Socialism in Europe", desc: "History: Russian Revolution and socialism", topics: ["Changes", "Revolution", "Impact"], link: "/coming-soon.html" },
+                    { number: 5, title: "What is Democracy?", desc: "Civics: Features and importance of democracy", topics: ["Definition", "Features", "Merits"], link: "/coming-soon.html" }
+                ],
+                "10": [
+                    { number: 1, title: "Resources and Development", desc: "Geography: Resource planning and conservation", topics: ["Types", "Planning", "Soil"], link: "/coming-soon.html" },
+                    { number: 2, title: "Forest and Wildlife Resources", desc: "Geography: Flora, fauna, and conservation", topics: ["Biodiversity", "Conservation", "Projects"], link: "/coming-soon.html" },
+                    { number: 3, title: "The Rise of Nationalism in Europe", desc: "History: Making of nationalism", topics: ["Unification", "Nation-State", "Visualizing"], link: "/coming-soon.html" },
+                    { number: 4, title: "Nationalism in India", desc: "History: Freedom struggle movements", topics: ["Non-Cooperation", "Civil Disobedience", "Satyagraha"], link: "/coming-soon.html" },
+                    { number: 5, title: "Power Sharing", desc: "Civics: Forms and need for power sharing", topics: ["Belgium", "Sri Lanka", "Forms"], link: "/coming-soon.html" }
+                ],
+                "11": [
+                    { number: 1, title: "India: Location", desc: "Geography: Strategic importance of India's location", topics: ["Latitudes", "Longitudes", "Neighbors"], link: "/coming-soon.html" },
+                    { number: 2, title: "Structure and Physiography", desc: "Geography: Geological structure", topics: ["Relief", "Drainage", "Divisions"], link: "/coming-soon.html" },
+                    { number: 3, title: "Early Societies", desc: "History: From beginning of time", topics: ["Evolution", "Settlements", "Tools"], link: "/coming-soon.html" },
+                    { number: 4, title: "Empires", desc: "History: Roman and other empires", topics: ["Administration", "Economy", "Culture"], link: "/coming-soon.html" },
+                    { number: 5, title: "Political Theory", desc: "Civics: Introduction to political theory", topics: ["Freedom", "Equality", "Justice"], link: "/coming-soon.html" }
+                ],
+                "12": [
+                    { number: 1, title: "Human Geography", desc: "Geography: Nature and scope", topics: ["Nature", "Scope", "Fields"], link: "/coming-soon.html" },
+                    { number: 2, title: "The World Population", desc: "Geography: Distribution, density, and growth", topics: ["Patterns", "Factors", "Trends"], link: "/coming-soon.html" },
+                    { number: 3, title: "Bricks, Beads and Bones", desc: "History: Harappan Civilization", topics: ["Seals", "Script", "Weights"], link: "/coming-soon.html" },
+                    { number: 4, title: "Kings, Farmers and Towns", desc: "History: Early states and economies", topics: ["Inscriptions", "Coins", "Administration"], link: "/coming-soon.html" },
+                    { number: 5, title: "Cold War Era", desc: "Civics: World politics post WWII", topics: ["Alliances", "Non-Aligned", "Arenas"], link: "/coming-soon.html" }
+                ]
+            };
+
+            const user = getUser();
+            const userClass = user.class || "6";
+
+            // Update header
+            const heroTitle = document.querySelector('.hero-content h1');
+            if (heroTitle) {
+                heroTitle.innerHTML = `<i class="ri-earth-line"></i> Class ${userClass} Social Science`;
+            }
+
+            const chapters = SS_CHAPTERS[userClass] || SS_CHAPTERS["6"];
+            const grid = document.getElementById('chaptersGrid');
+
+            if (grid) {
+                grid.innerHTML = chapters.map(ch => `
+            <div class="chapter-card">
+              <div class="chapter-number">${ch.number}</div>
+              <div class="chapter-content">
+                <h3>${ch.title}</h3>
+                <p>${ch.desc}</p>
+                <div class="chapter-topics">
+                  ${ch.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                </div>
+                <div class="chapter-progress">
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 0%"></div>
+                  </div>
+                  <span class="progress-text">0% Complete</span>
+                </div>
+              </div>
+              <a href="${ch.link}" class="chapter-btn">${ch.link.includes('coming-soon') ? 'Coming Soon' : 'Start Chapter'}</a>
+            </div>
+          `).join('');
+            }
+
+            // Update stats
+            const totalChaptersEl = document.querySelector('.stat-item:nth-child(2) .stat-number');
+            if (totalChaptersEl) totalChaptersEl.textContent = chapters.length;
+        });
+    </script>
+
+    <style>
+        .chapters-hero {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-fg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .hero-content h1 i {
+            color: var(--color-primary);
+        }
+
+        .hero-content .lead {
+            font-size: 1.125rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chapter-card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-primary);
+        }
+
+        .chapter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .chapter-card:hover::before {
+            opacity: 0.03;
+        }
+
+        .chapter-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .chapter-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .chapter-content p {
+            color: #64748b;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .chapter-topics {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .topic-tag {
+            background: var(--color-muted);
+            color: var(--color-fg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .chapter-progress {
+            margin-bottom: 1rem;
+        }
+
+        .chapter-progress .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-progress .progress {
+            height: 8px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .chapter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--color-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .chapter-btn:hover {
+            background: #128a3f;
+            transform: translateY(-2px);
+        }
+
+        .progress-overview {
+            margin-top: 2rem;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--color-muted);
+            border-radius: 0.75rem;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--color-fg);
+        }
+
+        .overall-progress-bar {
+            margin-top: 1rem;
+        }
+
+        .overall-progress-bar .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+        }
+
+        .overall-progress-bar .progress {
+            height: 12px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .progress-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .chapter-card {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chapter-topics {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .topic-tag {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</body>
+
+</html>

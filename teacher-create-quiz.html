@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Quiz • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body data-page="teacher-create-quiz">
+    <header id="site-header"></header>
+
+    <main class="container">
+        <section class="card">
+            <div class="page-header">
+                <h1>Create Quiz</h1>
+                <p class="lead">Create a custom quiz for your students</p>
+            </div>
+
+            <form id="quizForm" class="quiz-form">
+                <!-- Quiz Details Section -->
+                <div class="form-section">
+                    <h2>Quiz Details</h2>
+
+                    <div class="form-grid">
+                        <div class="form-row">
+                            <label for="quiz-title">Quiz Title *</label>
+                            <input type="text" id="quiz-title" required placeholder="e.g., Chapter 1 Quiz">
+                        </div>
+
+                        <div class="form-row">
+                            <label for="quiz-subject">Subject *</label>
+                            <select id="quiz-subject" required>
+                                <option value="">Select Subject</option>
+                                <option value="Math">Math</option>
+                                <option value="Science">Science</option>
+                                <option value="English">English</option>
+                                <option value="Social Science">Social Science</option>
+                                <option value="Environment">Environment</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="GK">GK</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="quiz-class">Class *</label>
+                            <select id="quiz-class" required>
+                                <option value="">Select Class</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="quiz-description">Description</label>
+                            <textarea id="quiz-description" rows="3"
+                                placeholder="Brief description of the quiz"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="quiz-difficulty">Difficulty Level</label>
+                            <select id="quiz-difficulty">
+                                <option value="">Select Difficulty</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="quiz-time-limit">Time Limit (minutes)</label>
+                            <input type="number" id="quiz-time-limit" min="1" max="180" placeholder="Optional">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h2>Questions</h2>
+                        <button type="button" class="btn btn-secondary" id="addQuestionBtn">
+                            <i class="ri-add-line"></i>
+                            Add Question
+                        </button>
+                    </div>
+
+                    <div id="questionsContainer">
+                        <!-- Questions will be added here -->
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ri-save-line"></i>
+                        Create Quiz
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer id="site-footer"></footer>
+
+    <script>
+        let questionCount = 0;
+        const questions = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeForm();
+            setupEventListeners();
+            addQuestion(); // Add first question by default
+        });
+
+        function initializeForm() {
+            // Populate class dropdown
+            const classes = JSON.parse(localStorage.getItem('gx_classes') || '[]');
+            const classSelect = document.getElementById('quiz-class');
+
+            if (classes.length > 0) {
+                classSelect.innerHTML = '<option value="">Select Class</option>' +
+                    classes.map(c => `<option value="${c.name}">${c.fullName || 'Grade ' + c.name}</option>`).join('');
+            } else {
+                // Default classes if none exist
+                classSelect.innerHTML = `
+          <option value="">Select Class</option>
+          <option value="6">Grade 6</option>
+          <option value="7">Grade 7</option>
+          <option value="8">Grade 8</option>
+          <option value="9">Grade 9</option>
+          <option value="10">Grade 10</option>
+        `;
+            }
+
+            // Pre-fill from URL params if coming from assignments page
+            const urlParams = new URLSearchParams(window.location.search);
+            const subject = urlParams.get('subject');
+            const classParam = urlParams.get('class');
+
+            if (subject) document.getElementById('quiz-subject').value = subject;
+            if (classParam) document.getElementById('quiz-class').value = classParam;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('addQuestionBtn').addEventListener('click', addQuestion);
+            document.getElementById('cancelBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
+                    window.location.href = '/teacher-assignments.html';
+                }
+            });
+            document.getElementById('quizForm').addEventListener('submit', handleSubmit);
+        }
+
+        function addQuestion() {
+            questionCount++;
+            const questionId = `question-${questionCount}`;
+
+            const questionHTML = `
+        <div class="question-block" id="${questionId}">
+          <div class="question-header">
+            <h3>Question ${questionCount}</h3>
+            <button type="button" class="btn-icon btn-danger" onclick="removeQuestion('${questionId}')">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </div>
+
+          <div class="form-row">
+            <label for="${questionId}-text">Question Text *</label>
+            <textarea id="${questionId}-text" rows="2" required placeholder="Enter your question"></textarea>
+          </div>
+
+          <div class="options-grid">
+            <div class="form-row">
+              <label for="${questionId}-option-0">Option A *</label>
+              <input type="text" id="${questionId}-option-0" required placeholder="First option">
+            </div>
+            <div class="form-row">
+              <label for="${questionId}-option-1">Option B *</label>
+              <input type="text" id="${questionId}-option-1" required placeholder="Second option">
+            </div>
+            <div class="form-row">
+              <label for="${questionId}-option-2">Option C *</label>
+              <input type="text" id="${questionId}-option-2" required placeholder="Third option">
+            </div>
+            <div class="form-row">
+              <label for="${questionId}-option-3">Option D *</label>
+              <input type="text" id="${questionId}-option-3" required placeholder="Fourth option">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="${questionId}-correct">Correct Answer *</label>
+            <select id="${questionId}-correct" required>
+              <option value="">Select correct answer</option>
+              <option value="0">Option A</option>
+              <option value="1">Option B</option>
+              <option value="2">Option C</option>
+              <option value="3">Option D</option>
+            </select>
+          </div>
+        </div>
+      `;
+
+            document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionHTML);
+        }
+
+        function removeQuestion(questionId) {
+            if (document.querySelectorAll('.question-block').length <= 1) {
+                alert('Quiz must have at least one question');
+                return;
+            }
+
+            if (confirm('Are you sure you want to remove this question?')) {
+                document.getElementById(questionId).remove();
+                renumberQuestions();
+            }
+        }
+
+        function renumberQuestions() {
+            const questionBlocks = document.querySelectorAll('.question-block');
+            questionBlocks.forEach((block, index) => {
+                const header = block.querySelector('.question-header h3');
+                header.textContent = `Question ${index + 1}`;
+            });
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+            // Collect quiz data
+            const quizData = {
+                id: generateQuizId(),
+                title: document.getElementById('quiz-title').value,
+                subject: document.getElementById('quiz-subject').value,
+                class: document.getElementById('quiz-class').value,
+                description: document.getElementById('quiz-description').value,
+                difficulty: document.getElementById('quiz-difficulty').value,
+                timeLimit: parseInt(document.getElementById('quiz-time-limit').value) || null,
+                timed: !!document.getElementById('quiz-time-limit').value,
+                createdAt: new Date().toISOString(),
+                createdBy: JSON.parse(localStorage.getItem('gx_user') || '{}').name || 'Teacher',
+                questions: []
+            };
+
+            // Collect questions
+            const questionBlocks = document.querySelectorAll('.question-block');
+            questionBlocks.forEach(block => {
+                const questionId = block.id;
+                const question = {
+                    question: document.getElementById(`${questionId}-text`).value,
+                    options: [
+                        document.getElementById(`${questionId}-option-0`).value,
+                        document.getElementById(`${questionId}-option-1`).value,
+                        document.getElementById(`${questionId}-option-2`).value,
+                        document.getElementById(`${questionId}-option-3`).value
+                    ],
+                    correct: parseInt(document.getElementById(`${questionId}-correct`).value)
+                };
+                quizData.questions.push(question);
+            });
+
+            // Validate
+            if (quizData.questions.length === 0) {
+                alert('Please add at least one question');
+                return;
+            }
+
+            // Save quiz
+            try {
+                await saveQuiz(quizData);
+                alert('Quiz created successfully!');
+                window.location.href = '/teacher-assignments.html';
+            } catch (err) {
+                console.error('Error saving quiz:', err);
+                alert('Failed to create quiz. Please try again.');
+            }
+        }
+
+        async function saveQuiz(quizData) {
+            // Try to save to server
+            try {
+                const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || 'http://localhost:8080';
+                const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/quizzes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('GX_TOKEN')}`
+                    },
+                    body: JSON.stringify(quizData)
+                });
+
+                if (res.ok) {
+                    console.log('Quiz saved to server');
+                }
+            } catch (err) {
+                console.error('Failed to save to server:', err);
+            }
+
+            // Always save to localStorage as backup
+            const quizzes = JSON.parse(localStorage.getItem('gx_quizzes') || '[]');
+            quizzes.push(quizData);
+            localStorage.setItem('gx_quizzes', JSON.stringify(quizzes));
+        }
+
+        function generateQuizId() {
+            return 'quiz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+    </script>
+
+    <style>
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--color-muted);
+        }
+
+        .page-header h1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header .lead {
+            color: #64748b;
+            font-size: 1.125rem;
+        }
+
+        .quiz-form {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+        }
+
+        .form-section h2 {
+            margin-bottom: 1.5rem;
+            color: var(--color-fg);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            margin: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-row label {
+            font-weight: 600;
+            color: var(--color-fg);
+        }
+
+        .form-row input,
+        .form-row select,
+        .form-row textarea {
+            padding: 0.75rem;
+            border: 2px solid var(--color-muted);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: inherit;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus,
+        .form-row textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .form-row textarea {
+            resize: vertical;
+        }
+
+        #questionsContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .question-block {
+            padding: 1.5rem;
+            background: white;
+            border: 2px solid var(--color-muted);
+            border-radius: 1rem;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--color-muted);
+        }
+
+        .question-header h3 {
+            margin: 0;
+            color: var(--color-fg);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon i {
+            font-size: 1.25rem;
+        }
+
+        .btn-danger {
+            color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: #fee2e2;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--color-muted);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0d8ec8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #e0f2fe;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--color-fg);
+            border: 2px solid var(--color-muted);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        @media (max-width: 768px) {
+            .form-section {
+                padding: 1.5rem;
+            }
+
+            .form-grid,
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</body>
+
+</html>

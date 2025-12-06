@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Doubts • GuruKulX Teacher</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <script defer src="/js/main.js"></script>
+    <style>
+        .doubt-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .doubt-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .doubt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .doubt-meta {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .doubt-subject {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .doubt-question {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .doubt-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <header id="site-header"></header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Student Doubts</h1>
+            <p class="text-muted">Review and answer questions from students.</p>
+        </div>
+
+        <div id="doubts-container">
+            <div class="loading-spinner"></div>
+        </div>
+    </main>
+
+    <footer id="site-footer"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('doubts-container');
+
+            try {
+                const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || window.location.origin;
+                const token = localStorage.getItem('GX_TOKEN');
+
+                if (!token) {
+                    window.location.href = '/login-teacher.html';
+                    return;
+                }
+
+                const res = await fetch(`${apiBase}/api/doubts`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) throw new Error('Failed to fetch doubts');
+
+                const doubts = await res.json();
+
+                if (doubts.length === 0) {
+                    container.innerHTML = `
+            <div class="empty-state">
+              <i class="ri-chat-smile-2-line" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+              <h3>No doubts yet!</h3>
+              <p>Great job! Your students seem to understand everything clearly.</p>
+            </div>
+          `;
+                    return;
+                }
+
+                container.innerHTML = doubts.map(doubt => `
+          <div class="doubt-card">
+            <div class="doubt-header">
+              <div>
+                <span class="doubt-subject">${escapeHTML(doubt.subject)}</span>
+                <div class="doubt-meta">
+                  Asked by <strong>${escapeHTML(doubt.user?.name || 'Unknown')}</strong> 
+                  (Class ${escapeHTML(doubt.user?.profile?.class || doubt.user?.class || 'N/A')})
+                  • ${new Date(doubt.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+              <span class="badge ${doubt.status === 'pending' ? 'badge-warning' : 'badge-success'}">
+                ${doubt.status}
+              </span>
+            </div>
+            <div class="doubt-question">
+              ${escapeHTML(doubt.question)}
+            </div>
+            <div class="doubt-actions">
+              <button class="btn btn-sm btn-outline" onclick="alert('Reply feature coming soon!')">
+                <i class="ri-reply-line"></i> Reply
+              </button>
+              <button class="btn btn-sm btn-ghost" onclick="alert('Mark as resolved feature coming soon!')">
+                <i class="ri-check-line"></i> Mark Resolved
+              </button>
+            </div>
+          </div>
+        `).join('');
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `
+          <div class="alert alert-error">
+            Failed to load doubts. Please try again later.
+          </div>
+        `;
+            }
+        });
+
+        function escapeHTML(str) {
+            return (str || '').toString().replace(/[&<>'"]/g,
+                c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+    </script>
+</body>
+
+</html>

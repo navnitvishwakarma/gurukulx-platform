@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Tasks • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body data-page="student-tasks">
+    <header id="site-header"></header>
+
+    <main class="container">
+        <section class="card">
+            <h1>My Tasks</h1>
+            <p class="lead">View and complete your assigned tasks and games</p>
+
+            <div id="tasksList" class="table-like">
+                <!-- Tasks will be loaded here -->
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Completed Tasks</h2>
+            <div id="completedTasksList" class="table-like">
+                <!-- Completed tasks will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <footer id="site-footer"></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStudentTasks();
+        });
+
+        async function loadStudentTasks() {
+            const tasksList = document.getElementById('tasksList');
+            const completedTasksList = document.getElementById('completedTasksList');
+
+            // Get user info
+            const user = JSON.parse(localStorage.getItem('gx_user') || '{}');
+
+            // Try to fetch from server
+            try {
+                const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || 'http://localhost:8080';
+                const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/assignments`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('GX_TOKEN')}`
+                    }
+                });
+
+                if (res.ok) {
+                    const assignments = await res.json();
+                    renderTasks(assignments, tasksList, completedTasksList, user);
+                    return;
+                }
+            } catch (err) {
+                console.error('Failed to fetch tasks from server:', err);
+            }
+
+            // Fallback to local storage
+            const assignments = JSON.parse(localStorage.getItem('gx_assignments') || '[]');
+            renderTasks(assignments, tasksList, completedTasksList, user);
+        }
+
+        function renderTasks(assignments, tasksList, completedTasksList, user) {
+            // Filter assignments for current user's class
+            const userClass = user.class || '';
+            const userAssignments = assignments.filter(a => a.class_name === userClass || a.class === userClass);
+
+            // Separate pending and completed
+            const pending = userAssignments.filter(a => a.status !== 'Completed');
+            const completed = userAssignments.filter(a => a.status === 'Completed');
+
+            // Render pending tasks
+            if (pending.length === 0) {
+                tasksList.innerHTML = '<div class="row"><div class="rank">—</div><div>No pending tasks</div><div>—</div></div>';
+            } else {
+                tasksList.innerHTML = `
+          <div class="row header">
+            <div class="rank">#</div>
+            <div>Task</div>
+            <div>Due Date</div>
+            <div>Action</div>
+          </div>
+          ${pending.map((task, i) => `
+            <div class="row">
+              <div class="rank">${i + 1}</div>
+              <div>${escapeHTML(task.subject)} • ${escapeHTML(task.game)}</div>
+              <div>${task.due_date ? new Date(task.due_date).toLocaleDateString() : (task.due || '—')}</div>
+              <div>
+                <button class="btn btn-sm btn-primary" onclick="startTask('${task.game}', '${task.subject}', ${task.id || task.id})">
+                  Start
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        `;
+            }
+
+            // Render completed tasks
+            if (completed.length === 0) {
+                completedTasksList.innerHTML = '<div class="row"><div class="rank">—</div><div>No completed tasks yet</div><div>—</div></div>';
+            } else {
+                completedTasksList.innerHTML = `
+          <div class="row header">
+            <div class="rank">#</div>
+            <div>Task</div>
+            <div>Completed On</div>
+          </div>
+          ${completed.map((task, i) => `
+            <div class="row">
+              <div class="rank">${i + 1}</div>
+              <div>${escapeHTML(task.subject)} • ${escapeHTML(task.game)}</div>
+              <div>${task.completed_date ? new Date(task.completed_date).toLocaleDateString() : '—'}</div>
+            </div>
+          `).join('')}
+        `;
+            }
+        }
+
+        function startTask(game, subject) {
+            // Redirect to appropriate game page
+            const gameSlug = game.toLowerCase().replace(/\s+/g, '-');
+
+            // Map game names to their URLs
+            const gameUrls = {
+                'quiz': '/math-quiz.html',
+                'assignment': '/profile.html', // Placeholder
+                'rapid-fire': '/games/rapid-fire.html',
+                'balloon-pop-game': '/games/balloon-pop.html',
+                'runner-key': '/games/runner-key.html',
+                'virtual-lab': '/games/virtual-lab.html',
+                'map-game': '/games/map-game.html',
+                'spelling-bee': '/games/spelling-bee.html',
+                'debug-challenge': '/games/debug-challenge.html',
+                'guess-the-picture': '/games/guess-picture.html'
+            };
+
+            const url = gameUrls[gameSlug] || '/profile.html';
+            window.location.href = url;
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, (c) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[c]);
+        }
+    </script>
+
+    <style>
+        .table-like {
+            margin-top: 1.5rem;
+        }
+
+        .table-like .row {
+            display: grid;
+            grid-template-columns: 60px 1fr 150px 120px;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-muted);
+            align-items: center;
+        }
+
+        .table-like .row.header {
+            font-weight: 600;
+            background: var(--color-muted);
+            border-radius: 0.5rem;
+        }
+
+        .table-like .row:hover:not(.header) {
+            background: var(--color-muted);
+        }
+
+        .rank {
+            text-align: center;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        #completedTasksList .row {
+            grid-template-columns: 60px 1fr 150px;
+        }
+
+        @media (max-width: 768px) {
+            .table-like .row {
+                grid-template-columns: 40px 1fr;
+                gap: 0.5rem;
+            }
+
+            .table-like .row>div:nth-child(3),
+            .table-like .row>div:nth-child(4) {
+                grid-column: 2;
+            }
+        }
+    </style>
+</body>
+
+</html>

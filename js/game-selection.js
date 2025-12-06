@@ -1,5 +1,5 @@
 // Game Selection Page Functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Wait for header/footer to be injected
     setTimeout(initGameSelection, 100);
 });
@@ -17,7 +17,7 @@ function updateProgressFromStorage() {
 }
 
 function startGame(gameType) {
-    switch(gameType) {
+    switch (gameType) {
         case 'quiz':
             window.location.href = 'chapter1-quiz.html';
             break;
@@ -48,7 +48,7 @@ function showToast(title, message, type = "info") {
         toastContainer.className = 'toast-container';
         document.body.appendChild(toastContainer);
     }
-    
+
     const toastId = `toast-${Date.now()}`;
     const icons = {
         success: "ri-checkbox-circle-fill",
@@ -56,7 +56,7 @@ function showToast(title, message, type = "info") {
         warning: "ri-alert-fill",
         info: "ri-information-fill"
     };
-    
+
     const toast = document.createElement('div');
     toast.id = toastId;
     toast.className = `toast ${type}`;
@@ -70,14 +70,14 @@ function showToast(title, message, type = "info") {
             <i class="ri-close-line"></i>
         </button>
     `;
-    
+
     toastContainer.appendChild(toast);
-    
+
     // Show toast
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         if (document.getElementById(toastId)) {

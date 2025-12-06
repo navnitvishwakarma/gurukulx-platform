@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Initialize Quizzes • GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+    <div class="container" style="text-align: center; padding: 4rem 2rem;">
+        <h1>Initializing Sample Quizzes...</h1>
+        <p>Please wait while we set up sample quizzes for testing.</p>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Sample quizzes for testing
+        const sampleQuizzes = [
+            {
+                id: 'math-quiz-chapter-1',
+                title: 'chapter 1',
+                subject: 'Math',
+                class: '6',
+                description: 'helleo test',
+                difficulty: 'Beginner',
+                timeLimit: 10,
+                timed: true,
+                questions: [
+                    {
+                        question: 'What is 5 + 3?',
+                        options: ['6', '7', '8', '9'],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                id: 'math-quiz-1',
+                title: '1',
+                subject: 'Math',
+                class: '6',
+                description: 'Test your knowledge with this quiz',
+                difficulty: 'Intermediate',
+                timeLimit: 15,
+                timed: true,
+                questions: [
+                    {
+                        question: 'What is 12 × 8?',
+                        options: ['84', '96', '104', '112'],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                id: 'science-quiz-1',
+                title: 'Photosynthesis Quiz',
+                subject: 'Science',
+                class: '6',
+                description: 'Test your understanding of photosynthesis',
+                difficulty: 'Intermediate',
+                timeLimit: 12,
+                timed: true,
+                questions: [
+                    {
+                        question: 'What gas do plants absorb during photosynthesis?',
+                        options: ['Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Hydrogen'],
+                        correct: 2
+                    },
+                    {
+                        question: 'What is the green pigment in plants called?',
+                        options: ['Chlorophyll', 'Carotene', 'Xanthophyll', 'Anthocyanin'],
+                        correct: 0
+                    },
+                    {
+                        question: 'Where does photosynthesis primarily occur in a plant?',
+                        options: ['Roots', 'Stem', 'Leaves', 'Flowers'],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                id: 'english-quiz-1',
+                title: 'Grammar Basics',
+                subject: 'English',
+                class: '6',
+                description: 'Test your grammar knowledge',
+                difficulty: 'Beginner',
+                timeLimit: 10,
+                timed: true,
+                questions: [
+                    {
+                        question: 'Which is a noun?',
+                        options: ['Run', 'Beautiful', 'Book', 'Quickly'],
+                        correct: 2
+                    },
+                    {
+                        question: 'What is the plural of "child"?',
+                        options: ['Childs', 'Children', 'Childes', 'Childrens'],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                id: 'gk-quiz-1',
+                title: 'World Capitals',
+                subject: 'GK',
+                class: '6',
+                description: 'Test your knowledge of world capitals',
+                difficulty: 'Intermediate',
+                timeLimit: 8,
+                timed: true,
+                questions: [
+                    {
+                        question: 'What is the capital of France?',
+                        options: ['London', 'Berlin', 'Paris', 'Madrid'],
+                        correct: 2
+                    },
+                    {
+                        question: 'What is the capital of Japan?',
+                        options: ['Seoul', 'Beijing', 'Bangkok', 'Tokyo'],
+                        correct: 3
+                    }
+                ]
+            }
+        ];
+
+        // Save to localStorage
+        localStorage.setItem('gx_quizzes', JSON.stringify(sampleQuizzes));
+
+        const statusDiv = document.getElementById('status');
+        statusDiv.innerHTML = `
+      <div style="margin-top: 2rem; padding: 1.5rem; background: #d1fae5; border-radius: 0.75rem; color: #065f46;">
+        <h2 style="margin-bottom: 1rem;">✓ Success!</h2>
+        <p style="margin-bottom: 1rem;">Sample quizzes have been initialized.</p>
+        <p style="margin-bottom: 1.5rem;">Total quizzes added: ${sampleQuizzes.length}</p>
+        <a href="/quiz-selection.html?subject=Math" class="btn btn-primary" style="display: inline-block; background: #10b981; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">
+          View Math Quizzes
+        </a>
+        <a href="/quiz-selection.html" class="btn btn-secondary" style="display: inline-block; background: transparent; color: #10b981; border: 2px solid #10b981; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; margin-left: 1rem;">
+          View All Quizzes
+        </a>
+      </div>
+    `;
+    </script>
+</body>
+
+</html>

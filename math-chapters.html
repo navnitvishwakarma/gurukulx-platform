@@ -1,555 +1,421 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Mathematics Chapters – GuruKulX</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
-    <script defer src="/js/main.js"></script>
-  </head>
-  <body>
-    <header id="site-header"></header>
-    <main class="container">
-      <section class="math-chapters-hero">
-        <div class="breadcrumb">
-          <a href="/chapter-game-selection.html">Learning Path</a>
-          <i class="ri-arrow-right-s-line"></i>
-          <span>Mathematics Chapters</span>
-        </div>
-        
-        <div class="hero-content">
-          <h1 class="text-balance">
-            <i class="ri-function-line"></i> Mathematics Chapters
-          </h1>
-          <p class="lead text-pretty">
-            Explore mathematics through structured chapters with lessons, examples, and practice exercises.
-          </p>
-        </div>
-      </section>
 
-      <section class="chapters-grid">
-        <div class="chapter-card">
-          <div class="chapter-number">1</div>
-          <div class="chapter-content">
-            <h3>Knowing Our Numbers</h3>
-            <p>Understanding large numbers, place value, and number systems</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Place Value</span>
-              <span class="topic-tag">Number Names</span>
-              <span class="topic-tag">Comparison</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathematics Chapters – GuruKulX</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+  <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+  <header id="site-header"></header>
+  <main class="container">
+    <section class="math-chapters-hero">
+      <div class="breadcrumb">
+        <a href="/chapter-game-selection.html">Learning Path</a>
+        <i class="ri-arrow-right-s-line"></i>
+        <span>Mathematics Chapters</span>
+      </div>
+
+      <div class="hero-content">
+        <h1 class="text-balance">
+          <i class="ri-function-line"></i> Mathematics Chapters
+        </h1>
+        <p class="lead text-pretty">
+          Explore mathematics through structured chapters with lessons, examples, and practice exercises.
+        </p>
+      </div>
+    </section>
+
+    <section class="chapters-grid" id="chaptersGrid">
+      <!-- Chapters will be dynamically loaded here -->
+    </section>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const MATH_CHAPTERS = {
+          "6": [
+            { number: 1, title: "Knowing Our Numbers", desc: "Large numbers, place value, and number systems", topics: ["Place Value", "Number Names", "Comparison"], link: "/chapter1-knowing-numbers.html" },
+            { number: 2, title: "Whole Numbers", desc: "Properties of whole numbers, operations, and number patterns", topics: ["Properties", "Operations", "Patterns"], link: "/chapter2-whole-numbers.html" },
+            { number: 3, title: "Playing with Numbers", desc: "Factors, multiples, prime and composite numbers", topics: ["Factors", "Multiples", "Prime Numbers"], link: "/chapter3-playing-numbers.html" },
+            { number: 4, title: "Basic Geometrical Ideas", desc: "Points, lines, angles, and basic shapes", topics: ["Points & Lines", "Angles", "Shapes"], link: "/coming-soon.html" },
+            { number: 5, title: "Understanding Elementary Shapes", desc: "Triangles, quadrilaterals, and their properties", topics: ["Triangles", "Quadrilaterals", "Properties"], link: "/coming-soon.html" },
+            { number: 6, title: "Integers", desc: "Positive and negative numbers, operations with integers", topics: ["Positive Numbers", "Negative Numbers", "Operations"], link: "/coming-soon.html" },
+            { number: 7, title: "Fractions", desc: "Understanding fractions, equivalent fractions, and operations", topics: ["Fraction Basics", "Equivalent Fractions", "Operations"], link: "/coming-soon.html" },
+            { number: 8, title: "Decimals", desc: "Decimal numbers, place value, and decimal operations", topics: ["Decimal Basics", "Place Value", "Operations"], link: "/coming-soon.html" },
+            { number: 9, title: "Data Handling", desc: "Collection, organization, and interpretation of data", topics: ["Data Collection", "Organization", "Interpretation"], link: "/coming-soon.html" },
+            { number: 10, title: "Mensuration", desc: "Perimeter, area, and volume of basic shapes", topics: ["Perimeter", "Area", "Volume"], link: "/coming-soon.html" },
+            { number: 11, title: "Algebra", desc: "Introduction to variables, expressions, and equations", topics: ["Variables", "Expressions", "Equations"], link: "/coming-soon.html" },
+            { number: 12, title: "Ratio and Proportion", desc: "Understanding ratios, proportions, and their applications", topics: ["Ratios", "Proportions", "Applications"], link: "/coming-soon.html" }
+          ],
+          "7": [
+            { number: 1, title: "Integers", desc: "Properties of integers, multiplication and division", topics: ["Multiplication", "Division", "Properties"], link: "/coming-soon.html" },
+            { number: 2, title: "Fractions and Decimals", desc: "Operations with fractions and decimals", topics: ["Multiplication", "Division", "Word Problems"], link: "/coming-soon.html" },
+            { number: 3, title: "Data Handling", desc: "Mean, median, mode, and bar graphs", topics: ["Mean", "Median", "Mode"], link: "/coming-soon.html" },
+            { number: 4, title: "Simple Equations", desc: "Setting up and solving simple linear equations", topics: ["Variables", "Equations", "Solutions"], link: "/coming-soon.html" },
+            { number: 5, title: "Lines and Angles", desc: "Related angles, pairs of lines, and transversals", topics: ["Angles", "Pairs of Lines", "Transversals"], link: "/coming-soon.html" }
+          ],
+          "8": [
+            { number: 1, title: "Rational Numbers", desc: "Properties and operations on rational numbers", topics: ["Properties", "Number Line", "Between Numbers"], link: "/coming-soon.html" },
+            { number: 2, title: "Linear Equations", desc: "Linear equations in one variable", topics: ["Solving Equations", "Applications", "Word Problems"], link: "/coming-soon.html" },
+            { number: 3, title: "Understanding Quadrilaterals", desc: "Polygons, parallelograms, and their properties", topics: ["Polygons", "Parallelograms", "Properties"], link: "/coming-soon.html" },
+            { number: 4, title: "Data Handling", desc: "Organizing data, pie charts, and probability", topics: ["Pie Charts", "Probability", "Chance"], link: "/coming-soon.html" },
+            { number: 5, title: "Squares and Square Roots", desc: "Finding squares and square roots", topics: ["Squares", "Square Roots", "Methods"], link: "/coming-soon.html" }
+          ],
+          "9": [
+            { number: 1, title: "Number Systems", desc: "Irrational numbers, real numbers, and their expansions", topics: ["Irrational Numbers", "Real Numbers", "Exponents"], link: "/coming-soon.html" },
+            { number: 2, title: "Polynomials", desc: "Polynomials in one variable, zeros, and factorization", topics: ["Polynomials", "Zeros", "Factorization"], link: "/coming-soon.html" },
+            { number: 3, title: "Coordinate Geometry", desc: "Cartesian system, plotting points", topics: ["Cartesian System", "Coordinates", "Quadrants"], link: "/coming-soon.html" },
+            { number: 4, title: "Linear Equations", desc: "Linear equations in two variables", topics: ["Solutions", "Graphing", "Lines"], link: "/coming-soon.html" },
+            { number: 5, title: "Euclid's Geometry", desc: "Introduction to Euclid's geometry and axioms", topics: ["Axioms", "Postulates", "Theorems"], link: "/coming-soon.html" }
+          ],
+          "10": [
+            { number: 1, title: "Real Numbers", desc: "Euclid's division lemma, Fundamental Theorem of Arithmetic", topics: ["Euclid's Lemma", "LCM & HCF", "Irrationality"], link: "/coming-soon.html" },
+            { number: 2, title: "Polynomials", desc: "Zeros of polynomials, relationship between zeros and coefficients", topics: ["Zeros", "Coefficients", "Division Algorithm"], link: "/coming-soon.html" },
+            { number: 3, title: "Pair of Linear Equations", desc: "Solving pairs of linear equations in two variables", topics: ["Substitution", "Elimination", "Cross-Multiplication"], link: "/coming-soon.html" },
+            { number: 4, title: "Quadratic Equations", desc: "Solving quadratic equations by factorization and formula", topics: ["Factorization", "Quadratic Formula", "Nature of Roots"], link: "/coming-soon.html" },
+            { number: 5, title: "Arithmetic Progressions", desc: "nth term and sum of first n terms of an AP", topics: ["nth Term", "Sum of Terms", "Word Problems"], link: "/coming-soon.html" }
+          ],
+          "11": [
+            { number: 1, title: "Sets", desc: "Sets and their representations, operations on sets", topics: ["Sets", "Subsets", "Venn Diagrams"], link: "/coming-soon.html" },
+            { number: 2, title: "Relations and Functions", desc: "Cartesian product, relations, and functions", topics: ["Relations", "Functions", "Domain & Range"], link: "/coming-soon.html" },
+            { number: 3, title: "Trigonometric Functions", desc: "Angles, trigonometric functions, and identities", topics: ["Angles", "Functions", "Identities"], link: "/coming-soon.html" },
+            { number: 4, title: "Complex Numbers", desc: "Complex numbers and quadratic equations", topics: ["Complex Numbers", "Argand Plane", "Quadratic Equations"], link: "/coming-soon.html" },
+            { number: 5, title: "Linear Inequalities", desc: "Linear inequalities in one and two variables", topics: ["Inequalities", "Solutions", "Graphing"], link: "/coming-soon.html" }
+          ],
+          "12": [
+            { number: 1, title: "Relations and Functions", desc: "Types of relations and functions, inverse trigonometric functions", topics: ["Relations", "Functions", "Inverse Trig"], link: "/coming-soon.html" },
+            { number: 2, title: "Matrices", desc: "Operations on matrices, types of matrices", topics: ["Matrices", "Operations", "Transpose"], link: "/coming-soon.html" },
+            { number: 3, title: "Determinants", desc: "Determinants, properties, and applications", topics: ["Determinants", "Properties", "Applications"], link: "/coming-soon.html" },
+            { number: 4, title: "Continuity and Differentiability", desc: "Continuity, differentiability, and derivatives", topics: ["Continuity", "Differentiability", "Derivatives"], link: "/coming-soon.html" },
+            { number: 5, title: "Integrals", desc: "Indefinite and definite integrals", topics: ["Integrals", "Methods", "Applications"], link: "/coming-soon.html" }
+          ]
+        };
+
+        const user = getUser();
+        const userClass = user.class || "6"; // Default to 6 if not set
+
+        // Update header to show class
+        const heroTitle = document.querySelector('.hero-content h1');
+        if (heroTitle) {
+          heroTitle.innerHTML = `<i class="ri-function-line"></i> Class ${userClass} Mathematics`;
+        }
+
+        const chapters = MATH_CHAPTERS[userClass] || MATH_CHAPTERS["6"];
+        const grid = document.getElementById('chaptersGrid');
+
+        if (grid) {
+          grid.innerHTML = chapters.map(ch => `
+              <div class="chapter-card">
+                <div class="chapter-number">${ch.number}</div>
+                <div class="chapter-content">
+                  <h3>${ch.title}</h3>
+                  <p>${ch.desc}</p>
+                  <div class="chapter-topics">
+                    ${ch.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                  </div>
+                  <div class="chapter-progress">
+                    <div class="progress-bar">
+                      <div class="progress" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text">0% Complete</span>
+                  </div>
+                </div>
+                <a href="${ch.link}" class="chapter-btn">${ch.link.includes('coming-soon') ? 'Coming Soon' : 'Start Chapter'}</a>
               </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/chapter1-knowing-numbers.html" class="chapter-btn">Start Chapter</a>
-        </div>
+            `).join('');
+        }
 
-        <div class="chapter-card">
-          <div class="chapter-number">2</div>
-          <div class="chapter-content">
-            <h3>Whole Numbers</h3>
-            <p>Properties of whole numbers, operations, and number patterns</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Properties</span>
-              <span class="topic-tag">Operations</span>
-              <span class="topic-tag">Patterns</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/chapter2-whole-numbers.html" class="chapter-btn">Start Chapter</a>
-        </div>
+        // Update stats
+        const totalChaptersEl = document.querySelector('.stat-item:nth-child(2) .stat-number');
+        if (totalChaptersEl) totalChaptersEl.textContent = chapters.length;
+      });
+    </script>
 
-        <div class="chapter-card">
-          <div class="chapter-number">3</div>
-          <div class="chapter-content">
-            <h3>Playing with Numbers</h3>
-            <p>Factors, multiples, prime and composite numbers</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Factors</span>
-              <span class="topic-tag">Multiples</span>
-              <span class="topic-tag">Prime Numbers</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
+    <section class="progress-overview">
+      <div class="card">
+        <h3>Overall Progress</h3>
+        <div class="progress-stats">
+          <div class="stat-item">
+            <span class="stat-number">0</span>
+            <span class="stat-label">Chapters Completed</span>
           </div>
-          <a href="/chapter3-playing-numbers.html" class="chapter-btn">Start Chapter</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">4</div>
-          <div class="chapter-content">
-            <h3>Basic Geometrical Ideas</h3>
-            <p>Points, lines, angles, and basic shapes</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Points & Lines</span>
-              <span class="topic-tag">Angles</span>
-              <span class="topic-tag">Shapes</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
+          <div class="stat-item">
+            <span class="stat-number">12</span>
+            <span class="stat-label">Total Chapters</span>
           </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">5</div>
-          <div class="chapter-content">
-            <h3>Understanding Elementary Shapes</h3>
-            <p>Triangles, quadrilaterals, and their properties</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Triangles</span>
-              <span class="topic-tag">Quadrilaterals</span>
-              <span class="topic-tag">Properties</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">6</div>
-          <div class="chapter-content">
-            <h3>Integers</h3>
-            <p>Positive and negative numbers, operations with integers</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Positive Numbers</span>
-              <span class="topic-tag">Negative Numbers</span>
-              <span class="topic-tag">Operations</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">7</div>
-          <div class="chapter-content">
-            <h3>Fractions</h3>
-            <p>Understanding fractions, equivalent fractions, and operations</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Fraction Basics</span>
-              <span class="topic-tag">Equivalent Fractions</span>
-              <span class="topic-tag">Operations</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">8</div>
-          <div class="chapter-content">
-            <h3>Decimals</h3>
-            <p>Decimal numbers, place value, and decimal operations</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Decimal Basics</span>
-              <span class="topic-tag">Place Value</span>
-              <span class="topic-tag">Operations</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">9</div>
-          <div class="chapter-content">
-            <h3>Data Handling</h3>
-            <p>Collection, organization, and interpretation of data</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Data Collection</span>
-              <span class="topic-tag">Organization</span>
-              <span class="topic-tag">Interpretation</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">10</div>
-          <div class="chapter-content">
-            <h3>Mensuration</h3>
-            <p>Perimeter, area, and volume of basic shapes</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Perimeter</span>
-              <span class="topic-tag">Area</span>
-              <span class="topic-tag">Volume</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">11</div>
-          <div class="chapter-content">
-            <h3>Algebra</h3>
-            <p>Introduction to variables, expressions, and equations</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Variables</span>
-              <span class="topic-tag">Expressions</span>
-              <span class="topic-tag">Equations</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-
-        <div class="chapter-card">
-          <div class="chapter-number">12</div>
-          <div class="chapter-content">
-            <h3>Ratio and Proportion</h3>
-            <p>Understanding ratios, proportions, and their applications</p>
-            <div class="chapter-topics">
-              <span class="topic-tag">Ratios</span>
-              <span class="topic-tag">Proportions</span>
-              <span class="topic-tag">Applications</span>
-            </div>
-            <div class="chapter-progress">
-              <div class="progress-bar">
-                <div class="progress" style="width: 0%"></div>
-              </div>
-              <span class="progress-text">0% Complete</span>
-            </div>
-          </div>
-          <a href="/coming-soon.html" class="chapter-btn">Coming Soon</a>
-        </div>
-      </section>
-
-      <section class="progress-overview">
-        <div class="card">
-          <h3>Overall Progress</h3>
-          <div class="progress-stats">
-            <div class="stat-item">
-              <span class="stat-number">0</span>
-              <span class="stat-label">Chapters Completed</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-number">12</span>
-              <span class="stat-label">Total Chapters</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-number">0%</span>
-              <span class="stat-label">Overall Progress</span>
-            </div>
-          </div>
-          <div class="overall-progress-bar">
-            <div class="progress-bar">
-              <div class="progress" style="width: 0%"></div>
-            </div>
+          <div class="stat-item">
+            <span class="stat-number">0%</span>
+            <span class="stat-label">Overall Progress</span>
           </div>
         </div>
-      </section>
-    </main>
-    <footer id="site-footer"></footer>
+        <div class="overall-progress-bar">
+          <div class="progress-bar">
+            <div class="progress" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
 
-    <style>
-      .math-chapters-hero {
-        text-align: center;
-        padding: 2rem 0;
-        margin-bottom: 2rem;
-      }
+  <style>
+    .math-chapters-hero {
+      text-align: center;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+    }
 
-      .breadcrumb {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
-        color: #64748b;
-      }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
 
-      .breadcrumb a {
-        color: var(--color-primary);
-        text-decoration: none;
-      }
+    .breadcrumb a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
 
-      .breadcrumb a:hover {
-        text-decoration: underline;
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .hero-content h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--color-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .hero-content h1 i {
+      color: var(--color-primary);
+    }
+
+    .hero-content .lead {
+      font-size: 1.125rem;
+      color: #64748b;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .chapters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chapter-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-muted);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chapter-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      border-color: var(--color-primary);
+    }
+
+    .chapter-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .chapter-card:hover::before {
+      opacity: 0.03;
+    }
+
+    .chapter-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .chapter-content h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-fg);
+    }
+
+    .chapter-content p {
+      color: #64748b;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .chapter-topics {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .topic-tag {
+      background: var(--color-muted);
+      color: var(--color-fg);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .chapter-progress {
+      margin-bottom: 1rem;
+    }
+
+    .chapter-progress .progress-bar {
+      width: 100%;
+      background: #f1f5f9;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .chapter-progress .progress {
+      height: 8px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      transition: width 0.6s ease;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .chapter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--color-primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .chapter-btn:hover {
+      background: #128a3f;
+      transform: translateY(-2px);
+    }
+
+    .progress-overview {
+      margin-top: 2rem;
+    }
+
+    .progress-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: var(--color-muted);
+      border-radius: 0.75rem;
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--color-fg);
+    }
+
+    .overall-progress-bar {
+      margin-top: 1rem;
+    }
+
+    .overall-progress-bar .progress-bar {
+      width: 100%;
+      background: #f1f5f9;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--color-muted);
+    }
+
+    .overall-progress-bar .progress {
+      height: 12px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      transition: width 0.6s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .chapters-grid {
+        grid-template-columns: 1fr;
       }
 
       .hero-content h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: var(--color-fg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-      }
-
-      .hero-content h1 i {
-        color: var(--color-primary);
-      }
-
-      .hero-content .lead {
-        font-size: 1.125rem;
-        color: #64748b;
-        max-width: 600px;
-        margin: 0 auto;
-      }
-
-      .chapters-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-      }
-
-      .chapter-card {
-        background: var(--color-bg);
-        border: 1px solid var(--color-muted);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .chapter-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-        border-color: var(--color-primary);
-      }
-
-      .chapter-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: -1;
-      }
-
-      .chapter-card:hover::before {
-        opacity: 0.03;
-      }
-
-      .chapter-number {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-      }
-
-      .chapter-content h3 {
-        font-size: 1.25rem;
-        margin-bottom: 0.5rem;
-        color: var(--color-fg);
-      }
-
-      .chapter-content p {
-        color: #64748b;
-        margin-bottom: 1rem;
-        line-height: 1.6;
-      }
-
-      .chapter-topics {
-        display: flex;
+        font-size: 2rem;
+        flex-direction: column;
         gap: 0.5rem;
-        flex-wrap: wrap;
-        margin-bottom: 1rem;
-      }
-
-      .topic-tag {
-        background: var(--color-muted);
-        color: var(--color-fg);
-        padding: 0.25rem 0.75rem;
-        border-radius: 999px;
-        font-size: 0.8rem;
-        font-weight: 500;
-      }
-
-      .chapter-progress {
-        margin-bottom: 1rem;
-      }
-
-      .chapter-progress .progress-bar {
-        width: 100%;
-        background: #f1f5f9;
-        border-radius: 999px;
-        overflow: hidden;
-        border: 1px solid var(--color-muted);
-        margin-bottom: 0.5rem;
-      }
-
-      .chapter-progress .progress {
-        height: 8px;
-        background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-        transition: width 0.6s ease;
-      }
-
-      .progress-text {
-        font-size: 0.85rem;
-        color: #64748b;
-      }
-
-      .chapter-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--color-primary);
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.75rem;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        width: 100%;
-        justify-content: center;
-      }
-
-      .chapter-btn:hover {
-        background: #128a3f;
-        transform: translateY(-2px);
-      }
-
-      .progress-overview {
-        margin-top: 2rem;
       }
 
       .progress-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        grid-template-columns: 1fr;
       }
 
-      .stat-item {
-        text-align: center;
+      .chapter-card {
         padding: 1rem;
-        background: var(--color-muted);
-        border-radius: 0.75rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .chapter-topics {
+        flex-direction: column;
+        align-items: flex-start;
       }
 
-      .stat-number {
-        display: block;
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--color-primary);
-        margin-bottom: 0.25rem;
+      .topic-tag {
+        font-size: 0.75rem;
       }
+    }
+  </style>
+</body>
 
-      .stat-label {
-        font-size: 0.9rem;
-        color: var(--color-fg);
-      }
-
-      .overall-progress-bar {
-        margin-top: 1rem;
-      }
-
-      .overall-progress-bar .progress-bar {
-        width: 100%;
-        background: #f1f5f9;
-        border-radius: 999px;
-        overflow: hidden;
-        border: 1px solid var(--color-muted);
-      }
-
-      .overall-progress-bar .progress {
-        height: 12px;
-        background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-        transition: width 0.6s ease;
-      }
-
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .chapters-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .hero-content h1 {
-          font-size: 2rem;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        .progress-stats {
-          grid-template-columns: 1fr;
-        }
-
-        .chapter-card {
-          padding: 1rem;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .chapter-topics {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .topic-tag {
-          font-size: 0.75rem;
-        }
-      }
-    </style>
-  </body>
 </html>
