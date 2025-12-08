@@ -89,7 +89,7 @@ A comprehensive educational platform that makes environmental education engaging
    ```
    MONGODB_URI=mongodb+srv://digloo:navnit@cluster0.a6xgm1l.mongodb.net/gurukulx?retryWrites=true&w=majority&appName=Cluster0
    JWT_SECRET=gurukulx-super-secret-jwt-key-2024
-   GEMINI_API_KEY=AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do
+   GEMINI_API_KEY=YOUR_GEMINI_API_KEY
    NODE_ENV=production
    ```
 

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 6: Integers – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+    <header id="site-header"></header>
+    <main class="container">
+        <section class="chapter-header">
+            <div class="breadcrumb">
+                <a href="/math-chapters.html">Mathematics Chapters</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Chapter 6: Integers</span>
+            </div>
+
+            <div class="chapter-title">
+                <div class="chapter-number">6</div>
+                <div class="chapter-info">
+                    <h1>Integers</h1>
+                    <p class="chapter-subtitle">Positive and negative numbers, operations on the number line</p>
+                </div>
+            </div>
+
+            <div class="chapter-progress">
+                <div class="progress-bar">
+                    <div class="progress" id="chapterProgress" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0% Complete</span>
+            </div>
+        </section>
+
+        <section class="chapter-content">
+            <div class="content-tabs">
+                <button class="tab-btn active" data-tab="lesson">Lesson</button>
+                <button class="tab-btn" data-tab="examples">Examples</button>
+                <button class="tab-btn" data-tab="practice">Practice</button>
+                <button class="tab-btn" data-tab="quiz">Quiz</button>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="tab-content active" id="lesson">
+                <div class="lesson-section">
+                    <h2>Understanding Integers</h2>
+                    <p>Integers form a bigger collection of numbers which contains whole numbers and negative numbers.
+                    </p>
+
+                    <div class="concept-box">
+                        <h3>What are Integers?</h3>
+                        <ul>
+                            <li><strong>Positive Integers:</strong> 1, 2, 3, 4, ... (Natural numbers)</li>
+                            <li><strong>Zero:</strong> 0 is an integer which is neither positive nor negative.</li>
+                            <li><strong>Negative Integers:</strong> -1, -2, -3, -4, ...</li>
+                        </ul>
+                        <p>The collection of integers is ..., -3, -2, -1, 0, 1, 2, 3, ...</p>
+                    </div>
+
+                    <div class="concept-box">
+                        <h3>Ordering of Integers</h3>
+                        <p>On a number line, numbers to the right are greater than numbers to the left.</p>
+                        <p>Example: 5 > 2, 2 > 0, 0 > -1, -2 > -5.</p>
+                    </div>
+
+                    <div class="concept-box">
+                        <h3>Addition and Subtraction</h3>
+                        <p><strong>Addition Rules:</strong></p>
+                        <ul>
+                            <li>Same signs: Add and keep the sign. (e.g., -2 + (-3) = -5)</li>
+                            <li>Different signs: Subtract smaller absolute value from larger, keep sign of larger.
+                                (e.g., -5 + 3 = -2)</li>
+                        </ul>
+                        <p><strong>Subtraction Rule:</strong></p>
+                        <ul>
+                            <li>Subtracting a number is same as adding its additive inverse. (e.g., 5 - (-2) = 5 + 2 =
+                                7)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples Content -->
+            <div class="tab-content" id="examples">
+                <div class="example-section">
+                    <h2>Solved Examples</h2>
+
+                    <div class="example-box">
+                        <h3>Example 1: Comparing Integers</h3>
+                        <p><strong>Question:</strong> Which is greater: -15 or -10?</p>
+                        <p><strong>Solution:</strong></p>
+                        <div class="solution">
+                            <p>On the number line, -10 is to the right of -15.</p>
+                            <p>Therefore, <strong>-10 > -15</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h3>Example 2: Adding Integers</h3>
+                        <p><strong>Question:</strong> Solve: (-10) + (+3)</p>
+                        <p><strong>Solution:</strong></p>
+                        <div class="solution">
+                            <p>We are adding integers with different signs.</p>
+                            <p>Difference: 10 - 3 = 7.</p>
+                            <p>Sign of larger number (10) is negative.</p>
+                            <p><strong>Answer: -7</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Content -->
+            <div class="tab-content" id="practice">
+                <div class="practice-section">
+                    <h2>Practice Exercises</h2>
+
+                    <div class="exercise-box">
+                        <h3>Exercise 1: Solve</h3>
+                        <div class="practice-questions">
+                            <div class="question">
+                                <p>-5 + 8 = ?</p>
+                                <input type="text" class="answer-input" placeholder="Your answer">
+                                <button class="check-btn" onclick="checkAnswer(this, '3')">Check</button>
+                            </div>
+                            <div class="question">
+                                <p>Successor of -10 is ?</p>
+                                <input type="text" class="answer-input" placeholder="Your answer">
+                                <button class="check-btn" onclick="checkAnswer(this, '-9')">Check</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Content -->
+            <div class="tab-content" id="quiz">
+                <div class="quiz-section">
+                    <h2>Chapter Quiz</h2>
+                    <p>Test your knowledge of integers.</p>
+
+                    <div class="quiz-container">
+                        <div class="quiz-question" data-question="1">
+                            <h3>Question 1: The integer 5 less than -2 is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="-7"> -7</label>
+                                <label><input type="radio" name="q1" value="3"> 3</label>
+                                <label><input type="radio" name="q1" value="7"> 7</label>
+                                <label><input type="radio" name="q1" value="-3"> -3</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question" data-question="2">
+                            <h3>Question 2: Which integer is greater?</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="-1"> -1</label>
+                                <label><input type="radio" name="q2" value="-100"> -100</label>
+                                <label><input type="radio" name="q2" value="-50"> -50</label>
+                                <label><input type="radio" name="q2" value="-5"> -5</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question" data-question="3">
+                            <h3>Question 3: Additive inverse of -8 is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="8"> 8</label>
+                                <label><input type="radio" name="q3" value="-8"> -8</label>
+                                <label><input type="radio" name="q3" value="0"> 0</label>
+                                <label><input type="radio" name="q3" value="1"> 1</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question" data-question="4">
+                            <h3>Question 4: 10 + (-5) + (-2) = ?</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="3"> 3</label>
+                                <label><input type="radio" name="q4" value="17"> 17</label>
+                                <label><input type="radio" name="q4" value="-3"> -3</label>
+                                <label><input type="radio" name="q4" value="7"> 7</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question" data-question="5">
+                            <h3>Question 5: Absolute value of -5 is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="5"> 5</label>
+                                <label><input type="radio" name="q5" value="-5"> -5</label>
+                                <label><input type="radio" name="q5" value="0"> 0</label>
+                                <label><input type="radio" name="q5" value="1"> 1</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-actions">
+                            <button class="btn btn-primary" onclick="submitQuiz()">Submit Quiz</button>
+                            <button class="btn" onclick="resetQuiz()">Reset</button>
+                        </div>
+
+                        <div class="quiz-result" id="quizResult" style="display: none;">
+                            <h3>Quiz Results</h3>
+                            <div class="result-score">
+                                <span class="score-text">Your Score: </span>
+                                <span class="score-value" id="scoreValue">0/5</span>
+                            </div>
+                            <div class="result-message" id="resultMessage"></div>
+                            <div class="quiz-actions">
+                                <button class="btn btn-primary" onclick="proceedToNextChapter()">Next Chapter</button>
+                                <button class="btn" onclick="retakeQuiz()">Retake Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <style>
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .chapter-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chapter-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .chapter-info h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .chapter-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .chapter-progress {
+            margin-top: 1rem;
+        }
+
+        .chapter-progress .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-progress .progress {
+            height: 10px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .content-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-btn:hover {
+            color: var(--color-fg);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .lesson-section,
+        .example-section,
+        .practice-section,
+        .quiz-section {
+            max-width: 800px;
+        }
+
+        .concept-box,
+        .example-box,
+        .exercise-box {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .concept-box h3,
+        .example-box h3,
+        .exercise-box h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .solution {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .practice-questions {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .question {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .check-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .quiz-container {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .quiz-question {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .quiz-question:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-options label:hover {
+            background: #f8fafc;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .quiz-result {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .result-score {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-value {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        .result-message {
+            margin-bottom: 1rem;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .chapter-title {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .quiz-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+                updateProgress();
+            });
+        });
+
+        function updateProgress() {
+            const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+            let progress = 0;
+            switch (activeTab) {
+                case 'lesson': progress = 25; break;
+                case 'examples': progress = 50; break;
+                case 'practice': progress = 75; break;
+                case 'quiz': progress = 100; break;
+            }
+            document.getElementById('chapterProgress').style.width = progress + '%';
+            document.querySelector('.progress-text').textContent = progress + '% Complete';
+        }
+
+        function checkAnswer(button, correctAnswer) {
+            const input = button.previousElementSibling;
+            const userAnswer = input.value.toLowerCase().trim();
+            const correct = correctAnswer.toLowerCase().trim();
+            if (userAnswer === correct) {
+                button.textContent = 'Correct! ✓';
+                button.style.background = '#16a34a';
+                input.style.borderColor = '#16a34a';
+            } else {
+                button.textContent = 'Try Again';
+                button.style.background = '#dc2626';
+                input.style.borderColor = '#dc2626';
+            }
+        }
+
+        const correctAnswers = {
+            'q1': '-7',
+            'q2': '-1',
+            'q3': '8',
+            'q4': '3',
+            'q5': '5'
+        };
+
+        function submitQuiz() {
+            let score = 0;
+            const totalQuestions = Object.keys(correctAnswers).length;
+            Object.keys(correctAnswers).forEach(questionId => {
+                const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
+                if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
+                    score++;
+                }
+            });
+            const percentage = (score / totalQuestions) * 100;
+            document.getElementById('scoreValue').textContent = `${score}/${totalQuestions}`;
+            let message = '';
+            if (percentage >= 80) message = 'Excellent! Integer Expert!';
+            else if (percentage >= 60) message = 'Good job!';
+            else message = 'Keep practicing!';
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('quizResult').style.display = 'block';
+            document.getElementById('chapterProgress').style.width = '100%';
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+
+        function resetQuiz() {
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            document.getElementById('quizResult').style.display = 'none';
+        }
+
+        function retakeQuiz() { resetQuiz(); }
+
+        function proceedToNextChapter() {
+            window.location.href = '/chapter7-fractions.html';
+        }
+    </script>
+</body>
+
+</html>

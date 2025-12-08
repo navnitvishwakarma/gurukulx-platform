@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 3: Determinants (Class 12) – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+    <header id="site-header"></header>
+    <main class="container">
+        <section class="chapter-header">
+            <div class="breadcrumb">
+                <a href="/math-chapters.html">Mathematics Chapters</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Chapter 3: Determinants</span>
+            </div>
+
+            <div class="chapter-title">
+                <div class="chapter-number">3</div>
+                <div class="chapter-info">
+                    <h1>Determinants</h1>
+                    <p class="chapter-subtitle">Expansion, properties, minors, and cofactors</p>
+                </div>
+            </div>
+
+            <div class="chapter-progress">
+                <div class="progress-bar">
+                    <div class="progress" id="chapterProgress" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0% Complete</span>
+            </div>
+        </section>
+
+        <section class="chapter-content">
+            <div class="content-tabs">
+                <button class="tab-btn active" data-tab="lesson">Lesson</button>
+                <button class="tab-btn" data-tab="examples">Examples</button>
+                <button class="tab-btn" data-tab="practice">Practice</button>
+                <button class="tab-btn" data-tab="quiz">Quiz</button>
+            </div>
+
+            <div class="tab-content active" id="lesson">
+                <div class="lesson-section">
+                    <h2>Definition and Expansion</h2>
+                    <p>Every square matrix A is associated with a number called its determinant, det(A) or |A|.</p>
+
+                    <div class="concept-box">
+                        <h3>Properties</h3>
+                        <p>|A| = |A'|.</p>
+                        <p>If two rows are identical, determinant is zero.</p>
+                        <p>Area of triangle using determinants.</p>
+                    </div>
+
+                    <div class="concept-box">
+                        <h3>Inverse</h3>
+                        <p>A adj(A) = |A| I.</p>
+                        <p>A^-1 = (1/|A|) adj(A), provided |A| ≠ 0.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="examples">
+                <div class="example-section">
+                    <h2>Solved Examples</h2>
+                    <div class="example-box">
+                        <h3>Example 1: 2x2 Determinant</h3>
+                        <p><strong>Question:</strong> |A| where A = [[2, 4], [-1, 2]].</p>
+                        <p><strong>Solution:</strong> (2*2) - (4*-1) = 4 + 4 = 8.</p>
+                    </div>
+                    <div class="example-box">
+                        <h3>Example 2: Singular Matrix</h3>
+                        <p><strong>Question:</strong> When is a matrix singular?</p>
+                        <p><strong>Solution:</strong> When its determinant is zero.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="practice">
+                <div class="practice-section">
+                    <h2>Practice Exercises</h2>
+                    <div class="exercise-box">
+                        <h3>Exercise 1</h3>
+                        <div class="practice-questions">
+                            <div class="question">
+                                <p>Value of determinant of [[1, 2], [3, 4]]?</p>
+                                <input type="text" class="answer-input" placeholder="Your answer">
+                                <button class="check-btn" data-answer="-2">Check</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="quiz">
+                <div class="quiz-section">
+                    <h2>Chapter Quiz</h2>
+                    <div class="quiz-container">
+                        <div class="quiz-question" data-question="1">
+                            <h3>Question 1: If rows are interchanged, determinant:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="changesign"> Changes Sign</label>
+                                <label><input type="radio" name="q1" value="same"> Remains Same</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="2">
+                            <h3>Question 2: |kA| for order n is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="k^n|A|"> k^n |A|</label>
+                                <label><input type="radio" name="q2" value="k|A|"> k |A|</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="3">
+                            <h3>Question 3: For invertible matrix A, |A^-1| = ?</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="1/|A|"> 1/|A|</label>
+                                <label><input type="radio" name="q3" value="|A|"> |A|</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="4">
+                            <h3>Question 4: Area of triangle with collinear vertices is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="0"> 0</label>
+                                <label><input type="radio" name="q4" value="positive"> Positive</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="5">
+                            <h3>Question 5: Matrix A is invertible if:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="nonsingular"> Non-singular</label>
+                                <label><input type="radio" name="q5" value="singular"> Singular</label>
+                            </div>
+                        </div>
+                        <div class="quiz-actions">
+                            <button class="btn btn-primary" id="submitQuizBtn">Submit Quiz</button>
+                            <button class="btn" id="resetQuizBtn">Reset</button>
+                        </div>
+                        <div class="quiz-result" id="quizResult" style="display: none;">
+                            <h3 id="resultMessage"></h3>
+                            <p id="scoreValue"></p>
+                            <button class="btn btn-primary" id="nextChapterBtn">Next Chapter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="site-footer"></footer>
+    <style>
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .chapter-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chapter-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .chapter-info h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .chapter-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .chapter-progress {
+            margin-top: 1rem;
+        }
+
+        .chapter-progress .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-progress .progress {
+            height: 10px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .content-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-btn:hover {
+            color: var(--color-fg);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .lesson-section,
+        .example-section,
+        .practice-section,
+        .quiz-section {
+            max-width: 800px;
+        }
+
+        .concept-box,
+        .example-box,
+        .exercise-box {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .concept-box h3,
+        .example-box h3,
+        .exercise-box h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .solution {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .practice-questions {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .question {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .check-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .quiz-container {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .quiz-question {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .quiz-question:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-options label:hover {
+            background: #f8fafc;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .quiz-result {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .chapter-title {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .quiz-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <script>
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+                updateProgress();
+            });
+        });
+        function updateProgress() {
+            const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+            let progress = 0;
+            if (activeTab === 'lesson') progress = 25;
+            else if (activeTab === 'examples') progress = 50;
+            else if (activeTab === 'practice') progress = 75;
+            else if (activeTab === 'quiz') progress = 100;
+            document.getElementById('chapterProgress').style.width = progress + '%';
+            document.querySelector('.progress-text').textContent = progress + '% Complete';
+        }
+        function checkAnswer(button, correctAnswer) {
+            const input = button.previousElementSibling;
+            if (input.value.trim() === correctAnswer) {
+                button.textContent = 'Correct!'; button.style.background = '#16a34a';
+            } else {
+                button.textContent = 'Try Again'; button.style.background = '#dc2626';
+            }
+        }
+        const correctAnswers = { 'q1': 'changesign', 'q2': 'k^n|A|', 'q3': '1/|A|', 'q4': '0', 'q5': 'nonsingular' };
+        function submitQuiz() {
+            let score = 0;
+            Object.keys(correctAnswers).forEach(q => {
+                const sel = document.querySelector(`input[name="${q}"]:checked`);
+                if (sel && sel.value === correctAnswers[q]) score++;
+            });
+            document.getElementById('resultMessage').textContent = `Score: ${score}/5`;
+            document.getElementById('quizResult').style.display = 'block';
+        }
+        function resetQuiz() {
+            document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+            document.getElementById('quizResult').style.display = 'none';
+        }
+        function proceedToNextChapter() { window.location.href = '/chapter4-continuity-differentiability-class12.html'; }
+    
+      // Event listeners for CSP compliance
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            if (!btn.hasAttribute('data-listener-attached')) {
+                btn.addEventListener('click', () => {
+                    checkAnswer(btn, btn.getAttribute('data-answer'));
+                });
+                btn.setAttribute('data-listener-attached', 'true');
+            }
+        });
+        
+        const submitBtn = document.getElementById('submitQuizBtn');
+        if (submitBtn) submitBtn.addEventListener('click', submitQuiz);
+        
+        const resetBtn = document.getElementById('resetQuizBtn');
+        if (resetBtn) resetBtn.addEventListener('click', resetQuiz);
+        
+        const nextBtn = document.getElementById('nextChapterBtn');
+        if (nextBtn) nextBtn.addEventListener('click', proceedToNextChapter);
+      });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 2: Relations and Functions (Class 11) – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+    <header id="site-header"></header>
+    <main class="container">
+        <section class="chapter-header">
+            <div class="breadcrumb">
+                <a href="/math-chapters.html">Mathematics Chapters</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Chapter 2: Relations and Functions</span>
+            </div>
+
+            <div class="chapter-title">
+                <div class="chapter-number">2</div>
+                <div class="chapter-info">
+                    <h1>Relations and Functions</h1>
+                    <p class="chapter-subtitle">Cartesian product, domain, codomain, and range</p>
+                </div>
+            </div>
+
+            <div class="chapter-progress">
+                <div class="progress-bar">
+                    <div class="progress" id="chapterProgress" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0% Complete</span>
+            </div>
+        </section>
+
+        <section class="chapter-content">
+            <div class="content-tabs">
+                <button class="tab-btn active" data-tab="lesson">Lesson</button>
+                <button class="tab-btn" data-tab="examples">Examples</button>
+                <button class="tab-btn" data-tab="practice">Practice</button>
+                <button class="tab-btn" data-tab="quiz">Quiz</button>
+            </div>
+
+            <div class="tab-content active" id="lesson">
+                <div class="lesson-section">
+                    <h2>Cartesian Product</h2>
+                    <p>If A and B are two non-empty sets, then Cartesian product A × B is the set of all ordered pairs
+                        (a, b) such that a ∈ A and b ∈ B.</p>
+
+                    <div class="concept-box">
+                        <h3>Relation</h3>
+                        <p>A relation R from set A to set B is a subset of A × B.</p>
+                        <p>Domain: Set of all first elements of ordered pairs in R.</p>
+                        <p>Range: Set of all second elements of ordered pairs in R.</p>
+                    </div>
+
+                    <div class="concept-box">
+                        <h3>Function</h3>
+                        <p>A relation f from A to B is a function if every element of set A has one and only one image
+                            in set B.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="examples">
+                <div class="example-section">
+                    <h2>Solved Examples</h2>
+                    <div class="example-box">
+                        <h3>Example 1: Cartesian Product</h3>
+                        <p><strong>Question:</strong> A={1,2}, B={3,4}. Find A × B.</p>
+                        <p><strong>Solution:</strong> {(1,3), (1,4), (2,3), (2,4)}.</p>
+                    </div>
+                    <div class="example-box">
+                        <h3>Example 2: Range of Function</h3>
+                        <p><strong>Question:</strong> f(x) = x², x ∈ {-1, 0, 1}</p>
+                        <p><strong>Solution:</strong> f(-1)=1, f(0)=0, f(1)=1. Range = {0, 1}.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="practice">
+                <div class="practice-section">
+                    <h2>Practice Exercises</h2>
+                    <div class="exercise-box">
+                        <h3>Exercise 1</h3>
+                        <div class="practice-questions">
+                            <div class="question">
+                                <p>If n(A)=2 and n(B)=3, n(A × B) is?</p>
+                                <input type="text" class="answer-input" placeholder="Your answer">
+                                <button class="check-btn" data-answer="6">Check</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="quiz">
+                <div class="quiz-section">
+                    <h2>Chapter Quiz</h2>
+                    <div class="quiz-container">
+                        <div class="quiz-question" data-question="1">
+                            <h3>Question 1: A relation is a subset of:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="cartesian"> Cartesian Product</label>
+                                <label><input type="radio" name="q1" value="union"> Union</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="2">
+                            <h3>Question 2: Domain of relation R={(1,2), (3,4)} is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="13"> {1, 3}</label>
+                                <label><input type="radio" name="q2" value="24"> {2, 4}</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="3">
+                            <h3>Question 3: If f(x) = x + 1, then f(1) is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="2"> 2</label>
+                                <label><input type="radio" name="q3" value="1"> 1</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="4">
+                            <h3>Question 4: Identity function is f(x) = ?</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="x"> x</label>
+                                <label><input type="radio" name="q4" value="1"> 1</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="5">
+                            <h3>Question 5: A function is a special type of:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="relation"> Relation</label>
+                                <label><input type="radio" name="q5" value="set"> Set</label>
+                            </div>
+                        </div>
+                        <div class="quiz-actions">
+                            <button class="btn btn-primary" id="submitQuizBtn">Submit Quiz</button>
+                            <button class="btn" id="resetQuizBtn">Reset</button>
+                        </div>
+                        <div class="quiz-result" id="quizResult" style="display: none;">
+                            <h3 id="resultMessage"></h3>
+                            <p id="scoreValue"></p>
+                            <button class="btn btn-primary" id="nextChapterBtn">Next Chapter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="site-footer"></footer>
+    <style>
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .chapter-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chapter-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .chapter-info h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .chapter-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .chapter-progress {
+            margin-top: 1rem;
+        }
+
+        .chapter-progress .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-progress .progress {
+            height: 10px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .content-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-btn:hover {
+            color: var(--color-fg);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .lesson-section,
+        .example-section,
+        .practice-section,
+        .quiz-section {
+            max-width: 800px;
+        }
+
+        .concept-box,
+        .example-box,
+        .exercise-box {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .concept-box h3,
+        .example-box h3,
+        .exercise-box h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .solution {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .practice-questions {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .question {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .check-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .quiz-container {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .quiz-question {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .quiz-question:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-options label:hover {
+            background: #f8fafc;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .quiz-result {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .chapter-title {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .quiz-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <script>
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+                updateProgress();
+            });
+        });
+        function updateProgress() {
+            const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+            let progress = 0;
+            if (activeTab === 'lesson') progress = 25;
+            else if (activeTab === 'examples') progress = 50;
+            else if (activeTab === 'practice') progress = 75;
+            else if (activeTab === 'quiz') progress = 100;
+            document.getElementById('chapterProgress').style.width = progress + '%';
+            document.querySelector('.progress-text').textContent = progress + '% Complete';
+        }
+        function checkAnswer(button, correctAnswer) {
+            const input = button.previousElementSibling;
+            if (input.value.trim() === correctAnswer) {
+                button.textContent = 'Correct!'; button.style.background = '#16a34a';
+            } else {
+                button.textContent = 'Try Again'; button.style.background = '#dc2626';
+            }
+        }
+        const correctAnswers = { 'q1': 'cartesian', 'q2': '13', 'q3': '2', 'q4': 'x', 'q5': 'relation' };
+        function submitQuiz() {
+            let score = 0;
+            Object.keys(correctAnswers).forEach(q => {
+                const sel = document.querySelector(`input[name="${q}"]:checked`);
+                if (sel && sel.value === correctAnswers[q]) score++;
+            });
+            document.getElementById('resultMessage').textContent = `Score: ${score}/5`;
+            document.getElementById('quizResult').style.display = 'block';
+        }
+        function resetQuiz() {
+            document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+            document.getElementById('quizResult').style.display = 'none';
+        }
+        function proceedToNextChapter() { window.location.href = '/chapter3-trigonometric-functions-class11.html'; }
+    
+      // Event listeners for CSP compliance
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            if (!btn.hasAttribute('data-listener-attached')) {
+                btn.addEventListener('click', () => {
+                    checkAnswer(btn, btn.getAttribute('data-answer'));
+                });
+                btn.setAttribute('data-listener-attached', 'true');
+            }
+        });
+        
+        const submitBtn = document.getElementById('submitQuizBtn');
+        if (submitBtn) submitBtn.addEventListener('click', submitQuiz);
+        
+        const resetBtn = document.getElementById('resetQuizBtn');
+        if (resetBtn) resetBtn.addEventListener('click', resetQuiz);
+        
+        const nextBtn = document.getElementById('nextChapterBtn');
+        if (nextBtn) nextBtn.addEventListener('click', proceedToNextChapter);
+      });
+    </script>
+</body>
+
+</html>

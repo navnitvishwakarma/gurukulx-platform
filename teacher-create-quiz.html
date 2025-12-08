@@ -60,7 +60,7 @@
 
                         <div class="form-row">
                             <label for="quiz-difficulty">Difficulty Level</label>
-                            <select id="quiz-difficulty">
+                            <select id="quiz-difficulty" required>
                                 <option value="">Select Difficulty</option>
                                 <option value="Beginner">Beginner</option>
                                 <option value="Intermediate">Intermediate</option>
@@ -147,7 +147,7 @@
             document.getElementById('addQuestionBtn').addEventListener('click', addQuestion);
             document.getElementById('cancelBtn').addEventListener('click', () => {
                 if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
-                    window.location.href = '/teacher-assignments.html';
+                    window.location.href = '/teacher-home.html';
                 }
             });
             document.getElementById('quizForm').addEventListener('submit', handleSubmit);
@@ -236,7 +236,7 @@
                 subject: document.getElementById('quiz-subject').value,
                 class: document.getElementById('quiz-class').value,
                 description: document.getElementById('quiz-description').value,
-                difficulty: document.getElementById('quiz-difficulty').value,
+                difficulty: document.getElementById('quiz-difficulty').value || 'Intermediate',
                 timeLimit: parseInt(document.getElementById('quiz-time-limit').value) || null,
                 timed: !!document.getElementById('quiz-time-limit').value,
                 createdAt: new Date().toISOString(),
@@ -271,7 +271,7 @@
             try {
                 await saveQuiz(quizData);
                 alert('Quiz created successfully!');
-                window.location.href = '/teacher-assignments.html';
+                window.location.href = '/teacher-home.html';
             } catch (err) {
                 console.error('Error saving quiz:', err);
                 alert('Failed to create quiz. Please try again.');
@@ -279,29 +279,46 @@
         }
 
         async function saveQuiz(quizData) {
+            let serverSaved = false;
             // Try to save to server
             try {
                 const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || 'http://localhost:8080';
+                const token = localStorage.getItem('GX_TOKEN');
+
+                if (!token) {
+                    throw new Error('Found no authentication token. Please log in again.');
+                }
+
+                console.log(`Attempting to save quiz to: ${apiBase}/api/quizzes`);
+
                 const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/quizzes`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('GX_TOKEN')}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(quizData)
                 });
 
                 if (res.ok) {
-                    console.log('Quiz saved to server');
+                    console.log('Quiz saved to server successfully');
+                    serverSaved = true;
+                } else {
+                    const errorText = await res.text();
+                    console.error('Server error response:', errorText);
+                    throw new Error(`Server Responded: ${res.status} ${res.statusText} - ${errorText}`);
                 }
             } catch (err) {
                 console.error('Failed to save to server:', err);
+                alert(`⚠️ Warning: Could not save to database!\n\nReason: ${err.message}\n\nThe quiz will be saved LOCALLY to your browser only.`);
             }
 
-            // Always save to localStorage as backup
+            // Always save to localStorage as backup/cache
             const quizzes = JSON.parse(localStorage.getItem('gx_quizzes') || '[]');
             quizzes.push(quizData);
             localStorage.setItem('gx_quizzes', JSON.stringify(quizzes));
+
+            return serverSaved;
         }
 
         function generateQuizId() {

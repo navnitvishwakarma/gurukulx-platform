@@ -86,19 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const micIcon = document.getElementById('micIcon');
     const apiStatus = document.getElementById('apiStatus');
 
-    // API Configuration - Direct Gemini API call with CORS proxy
-    const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
-    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
-    const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
-    const ALT_CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-    
-    // Server-side API endpoint configuration (fallback)
+    // API Configuration
+    // API Key removed for security - using backend proxy
     const API_BASE_URL = window.location.origin;
     const AI_ENDPOINT = `${API_BASE_URL}/api/ai`;
     
     // Check if user is authenticated
     function getAuthToken() {
-        return localStorage.getItem('token');
+        return localStorage.getItem('GX_TOKEN'); 
     }
     
     // Check if user is logged in
@@ -108,111 +103,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function searchWithGemini(query){
+        console.log('Attempting to connect to AI (Backend)...');
+        console.log('Query:', query);
+        
         try {
-            console.log('Attempting to connect to AI...');
-            console.log('Query:', query);
+            // Use backend API
+            const token = getAuthToken();
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const response = await fetch(AI_ENDPOINT, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    subject: 'General',
+                    question: query
+                })
+            });
             
-            // First try server-side API if user is logged in
-            if (isUserLoggedIn()) {
-                try {
-                    const token = getAuthToken();
-                    const response = await fetch(AI_ENDPOINT, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
-                            subject: 'General',
-                            question: query
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.answer) {
-                            console.log('Server API Response:', data);
-                            return data.answer;
-                        }
-                    }
-                } catch (serverError) {
-                    console.log('Server API failed, trying direct API...', serverError);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.answer) {
+                    console.log('Server API Response:', data);
+                    return data.answer;
+                } else {
+                    throw new Error('No answer in response');
                 }
+            } else {
+                throw new Error(`Server returned ${response.status}`);
             }
-            
-            // Fallback to direct API call with CORS proxy
-            console.log('Using direct API with CORS proxy...');
-            
-            // Try multiple CORS proxies
-            const proxies = [
-                { name: 'allorigins', url: `${CORS_PROXY}${encodeURIComponent(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`)}` },
-                { name: 'cors-anywhere', url: `${ALT_CORS_PROXY}${GEMINI_API_URL}?key=${GEMINI_API_KEY}` }
-            ];
-            
-            for (const proxy of proxies) {
-                try {
-                    console.log(`Trying ${proxy.name} proxy...`);
-                    
-                    const response = await fetch(proxy.url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...(proxy.name === 'cors-anywhere' && { 'X-Requested-With': 'XMLHttpRequest' })
-                        },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [{
-                                    text: `You are a helpful AI assistant. Please answer this question clearly and concisely: ${query}`
-                                }]
-                            }],
-                            generationConfig: {
-                                temperature: 0.7,
-                                maxOutputTokens: 500,
-                                topP: 0.8,
-                                topK: 10
-                            }
-                        })
-                    });
-                    
-                    console.log(`${proxy.name} Response status:`, response.status);
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log(`${proxy.name} Response:`, data);
-                        
-                        if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                            return data.candidates[0].content.parts[0].text;
-                        } else {
-                            console.error(`Unexpected response structure from ${proxy.name}:`, data);
-                            continue; // Try next proxy
-                        }
-                    } else {
-                        const errorText = await response.text();
-                        console.error(`${proxy.name} Error Response:`, errorText);
-                        continue; // Try next proxy
-                    }
-                } catch (proxyError) {
-                    console.error(`${proxy.name} proxy failed:`, proxyError);
-                    continue; // Try next proxy
-                }
-            }
-            
-            throw new Error('All CORS proxies failed');
-            
         } catch (error) {
             console.error('Error calling AI service:', error);
-            
-            // Provide more specific error messages
-            if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
-                throw new Error('CORS Error: The API cannot be called directly from the browser. Please check the browser console for more details.');
-            } else if (error.message.includes('API key')) {
-                throw new Error('API Key Error: Please check if the Gemini API key is valid and has proper permissions.');
-            } else if (error.message.includes('quota') || error.message.includes('limit')) {
-                throw new Error('API Quota Error: The API request limit has been exceeded. Please try again later.');
-            } else if (error.message.includes('network') || error.message.includes('fetch')) {
-                throw new Error('Network Error: Please check your internet connection and try again.');
-            }
-            
             throw error;
         }
     }

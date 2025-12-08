@@ -22,6 +22,7 @@ const Doubt = require('./models/Doubt');
 const Message = require('./models/Message');
 const Announcement = require('./models/Announcement');
 const Schedule = require('./models/Schedule');
+const Quiz = require('./models/Quiz');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -588,6 +589,45 @@ app.post('/api/resources', authenticateToken, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Quizzes
+app.get('/api/quizzes', async (req, res) => {
+  try {
+    const { subject, class: className } = req.query;
+    let query = {};
+    if (subject && subject !== 'All') query.subject = subject;
+
+    // Filter by class (match specific class, 'all', or null)
+    if (className && className !== 'all') {
+      query.$or = [
+        { class: className },
+        { class: 'all' },
+        { class: { $exists: false } },
+        { class: null }
+      ];
+    }
+
+    const quizzes = await Quiz.find(query).sort({ createdAt: -1 });
+    res.json(quizzes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/quizzes', authenticateToken, async (req, res) => {
+  if (req.user.role !== 'teacher') return res.status(403).json({ error: 'Access denied' });
+  try {
+    const quiz = new Quiz({
+      ...req.body,
+      createdBy: req.user.userId,
+      createdByName: req.user.name || req.user.username
+    });
+    await quiz.save();
+    res.status(201).json(quiz);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Assignments
 app.post('/api/assignments', authenticateToken, [
   body('class_name').notEmpty(),
@@ -945,7 +985,7 @@ app.post('/api/ai', authenticateToken, [
     }
 
     const { subject = 'General', question, profile } = req.body;
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
 
     if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your-gemini-api-key-here') {

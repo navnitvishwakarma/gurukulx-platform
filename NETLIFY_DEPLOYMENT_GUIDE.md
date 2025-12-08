@@ -149,7 +149,7 @@ MONGODB_URI = mongodb+srv://gurukulx-user:YOUR_PASSWORD@cluster0.xxxxx.mongodb.n
 
 JWT_SECRET = gurukulx-super-secret-jwt-key-2024
 
-GEMINI_API_KEY = AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do
+GEMINI_API_KEY = YOUR_GEMINI_API_KEY
 
 NODE_ENV = production
 ```

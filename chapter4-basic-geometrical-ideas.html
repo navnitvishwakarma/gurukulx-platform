@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 4: Basic Geometrical Ideas – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+    <header id="site-header"></header>
+    <main class="container">
+        <section class="chapter-header">
+            <div class="breadcrumb">
+                <a href="/math-chapters.html">Mathematics Chapters</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Chapter 4: Basic Geometrical Ideas</span>
+            </div>
+
+            <div class="chapter-title">
+                <div class="chapter-number">4</div>
+                <div class="chapter-info">
+                    <h1>Basic Geometrical Ideas</h1>
+                    <p class="chapter-subtitle">Points, lines, angles, and basic shapes</p>
+                </div>
+            </div>
+
+            <div class="chapter-progress">
+                <div class="progress-bar">
+                    <div class="progress" id="chapterProgress" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0% Complete</span>
+            </div>
+        </section>
+
+        <section class="chapter-content">
+            <div class="content-tabs">
+                <button class="tab-btn active" data-tab="lesson">Lesson</button>
+                <button class="tab-btn" data-tab="examples">Examples</button>
+                <button class="tab-btn" data-tab="practice">Practice</button>
+                <button class="tab-btn" data-tab="quiz">Quiz</button>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="tab-content active" id="lesson">
+                <div class="lesson-section">
+                    <h2>Introduction to Geometry</h2>
+                    <p>Geometry has a long and rich history. The term 'Geometry' is the English equivalent of the Greek
+                        word 'Geometron'. 'Geo' means Earth and 'Metron' means Measurement. In this chapter, we will
+                        learn about the basic building blocks of geometry.</p>
+
+                    <div class="concept-box">
+                        <h3>Points, Lines, and Rays</h3>
+                        <ul>
+                            <li><strong>Point:</strong> A point determines a location. It has no size, no width, no
+                                length, and no depth. It is usually denoted by a capital letter like A, B, C.</li>
+                            <li><strong>Line Segment:</strong> The shortest distance between two points is called a line
+                                segment. It has two endpoints. Denoted as <span
+                                    style="text-decoration: overline;">AB</span>.</li>
+                            <li><strong>Line:</strong> A line is obtained when a line segment is extended indefinitely
+                                in both directions. It has no endpoints. Denoted as <span
+                                    style="text-decoration: overline;">AB</span> (with arrows).</li>
+                            <li><strong>Ray:</strong> A ray is a portion of a line. It starts at one point (called
+                                starting point) and goes endlessly in a direction. Example: Sun rays. Denoted as <span
+                                    style="text-decoration: overline;">OA</span> (arrow on one side).</li>
+                        </ul>
+                    </div>
+
+                    <div class="concept-box">
+                        <h3>Angles</h3>
+                        <p>An angle is made up of two rays starting from a common starting point. The two rays forming
+                            the angle are called the <strong>arms</strong> or <strong>sides</strong> of the angle. The
+                            common starting point is the <strong>vertex</strong> of the angle.</p>
+                    </div>
+
+                    <div class="concept-box">
+                        <h3>Polygons</h3>
+                        <p>A polygon is a simple closed curve made up entirely of line segments.</p>
+                        <ul>
+                            <li><strong>Triangle:</strong> A polygon with 3 sides.</li>
+                            <li><strong>Quadrilateral:</strong> A polygon with 4 sides.</li>
+                        </ul>
+                    </div>
+
+                    <div class="concept-box">
+                        <h3>Circles</h3>
+                        <p>A circle is a simple closed curve which is not a polygon. Key parts:</p>
+                        <ul>
+                            <li><strong>Center:</strong> Fixed point in the middle.</li>
+                            <li><strong>Radius:</strong> A line segment connecting the center to a point on the circle.
+                            </li>
+                            <li><strong>Diameter:</strong> A line segment passing through the center and connecting two
+                                points on the circle. Double the radius.</li>
+                            <li><strong>Chord:</strong> A line segment connecting any two points on the circle.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples Content -->
+            <div class="tab-content" id="examples">
+                <div class="example-section">
+                    <h2>Solved Examples</h2>
+
+                    <div class="example-box">
+                        <h3>Example 1: Identifying Shapes</h3>
+                        <p><strong>Question:</strong> Name the points and line segments in the figure (imagine a
+                            triangle ABC).</p>
+                        <p><strong>Solution:</strong></p>
+                        <div class="solution">
+                            <p>Points: A, B, C</p>
+                            <p>Line Segments: <span style="text-decoration: overline;">AB</span>, <span
+                                    style="text-decoration: overline;">BC</span>, <span
+                                    style="text-decoration: overline;">CA</span></p>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h3>Example 2: Understanding Circles</h3>
+                        <p><strong>Question:</strong> If the radius of a circle is 5 cm, what is its diameter?</p>
+                        <p><strong>Solution:</strong></p>
+                        <div class="solution">
+                            <p>We know that Diameter = 2 × Radius</p>
+                            <p>Given Radius = 5 cm</p>
+                            <p>Diameter = 2 × 5 = 10 cm</p>
+                            <p><strong>Answer: 10 cm</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Content -->
+            <div class="tab-content" id="practice">
+                <div class="practice-section">
+                    <h2>Practice Exercises</h2>
+
+                    <div class="exercise-box">
+                        <h3>Exercise 1: Basic Definitions</h3>
+                        <div class="practice-questions">
+                            <div class="question">
+                                <p>A line segment extended indefinitely in both directions is called a _______.</p>
+                                <input type="text" class="answer-input" placeholder="Your answer">
+                                <button class="check-btn" onclick="checkAnswer(this, 'line')">Check</button>
+                            </div>
+                            <div class="question">
+                                <p>How many endpoints does a ray have?</p>
+                                <input type="text" class="answer-input" placeholder="Your answer (number)">
+                                <button class="check-btn" onclick="checkAnswer(this, '1')">Check</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="exercise-box">
+                        <h3>Exercise 2: Circles</h3>
+                        <div class="practice-questions">
+                            <div class="question">
+                                <p>The longest chord of a circle is called its _______.</p>
+                                <input type="text" class="answer-input" placeholder="Your answer">
+                                <button class="check-btn" onclick="checkAnswer(this, 'diameter')">Check</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Content -->
+            <div class="tab-content" id="quiz">
+                <div class="quiz-section">
+                    <h2>Chapter Quiz</h2>
+                    <p>Test your understanding of Basic Geometrical Ideas.</p>
+
+                    <div class="quiz-container">
+                        <div class="quiz-question" data-question="1">
+                            <h3>Question 1: Which of the following has no endpoints?</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="point"> Point</label>
+                                <label><input type="radio" name="q1" value="line segment"> Line Segment</label>
+                                <label><input type="radio" name="q1" value="line"> Line</label>
+                                <label><input type="radio" name="q1" value="ray"> Ray</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question" data-question="2">
+                            <h3>Question 2: How many sides does a triangle have?</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="2"> 2</label>
+                                <label><input type="radio" name="q2" value="3"> 3</label>
+                                <label><input type="radio" name="q2" value="4"> 4</label>
+                                <label><input type="radio" name="q2" value="5"> 5</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question" data-question="3">
+                            <h3>Question 3: Two distinct lines meeting at a point are called _____________ lines.</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="parallel"> Parallel</label>
+                                <label><input type="radio" name="q3" value="intersecting"> Intersecting</label>
+                                <label><input type="radio" name="q3" value="perpendicular"> Perpendicular</label>
+                                <label><input type="radio" name="q3" value="none"> None of these</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question" data-question="4">
+                            <h3>Question 4: A portion of a line which has two endpoints:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="line"> Line</label>
+                                <label><input type="radio" name="q4" value="ray"> Ray</label>
+                                <label><input type="radio" name="q4" value="plane"> Plane</label>
+                                <label><input type="radio" name="q4" value="line segment"> Line Segment</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question" data-question="5">
+                            <h3>Question 5: A diameter of a circle divides it into two equal parts; each part is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="semicircle"> Semicircle</label>
+                                <label><input type="radio" name="q5" value="sector"> Sector</label>
+                                <label><input type="radio" name="q5" value="segment"> Segment</label>
+                                <label><input type="radio" name="q5" value="quadrant"> Quadrant</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-actions">
+                            <button class="btn btn-primary" onclick="submitQuiz()">Submit Quiz</button>
+                            <button class="btn" onclick="resetQuiz()">Reset</button>
+                        </div>
+
+                        <div class="quiz-result" id="quizResult" style="display: none;">
+                            <h3>Quiz Results</h3>
+                            <div class="result-score">
+                                <span class="score-text">Your Score: </span>
+                                <span class="score-value" id="scoreValue">0/5</span>
+                            </div>
+                            <div class="result-message" id="resultMessage"></div>
+                            <div class="quiz-actions">
+                                <button class="btn btn-primary" onclick="proceedToNextChapter()">Next Chapter</button>
+                                <button class="btn" onclick="retakeQuiz()">Retake Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="site-footer"></footer>
+
+    <style>
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .chapter-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chapter-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .chapter-info h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .chapter-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .chapter-progress {
+            margin-top: 1rem;
+        }
+
+        .chapter-progress .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-progress .progress {
+            height: 10px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .content-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-btn:hover {
+            color: var(--color-fg);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .lesson-section,
+        .example-section,
+        .practice-section,
+        .quiz-section {
+            max-width: 800px;
+        }
+
+        .concept-box,
+        .example-box,
+        .exercise-box {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .concept-box h3,
+        .example-box h3,
+        .exercise-box h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .solution {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .practice-questions {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .question {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .check-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .quiz-container {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .quiz-question {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .quiz-question:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-options label:hover {
+            background: #f8fafc;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .quiz-result {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .result-score {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-value {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        .result-message {
+            margin-bottom: 1rem;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .chapter-title {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .quiz-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+                updateProgress();
+            });
+        });
+
+        function updateProgress() {
+            const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+            let progress = 0;
+            switch (activeTab) {
+                case 'lesson': progress = 25; break;
+                case 'examples': progress = 50; break;
+                case 'practice': progress = 75; break;
+                case 'quiz': progress = 100; break;
+            }
+            document.getElementById('chapterProgress').style.width = progress + '%';
+            document.querySelector('.progress-text').textContent = progress + '% Complete';
+        }
+
+        function checkAnswer(button, correctAnswer) {
+            const input = button.previousElementSibling;
+            const userAnswer = input.value.toLowerCase().trim();
+            const correct = correctAnswer.toLowerCase().trim();
+            if (userAnswer === correct) {
+                button.textContent = 'Correct! ✓';
+                button.style.background = '#16a34a';
+                input.style.borderColor = '#16a34a';
+            } else {
+                button.textContent = 'Try Again';
+                button.style.background = '#dc2626';
+                input.style.borderColor = '#dc2626';
+            }
+        }
+
+        const correctAnswers = {
+            'q1': 'line',
+            'q2': '3',
+            'q3': 'intersecting',
+            'q4': 'line segment',
+            'q5': 'semicircle'
+        };
+
+        function submitQuiz() {
+            let score = 0;
+            const totalQuestions = Object.keys(correctAnswers).length;
+            Object.keys(correctAnswers).forEach(questionId => {
+                const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
+                if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
+                    score++;
+                }
+            });
+            const percentage = (score / totalQuestions) * 100;
+            document.getElementById('scoreValue').textContent = `${score}/${totalQuestions}`;
+            let message = '';
+            if (percentage >= 80) message = 'Excellent! Master of Shapes!';
+            else if (percentage >= 60) message = 'Great job!';
+            else message = 'Keep practicing!';
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('quizResult').style.display = 'block';
+            document.getElementById('chapterProgress').style.width = '100%';
+            document.querySelector('.progress-text').textContent = '100% Complete';
+        }
+
+        function resetQuiz() {
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            document.getElementById('quizResult').style.display = 'none';
+        }
+
+        function retakeQuiz() { resetQuiz(); }
+
+        function proceedToNextChapter() {
+            window.location.href = '/chapter5-understanding-elementary-shapes.html';
+        }
+    </script>
+</body>
+
+</html>

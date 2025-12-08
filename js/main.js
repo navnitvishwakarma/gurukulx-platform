@@ -23,10 +23,11 @@ const DEFAULT_API_BASE = window.location.protocol === 'file:' || window.location
 const DEFAULT_AI_ENDPOINT = `${DEFAULT_API_BASE}/api/ai`
 
 // Gemini API configuration
-const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do' // Your actual Gemini API key
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+// API Key removed for security - using backend proxy
+const GEMINI_API_KEY = null
+const GEMINI_API_URL = null
 
-// Initialize once DOM is ready
+
 // Initialize once DOM is ready
 document.addEventListener("DOMContentLoaded", async () => {
   injectHeader()
@@ -427,26 +428,22 @@ function attachGlobalHandlers() {
 
       let answerHTML = ''
 
-      // 1) Try Gemini first if API key is available
-      console.log('Checking API key:', GEMINI_API_KEY ? 'Present' : 'Missing')
-      console.log('API key starts with:', GEMINI_API_KEY.substring(0, 10))
-      if (GEMINI_API_KEY && GEMINI_API_KEY !== 'AIzaSyC2L-IyfxCh3LjU4sSZuUba-cGFgfKMUik') {
-        try {
-          console.log('Attempting Gemini call...', { subject, question, profile })
-          const geminiResponse = await callGemini(subject, question, profile)
-          console.log('Gemini response received:', geminiResponse)
+      // 1) Try Gemini via Backend
+      try {
+        console.log('Attempting AI call...', { subject, question, profile })
+        const geminiResponse = await callGemini(subject, question, profile)
+
+        if (geminiResponse) {
           answerHTML = `
             <p><strong>Subject:</strong> ${escapeHTML(subject)}</p>
             <p><strong>Question:</strong> ${escapeHTML(question)}</p>
             <div>${escapeHTML(geminiResponse).replace(/\n/g, '<br/>')}</div>
             <p class="muted">Powered by Google Gemini AI</p>
           `
-        } catch (error) {
-          console.error('Gemini failed:', error)
-          // Fall through to local AI suggestions
         }
-      } else {
-        console.log('Gemini API key not configured, using fallback')
+      } catch (error) {
+        console.error('AI call failed:', error)
+        // Fall through to local AI suggestions
       }
 
       // 2) Try local smart answers if Gemini failed or not available
@@ -1217,9 +1214,18 @@ function initAssignControls() {
     const subjectGames = SUBJECT_GAMES[selectedSubject] || [];
     // Only allow Quiz and Assignment as per user request, plus subject games
     const games = ["Quiz", "Assignment", ...subjectGames]
+
+    // Add created quizzes
+    const quizzes = getJSON('gx_quizzes', []);
+    const availableQuizzes = quizzes
+      .filter(q => !q.class || q.class === 'all' || (sc && q.class === sc.value))
+      .map(q => `Quiz: ${q.title}`);
+
+    const allOptions = [...games, ...availableQuizzes];
+
     if (sg)
-      sg.innerHTML = games
-        .map((g) => `< option value = "${g}" > ${g}</option > `)
+      sg.innerHTML = allOptions
+        .map((g) => `<option value="${g}">${g}</option>`)
         .join("")
   }
   subjectSel?.addEventListener("change", updateGames)
@@ -1238,7 +1244,7 @@ function initAssignControls() {
 
       // If Quiz is selected, redirect to the quiz builder
       if (game === "Quiz") {
-        window.location.href = `/ teacher - create - quiz.html ? class= ${encodeURIComponent(cls)}& subject=${encodeURIComponent(subj)}& due=${encodeURIComponent(due)} `
+        window.location.href = `/teacher-create-quiz.html?class=${encodeURIComponent(cls)}&subject=${encodeURIComponent(subj)}&due=${encodeURIComponent(due)}`
         return
       }
 
@@ -2155,6 +2161,10 @@ function initFloatingWidget() {
   }
 
   // Check for unread notifications
+  let badgeErrorCount = 0;
+  const MAX_BADGE_ERRORS = 3;
+  let badgeInterval = null;
+
   async function updateNotificationBadge() {
     const badge = document.getElementById('fabBadge');
     if (!badge) return;
@@ -2172,6 +2182,7 @@ function initFloatingWidget() {
       });
 
       if (res.ok) {
+        badgeErrorCount = 0; // Reset error count on success
         const notifications = await res.json();
         const unreadCount = notifications.filter(n => !n.is_read).length;
 
@@ -2183,13 +2194,21 @@ function initFloatingWidget() {
         }
       }
     } catch (e) {
-      console.error("Failed to update badge", e);
+      badgeErrorCount++;
+      // Only log the first few errors to avoid console spam
+      if (badgeErrorCount <= MAX_BADGE_ERRORS) {
+        console.warn("Failed to update notification badge (server might be unreachable)", e);
+      }
+      if (badgeErrorCount > MAX_BADGE_ERRORS && badgeInterval) {
+        console.warn("Stopping notification badge updates due to persistent errors.");
+        clearInterval(badgeInterval);
+      }
     }
   }
 
   // Initial check and periodic update
   updateNotificationBadge();
-  setInterval(updateNotificationBadge, 60000); // Check every minute
+  badgeInterval = setInterval(updateNotificationBadge, 60000); // Check every minute
 }
 
 // Initialize widget on load
@@ -2855,3 +2874,30 @@ function hydratePage() {
     document.getElementById("qTotal").textContent = String(MATH_QUIZ.length)
   }
 }
+// Secure Backend Call for Gemini AI
+async function callGemini(subject, question, profile) {
+  try {
+    const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
+    // backend expects: subject, question, certain profile fields
+    const res = await fetch(\\/api/ai\, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': \Bearer \\
+      },
+      body: JSON.stringify({ subject, question, profile })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      return data.answer;
+    } else {
+      console.error('AI Backend Error:', res.status);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error calling AI backend:', error);
+    return null;
+  }
+}
+

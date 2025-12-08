@@ -1,0 +1,302 @@
+:root {
+    --primary: #FF6B6B;
+    /* Pastel Red */
+    --secondary: #4ECDC4;
+    /* Pastel Teal */
+    --accent: #FFE66D;
+    /* Pastel Yellow */
+    --dark: #292f36;
+    --light: #f7fff7;
+    --lane-color: #fce3e3;
+    --sky-color: #c7f9cc;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--sky-color);
+    font-family: 'Nunito', sans-serif;
+}
+
+/* 3D Scene Setup */
+#game-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    perspective: 800px;
+    overflow: hidden;
+    background-color: var(--sky-color);
+}
+
+/* Camera setup */
+#world {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transform: rotateX(10deg);
+    /* Tilt down */
+}
+
+/* The Floor */
+#ground {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 10000px;
+
+    
+
+
+
+
+    
+    transform: translate(-50%, -50%) translateY(300px) rotateX(90deg);
+
+    background: repeating-linear-gradient(180deg,
+            #7ac78b 0px,
+            #7ac78b 400px,
+            #88d498 400px,
+            #88d498 800px);
+    border-left: 10px solid #55a666;
+    border-right: 10px solid #55a666;
+    backface-visibility: visible;
+}
+
+.lane-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Scene matches Ground origin for coordinate sync */
+#scene {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    /* Move scene origin down to match ground level (300px) */
+    transform: translateY(300px);
+}
+
+#player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    /* Centered on the coordinate point */
+    margin-left: -40px;
+    margin-top: -80px;
+    /* Feet at 0 (on floor) */
+    transform-origin: bottom center;
+}
+
+.character-body {
+    width: 100%;
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 20px;
+    box-shadow: 0 5px 0 #cf5555;
+    position: relative;
+    animation: bounce 0.4s infinite alternate ease-in-out;
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-10px);
+    }
+}
+
+.eyes {
+    position: absolute;
+    top: 25%;
+    left: 20%;
+    width: 15px;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 40px 0 0 white;
+    /* Second eye */
+}
+
+.eyes::after {
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    width: 6px;
+    height: 6px;
+    background: black;
+    border-radius: 50%;
+    box-shadow: 40px 0 0 black;
+}
+
+.mouth {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 10px;
+    background: #333;
+    border-radius: 0 0 15px 15px;
+}
+
+/* Game Objects (Answers) */
+.game-object {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+
+    /* Center origin logic matching player */
+    margin-left: -50px;
+    margin-top: -100px;
+    /* Sit on floor */
+
+    transform-style: preserve-3d;
+}
+
+.answer-card {
+    width: 100%;
+    height: 100%;
+    background: var(--light);
+    border: 5px solid var(--secondary);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--dark);
+    box-shadow: 0 5px 0 #3db5ad;
+}
+
+/* UI Layers */
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+    backdrop-filter: blur(5px);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--primary);
+    text-shadow: 5px 5px 0px var(--accent);
+    text-align: center;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: white;
+    background: var(--secondary);
+    padding: 15px 40px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 10px 0 #3db5ad;
+    transition: transform 0.1s;
+}
+
+.btn:active {
+    transform: translateY(5px);
+    box-shadow: 0 5px 0 #3db5ad;
+}
+
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#score-board {
+    font-family: 'Fredoka One';
+    font-size: 2rem;
+    color: var(--dark);
+    background: white;
+    padding: 10px 30px;
+    border-radius: 30px;
+    box-shadow: 0 5px 0 #ddd;
+    margin-bottom: 20px;
+}
+
+#question-box {
+    background: var(--accent);
+    padding: 20px 50px;
+    border-radius: 20px;
+    border: 5px solid orange;
+    box-shadow: 0 10px 0 #cc9a00;
+    transform: rotate(-2deg);
+}
+
+#question-text {
+    font-family: 'Fredoka One';
+    font-size: 3rem;
+    color: var(--dark);
+}

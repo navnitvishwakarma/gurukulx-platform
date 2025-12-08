@@ -65,9 +65,10 @@
             const user = JSON.parse(localStorage.getItem('gx_user') || '{}');
             const userClass = user.class || '';
 
-            let quizzes = [];
+            let serverQuizzes = [];
+            let localQuizzes = [];
 
-            // Try to fetch from server
+            // 1. Try to fetch from server
             try {
                 const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || 'http://localhost:8080';
                 const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/quizzes?subject=${subject}&class=${userClass}`, {
@@ -77,23 +78,34 @@
                 });
 
                 if (res.ok) {
-                    quizzes = await res.json();
+                    serverQuizzes = await res.json();
                 }
             } catch (err) {
                 console.error('Failed to fetch quizzes from server:', err);
             }
 
-            // Fallback to local storage
-            if (quizzes.length === 0) {
-                const allQuizzes = JSON.parse(localStorage.getItem('gx_quizzes') || '[]');
-                quizzes = allQuizzes.filter(q => {
-                    const matchesSubject = subject === 'All' || q.subject === subject;
-                    const matchesClass = !q.class || q.class === userClass;
-                    return matchesSubject && matchesClass;
-                });
-            }
+            // 2. Fetch from local storage (Teacher created)
+            const allLocalQuizzes = JSON.parse(localStorage.getItem('gx_quizzes') || '[]');
+            localQuizzes = allLocalQuizzes.filter(q => {
+                const matchesSubject = subject === 'All' || q.subject === subject;
+                // Match class: if quiz has no class (all), or matches user's class, or user has no class (show all)
+                const matchesClass = !q.class || q.class === 'all' || q.class === userClass || !userClass;
+                return matchesSubject && matchesClass;
+            });
 
-            renderQuizzes(quizzes, subject);
+            // 3. Merge unique quizzes (prefer server if IDs collide, though unlikely with local IDs)
+            // Using a Map to ensure uniqueness by ID
+            const quizMap = new Map();
+
+            // Add server quizzes first
+            serverQuizzes.forEach(q => quizMap.set(q.id || q._id, q));
+
+            // Add local quizzes (will overwrite if same ID, or add if new)
+            localQuizzes.forEach(q => quizMap.set(q.id, q));
+
+            const combinedQuizzes = Array.from(quizMap.values());
+
+            renderQuizzes(combinedQuizzes, subject);
         }
 
         function renderQuizzes(quizzes, subject) {

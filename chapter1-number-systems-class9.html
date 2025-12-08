@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 1: Number Systems (Class 9) – GuruKulX</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
+    <script defer src="/js/main.js"></script>
+</head>
+
+<body>
+    <header id="site-header"></header>
+    <main class="container">
+        <section class="chapter-header">
+            <div class="breadcrumb">
+                <a href="/math-chapters.html">Mathematics Chapters</a>
+                <i class="ri-arrow-right-s-line"></i>
+                <span>Chapter 1: Number Systems</span>
+            </div>
+
+            <div class="chapter-title">
+                <div class="chapter-number">1</div>
+                <div class="chapter-info">
+                    <h1>Number Systems</h1>
+                    <p class="chapter-subtitle">Irrational numbers, Real numbers and Exponents</p>
+                </div>
+            </div>
+
+            <div class="chapter-progress">
+                <div class="progress-bar">
+                    <div class="progress" id="chapterProgress" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0% Complete</span>
+            </div>
+        </section>
+
+        <section class="chapter-content">
+            <div class="content-tabs">
+                <button class="tab-btn active" data-tab="lesson">Lesson</button>
+                <button class="tab-btn" data-tab="examples">Examples</button>
+                <button class="tab-btn" data-tab="practice">Practice</button>
+                <button class="tab-btn" data-tab="quiz">Quiz</button>
+            </div>
+
+            <div class="tab-content active" id="lesson">
+                <div class="lesson-section">
+                    <h2>Real Numbers</h2>
+                    <p>Real numbers include both rational and irrational numbers.</p>
+
+                    <div class="concept-box">
+                        <h3>Irrational Numbers</h3>
+                        <p>Numbers that cannot be written in the form p/q (where p, q are integers and q≠0) are
+                            irrational. Example: √2, π.</p>
+                        <p>Decimal expansion of irrational numbers is non-terminating and non-recurring.</p>
+                    </div>
+
+                    <div class="concept-box">
+                        <h3>Laws of Exponents</h3>
+                        <p>a^m × a^n = a^(m+n)</p>
+                        <p>(a^m)^n = a^(mn)</p>
+                        <p>a^0 = 1</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="examples">
+                <div class="example-section">
+                    <h2>Solved Examples</h2>
+                    <div class="example-box">
+                        <h3>Example 1: Rationalize the denominator</h3>
+                        <p><strong>Question:</strong> Rationalize 1/√2</p>
+                        <p><strong>Solution:</strong> Multiply numerator and denominator by √2. (1×√2)/(√2×√2) = √2/2.
+                        </p>
+                    </div>
+                    <div class="example-box">
+                        <h3>Example 2: Exponents</h3>
+                        <p><strong>Question:</strong> Simplify 2^2 × 2^3</p>
+                        <p><strong>Solution:</strong> 2^(2+3) = 2^5 = 32.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="practice">
+                <div class="practice-section">
+                    <h2>Practice Exercises</h2>
+                    <div class="exercise-box">
+                        <h3>Exercise 1</h3>
+                        <div class="practice-questions">
+                            <div class="question">
+                                <p>Value of 64^(1/2) is?</p>
+                                <input type="text" class="answer-input" placeholder="Your answer">
+                                <button class="check-btn" data-answer="8">Check</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="quiz">
+                <div class="quiz-section">
+                    <h2>Chapter Quiz</h2>
+                    <div class="quiz-container">
+                        <div class="quiz-question" data-question="1">
+                            <h3>Question 1: Which of the following is irrational?</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="sqrt3"> √3</label>
+                                <label><input type="radio" name="q1" value="sqrt4"> √4</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="2">
+                            <h3>Question 2: π is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="rational"> Rational</label>
+                                <label><input type="radio" name="q2" value="irrational"> Irrational</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="3">
+                            <h3>Question 3: Decimal expansion of a rational number is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="terminating"> Terminating or
+                                    Recurring</label>
+                                <label><input type="radio" name="q3" value="non-recurring"> Non-terminating
+                                    Non-recurring</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="4">
+                            <h3>Question 4: Value of (36)^(1/2) is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="6"> 6</label>
+                                <label><input type="radio" name="q4" value="18"> 18</label>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="5">
+                            <h3>Question 5: A rational number between 1 and 2 is:</h3>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="1.5"> 1.5</label>
+                                <label><input type="radio" name="q5" value="sqrt2"> √2</label>
+                            </div>
+                        </div>
+                        <div class="quiz-actions">
+                            <button class="btn btn-primary" id="submitQuizBtn">Submit Quiz</button>
+                            <button class="btn" id="resetQuizBtn">Reset</button>
+                        </div>
+                        <div class="quiz-result" id="quizResult" style="display: none;">
+                            <h3 id="resultMessage"></h3>
+                            <p id="scoreValue"></p>
+                            <button class="btn btn-primary" id="nextChapterBtn">Next Chapter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="site-footer"></footer>
+    <style>
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .chapter-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chapter-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .chapter-info h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .chapter-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .chapter-progress {
+            margin-top: 1rem;
+        }
+
+        .chapter-progress .progress-bar {
+            width: 100%;
+            background: #f1f5f9;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-progress .progress {
+            height: 10px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 0.6s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .content-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-btn:hover {
+            color: var(--color-fg);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .lesson-section,
+        .example-section,
+        .practice-section,
+        .quiz-section {
+            max-width: 800px;
+        }
+
+        .concept-box,
+        .example-box,
+        .exercise-box {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .concept-box h3,
+        .example-box h3,
+        .exercise-box h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .solution {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .practice-questions {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .question {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-muted);
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .check-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .quiz-container {
+            background: var(--color-bg);
+            border: 1px solid var(--color-muted);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .quiz-question {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-muted);
+        }
+
+        .quiz-question:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quiz-options label:hover {
+            background: #f8fafc;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .quiz-result {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .chapter-title {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .quiz-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <script>
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+                updateProgress();
+            });
+        });
+        function updateProgress() {
+            const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+            let progress = 0;
+            if (activeTab === 'lesson') progress = 25;
+            else if (activeTab === 'examples') progress = 50;
+            else if (activeTab === 'practice') progress = 75;
+            else if (activeTab === 'quiz') progress = 100;
+            document.getElementById('chapterProgress').style.width = progress + '%';
+            document.querySelector('.progress-text').textContent = progress + '% Complete';
+        }
+        function checkAnswer(button, correctAnswer) {
+            const input = button.previousElementSibling;
+            if (input.value.trim() === correctAnswer) {
+                button.textContent = 'Correct!'; button.style.background = '#16a34a';
+            } else {
+                button.textContent = 'Try Again'; button.style.background = '#dc2626';
+            }
+        }
+        const correctAnswers = { 'q1': 'sqrt3', 'q2': 'irrational', 'q3': 'terminating', 'q4': '6', 'q5': '1.5' };
+        function submitQuiz() {
+            let score = 0;
+            Object.keys(correctAnswers).forEach(q => {
+                const sel = document.querySelector(`input[name="${q}"]:checked`);
+                if (sel && sel.value === correctAnswers[q]) score++;
+            });
+            document.getElementById('resultMessage').textContent = `Score: ${score}/5`;
+            document.getElementById('quizResult').style.display = 'block';
+        }
+        function resetQuiz() {
+            document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+            document.getElementById('quizResult').style.display = 'none';
+        }
+        function proceedToNextChapter() { window.location.href = '/chapter2-polynomials-class9.html'; }
+    
+      // Event listeners for CSP compliance
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            if (!btn.hasAttribute('data-listener-attached')) {
+                btn.addEventListener('click', () => {
+                    checkAnswer(btn, btn.getAttribute('data-answer'));
+                });
+                btn.setAttribute('data-listener-attached', 'true');
+            }
+        });
+        
+        const submitBtn = document.getElementById('submitQuizBtn');
+        if (submitBtn) submitBtn.addEventListener('click', submitQuiz);
+        
+        const resetBtn = document.getElementById('resetQuizBtn');
+        if (resetBtn) resetBtn.addEventListener('click', resetQuiz);
+        
+        const nextBtn = document.getElementById('nextChapterBtn');
+        if (nextBtn) nextBtn.addEventListener('click', proceedToNextChapter);
+      });
+    </script>
+</body>
+
+</html>

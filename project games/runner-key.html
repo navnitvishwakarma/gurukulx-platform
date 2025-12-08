@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runner Key</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="runner-key.css">
+</head>
+
+<body>
+
+    <!-- Game Container -->
+    <div id="game-container">
+
+        <!-- Sky/Background -->
+        <div id="world">
+            <!-- Ground/Floor with lanes -->
+            <div id="ground">
+                <div class="lane-marker" style="left: 33%;"></div>
+                <div class="lane-marker" style="left: 66%;"></div>
+            </div>
+
+            <!-- Dynamic Game Elements Container -->
+            <div id="scene">
+                <!-- Player Character -->
+                <div id="player" class="center-lane">
+                    <div class="character-body">
+                        <div class="eyes"></div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UI Overlay -->
+        <div id="ui-layer">
+
+            <!-- HUD -->
+            <div id="hud" class="hidden">
+                <div id="score-board">Score: <span id="score">0</span></div>
+                <div id="question-box">
+                    <span id="question-text">Ready?</span>
+                </div>
+            </div>
+
+            <!-- Start Screen -->
+            <div id="start-screen" class="screen">
+                <h1 class="title">Runner Key</h1>
+                <p>Use LEFT / RIGHT arrows to move!</p>
+                <div class="btn" id="start-btn">PLAY!</div>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div id="game-over-screen" class="screen hidden">
+                <h1 class="title">OOPS!</h1>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <div class="btn" id="restart-btn">TRY AGAIN</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="runner-key.js"></script>
+</body>
+
+</html>

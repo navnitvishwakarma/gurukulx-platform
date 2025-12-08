@@ -65,10 +65,10 @@ if (fs.existsSync('netlify.toml')) {
 // Check main.js for API key
 if (fs.existsSync('js/main.js')) {
   const mainJs = fs.readFileSync('js/main.js', 'utf8');
-  if (mainJs.includes('AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do')) {
-    console.log('✅ Gemini API key configured in main.js');
+  if (!mainJs.includes('AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do')) {
+    console.log('✅ Gemini API key is securely hidden in main.js');
   } else {
-    console.log('❌ Gemini API key not found in main.js');
+    console.log('❌ Gemini API key is EXPOSED in main.js');
     allFilesExist = false;
   }
 } else {

@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   const bcrypt = require('bcryptjs');
   try {
@@ -68,13 +68,13 @@ userSchema.pre('save', async function(next) {
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   const bcrypt = require('bcryptjs');
   return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Get public profile
-userSchema.methods.getPublicProfile = function() {
+userSchema.methods.getPublicProfile = function () {
   const userObject = this.toObject();
   delete userObject.password;
   return userObject;
@@ -179,7 +179,7 @@ let isConnected = false;
 
 const connectDB = async () => {
   if (isConnected) return;
-  
+
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
@@ -576,12 +576,12 @@ app.post('/api/ai', authenticateToken, [
     }
 
     const { subject, question, profile } = req.body;
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
 
     if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your-gemini-api-key-here') {
-      return res.json({ 
-        answer: `This is a placeholder AI response for the question: "${question}" in subject: "${subject}". Please configure your Gemini API key to get real AI responses.` 
+      return res.json({
+        answer: `This is a placeholder AI response for the question: "${question}" in subject: "${subject}". Please configure your Gemini API key to get real AI responses.`
       });
     }
 
@@ -658,7 +658,7 @@ app.use((req, res) => {
 // Export handler for Netlify Functions
 const handler = async (event, context) => {
   console.log('Function called with:', { path: event.path, method: event.method });
-  
+
   // Set up the request and response objects
   const { method, path, headers, body } = event;
 
@@ -727,111 +727,111 @@ const handler = async (event, context) => {
   // Route the request
   try {
     console.log('Routing request:', { path, method, body: req.body });
-    
+
     // Health check
     if (path === '/api/health') {
       console.log('Matched health route');
       return res.json({ status: 'OK', timestamp: new Date().toISOString() });
     }
-    
+
     // Authentication routes
     if (path === '/api/auth/register' && method === 'POST') {
       try {
         console.log('Registration attempt:', { username: req.body.username, role: req.body.role });
-        
+
         const { username, password, name, role, userClass, email } = req.body;
-        
+
         if (!username || !password || !name || !role) {
           console.log('Missing required fields:', { username: !!username, password: !!password, name: !!name, role: !!role });
           return res.status(400).json({ error: 'Missing required fields' });
         }
-        
+
         // Check if user already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
           console.log('Username already exists:', username);
           return res.status(400).json({ error: 'Username already exists' });
         }
-        
+
         // Create new user
         const user = new User({
-          username, 
-          password, 
-          name, 
-          role, 
-          class: userClass, 
+          username,
+          password,
+          name,
+          role,
+          class: userClass,
           email,
           profile: { score: 0, xp: 0, level: 1, progress: 0, streak: 0, badges: [] }
         });
-        
+
         await user.save();
         console.log('User created successfully:', user._id);
         return res.status(201).json({ message: 'User created successfully', userId: user._id });
-        
+
       } catch (error) {
         console.error('Registration error:', error);
         return res.status(500).json({ error: 'Registration failed: ' + error.message });
       }
     }
-    
+
     if (path === '/api/auth/login' && method === 'POST') {
       try {
         console.log('Matched login route');
         console.log('Login attempt:', { username: req.body.username });
-        
+
         const { username, password } = req.body;
-        
+
         if (!username || !password) {
           console.log('Missing credentials:', { username: !!username, password: !!password });
           return res.status(400).json({ error: 'Username and password required' });
         }
-        
+
         const user = await User.findOne({ username });
         if (!user) {
           console.log('User not found:', username);
           return res.status(401).json({ error: 'Invalid credentials' });
         }
-        
+
         const isValidPassword = await user.comparePassword(password);
         if (!isValidPassword) {
           console.log('Invalid password for user:', username);
           return res.status(401).json({ error: 'Invalid credentials' });
         }
-        
+
         const jwt = require('jsonwebtoken');
         const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-        
+
         const token = jwt.sign(
           { userId: user._id, username: user.username, role: user.role, class: user.class },
           JWT_SECRET,
           { expiresIn: '24h' }
         );
-        
+
         console.log('Login successful for user:', username);
-        return res.json({ 
+        return res.json({
           message: 'Login successful',
-          token, 
-          user: user.getPublicProfile() 
+          token,
+          user: user.getPublicProfile()
         });
-        
+
       } catch (error) {
         console.error('Login error:', error);
         return res.status(500).json({ error: 'Login failed: ' + error.message });
       }
     }
-    
+
     // User profile routes
     if (path === '/api/user/profile' && method === 'GET') {
       const authHeader = headers.authorization;
       const token = authHeader && authHeader.split(' ')[1];
-      
+
       if (!token) {
         return res.status(401).json({ error: 'Access token required' });
       }
-      
+
       const jwt = require('jsonwebtoken');
       const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-      
+
       try {
         const decoded = jwt.verify(token, JWT_SECRET);
         const user = await User.findById(decoded.userId);
@@ -843,23 +843,23 @@ const handler = async (event, context) => {
         return res.status(403).json({ error: 'Invalid or expired token' });
       }
     }
-    
+
     // Game results
     if (path === '/api/game/results' && method === 'POST') {
       const authHeader = headers.authorization;
       const token = authHeader && authHeader.split(' ')[1];
-      
+
       if (!token) {
         return res.status(401).json({ error: 'Access token required' });
       }
-      
+
       const jwt = require('jsonwebtoken');
       const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-      
+
       try {
         const decoded = jwt.verify(token, JWT_SECRET);
         const { gameType, score, xpEarned = 0, progressEarned = 0 } = req.body;
-        
+
         const gameResult = new GameResult({
           user: decoded.userId,
           game_type: gameType,
@@ -867,9 +867,9 @@ const handler = async (event, context) => {
           xp_earned: xpEarned,
           progress_earned: progressEarned
         });
-        
+
         await gameResult.save();
-        
+
         await User.findByIdAndUpdate(
           decoded.userId,
           {
@@ -880,94 +880,94 @@ const handler = async (event, context) => {
             }
           }
         );
-        
+
         return res.json({ message: 'Game results saved successfully', resultId: gameResult._id });
       } catch (error) {
         return res.status(403).json({ error: 'Invalid or expired token' });
       }
     }
-    
+
     // Leaderboard
     if (path === '/api/leaderboard' && method === 'GET') {
       const leaderboard = await User.find({ role: 'student' })
         .select('name profile.score profile.badges profile.level')
         .sort({ 'profile.score': -1 })
         .limit(50);
-      
+
       return res.json(leaderboard);
     }
-    
+
     // Feedback
     if (path === '/api/feedback' && method === 'POST') {
       const { name, email, message } = req.body;
-      
+
       if (!name || !message) {
         return res.status(400).json({ error: 'Name and message required' });
       }
-      
+
       const feedback = new Feedback({ name, email, message });
       await feedback.save();
-      
+
       return res.status(201).json({ message: 'Feedback submitted successfully' });
     }
-    
+
     // Doubts
     if (path === '/api/doubts' && method === 'POST') {
       const authHeader = headers.authorization;
       const token = authHeader && authHeader.split(' ')[1];
-      
+
       if (!token) {
         return res.status(401).json({ error: 'Access token required' });
       }
-      
+
       const jwt = require('jsonwebtoken');
       const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-      
+
       try {
         const decoded = jwt.verify(token, JWT_SECRET);
         const { subject, question } = req.body;
-        
+
         const doubt = new Doubt({
           user: decoded.userId,
           subject,
           question
         });
-        
+
         await doubt.save();
         return res.status(201).json({ message: 'Doubt submitted successfully' });
       } catch (error) {
         return res.status(403).json({ error: 'Invalid or expired token' });
       }
     }
-    
+
     // AI endpoint
     if (path === '/api/ai' && method === 'POST') {
       const authHeader = headers.authorization;
       const token = authHeader && authHeader.split(' ')[1];
-      
+
       if (!token) {
         return res.status(401).json({ error: 'Access token required' });
       }
-      
+
       const jwt = require('jsonwebtoken');
       const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-      
+
       try {
         const decoded = jwt.verify(token, JWT_SECRET);
         const { subject, question } = req.body;
-        
+
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
         const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
-        
+
         if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your-gemini-api-key-here') {
-          return res.json({ 
-            answer: `This is a placeholder AI response for the question: "${question}" in subject: "${subject}". Please configure your Gemini API key to get real AI responses.` 
+          return res.json({
+            answer: `This is a placeholder AI response for the question: "${question}" in subject: "${subject}". Please configure your Gemini API key to get real AI responses.`
           });
         }
-        
+
         const user = await User.findById(decoded.userId);
         const userProfile = user?.profile || { level: 1, xp: 0, score: 0 };
-        
+
         const prompt = `You are an AI tutor for GuruKulX, an educational platform. You help students with their academic questions across various subjects.
 
 Student Profile:
@@ -1022,7 +1022,7 @@ Please provide a helpful educational response:`;
         return res.status(403).json({ error: 'Invalid or expired token' });
       }
     }
-    
+
     // Default 404 - Log the path for debugging
     console.log('Route not found:', { path, method });
     return res.status(404).json({ error: 'Route not found', path, method });

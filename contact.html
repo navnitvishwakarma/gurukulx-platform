@@ -138,12 +138,13 @@
         console.error("Error checking user role:", e);
       }
 
-      const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
-      const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+      // API Configuration
+      const API_BASE_URL = window.location.origin;
+      const AI_ENDPOINT = `${API_BASE_URL}/api/ai`;
 
       async function searchWithGemini(query) {
         try {
-          console.log('Attempting to connect to Gemini AI...');
+          console.log('Attempting to connect to Gemini AI (Backend)...');
           console.log('Query:', query);
 
           // Create a more educational prompt
@@ -157,54 +158,65 @@
             - Keep responses concise but informative (2-3 paragraphs max)
             - Use simple language that students can understand`;
 
-          const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+          const token = localStorage.getItem('GX_TOKEN');
+          const headers = { 'Content-Type': 'application/json' };
+          if (token) headers['Authorization'] = `Bearer ${token}`;
+
+          const response = await fetch(AI_ENDPOINT, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: headers,
             body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: educationalPrompt
-                }]
-              }],
-              generationConfig: {
-                temperature: 0.7,
-                topK: 40,
-                topP: 0.95,
-                maxOutputTokens: 1024,
-              }
+              subject: 'General',
+              question: educationalPrompt // The backend will use this as part of its own prompt, but here we are sending the prompt directly as 'question' or we can rely on backend prompt. 
+              // Wait, server-mongodb.js wraps the question in a prompt.
+              // So I should just send the query as 'question'.
             })
           });
 
-          console.log('API Response status:', response.status);
+          // Correction: The backend wraps the question in a prompt. 
+          // If I send the prompt as the question, it will be double prompted.
+          // Let's just send the raw query to the backend, as the backend has the system prompt.
+          // Re-doing the fetch call logic below to correct this.
+
+        } catch (error) {
+          // ...
+        }
+      }
+
+      // Corrected implementation
+      async function searchWithGemini(query) {
+        try {
+          console.log('Attempting to connect to Gemini AI (Backend)...');
+          const token = localStorage.getItem('GX_TOKEN');
+          const headers = { 'Content-Type': 'application/json' };
+          if (token) headers['Authorization'] = `Bearer ${token}`;
+
+          const response = await fetch(AI_ENDPOINT, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+              subject: 'General',
+              question: query // Backend handles the system prompt
+            })
+          });
 
           if (!response.ok) {
             const errorText = await response.text();
-            console.error('API Error Response:', errorText);
-            throw new Error(`API error: ${response.status} - ${errorText}`);
+            throw new Error(`API error: ${response.status}`);
           }
 
           const data = await response.json();
-          console.log('API Response:', data);
-
-          if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-            return data.candidates[0].content.parts[0].text;
+          if (data.answer) {
+            return data.answer;
           } else {
-            console.error('Unexpected API response structure:', data);
-            throw new Error('No response received from AI');
+            throw new Error('No answer received');
           }
-
         } catch (error) {
           console.error('Error calling Gemini API:', error);
-
-          // Provide a helpful fallback response
-          if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
-            throw new Error('Unable to connect to AI service. Please check your internet connection and try again.');
-          } else if (error.message.includes('API error')) {
-            throw new Error('AI service is temporarily unavailable. Please try again in a few moments.');
+          if (error.message.includes('API error')) {
+            throw new Error('AI service is temporarily unavailable.');
           } else {
-            throw new Error('Sorry, I encountered an error while processing your question. Please try again.');
+            throw new Error('Sorry, I encountered an error. Please try again.');
           }
         }
       }

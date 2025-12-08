@@ -1,11 +1,11 @@
 // Quick test script for Gemini API integration
-const GEMINI_API_KEY = 'AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do';
+const GEMINI_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your key for local testing
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 async function testGeminiAPI() {
   try {
     console.log('Testing Gemini API integration...');
-    
+
     const prompt = `You are an AI tutor for GuruKulX, an educational platform. 
     
     Student Profile:
@@ -49,7 +49,7 @@ async function testGeminiAPI() {
 
     console.log('✅ Gemini API Test Successful!');
     console.log('Response:', answer);
-    
+
   } catch (error) {
     console.error('❌ Gemini API Test Failed:', error.message);
   }
