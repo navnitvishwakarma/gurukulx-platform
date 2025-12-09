@@ -1,4 +1,4 @@
-/* Quiz Page Styles */
+
 .quiz-container {
     max-width: 800px;
     margin: 2rem auto;
@@ -97,7 +97,7 @@
     font-size: 1.1rem;
 }
 
-/* Quiz Play Styles */
+
 .question-header {
     display: flex;
     justify-content: space-between;
@@ -202,7 +202,7 @@
     align-items: center;
 }
 
-/* Quiz End Styles */
+
 .quiz-end {
     display: flex;
     justify-content: center;
@@ -273,7 +273,7 @@
     flex-wrap: wrap;
 }
 
-/* Review Mode */
+
 .review-mode .option {
     cursor: default;
 }
@@ -283,7 +283,7 @@
     border-color: var(--color-muted);
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 768px) {
     .quiz-container {
         padding: 1.5rem;

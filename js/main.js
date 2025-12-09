@@ -1,4 +1,4 @@
-// Data keys
+
 const LS = {
   user: "gx_user", // {name, role}
   theme: "gx_theme",
@@ -16,26 +16,26 @@ const LS = {
   profiles: "gx_profiles", // { [name]: {score,xp,level,progress,streak,class} }
 }
 
-// Default backend endpoints (override via localStorage or window vars)
+
 const DEFAULT_API_BASE = window.location.protocol === 'file:' || window.location.origin === 'null'
   ? 'http://localhost:8080'
   : window.location.origin
 const DEFAULT_AI_ENDPOINT = `${DEFAULT_API_BASE}/api/ai`
 
-// Gemini API configuration
-// API Key removed for security - using backend proxy
+
+
 const GEMINI_API_KEY = null
 const GEMINI_API_URL = null
 
 
-// Initialize once DOM is ready
+
 document.addEventListener("DOMContentLoaded", async () => {
   injectHeader()
   injectFooter()
   initTheme()
   attachGlobalHandlers()
 
-  // Ensure profile is up to date from server
+
   const user = getUser()
   if (user.name && user.name !== "Guest") {
     await loadOrCreateUserProfile(user.name)
@@ -54,7 +54,7 @@ function updateHomeCTA() {
   }
 }
 
-// Define initialization function globally
+
 window.googleTranslateElementInit = function () {
   console.log('Google Translate: Initializing widget...')
   const el = document.getElementById('google_translate_element')
@@ -75,18 +75,18 @@ window.googleTranslateElementInit = function () {
   }
 }
 
-// Google Translate Injection
+
 function injectGoogleTranslate() {
   console.log('Google Translate: Injection requested')
 
-  // If Google Translate API is already loaded, manually initialize
+
   if (window.google && window.google.translate) {
     console.log('Google Translate: API already loaded, triggering init')
     window.googleTranslateElementInit()
     return
   }
 
-  // Add Google Translate script if not already present
+
   if (!document.querySelector('script[src*="translate.google.com"]')) {
     console.log('Google Translate: Loading script...')
     const script = document.createElement('script')
@@ -98,12 +98,12 @@ function injectGoogleTranslate() {
     console.log('Google Translate: Script already present but API not ready')
   }
 }
-// Header/Footer
+
 function injectHeader() {
   const header = document.getElementById("site-header")
   if (!header) return
 
-  // Check if user is logged in
+
   const user = getUser()
   const isLoggedIn = user && user.name && user.name !== "Guest"
 
@@ -136,7 +136,7 @@ function injectHeader() {
     </div>
   `
 
-  // Mobile nav toggle
+
   const navToggle = header.querySelector(".nav-toggle")
   const primaryNav = header.querySelector("#primary-nav")
   if (navToggle && primaryNav) {
@@ -147,25 +147,25 @@ function injectHeader() {
   }
 
 
-  // Add logout handler if user is logged in
+
   if (isLoggedIn) {
     document.getElementById("logout-link").addEventListener("click", handleLogout)
   }
 
-  // Re-initialize Google Translate widget
+
   injectGoogleTranslate()
 }
 
-// Logoutfunction
+
 function handleLogout(e) {
   e.preventDefault()
   console.log("Logging out...")
 
-  // Clear user data
+
   localStorage.removeItem(LS.user)
   localStorage.removeItem('GX_TOKEN')
 
-  // Clear profile data
+
   localStorage.removeItem(LS.score)
   localStorage.removeItem(LS.xp)
   localStorage.removeItem(LS.level)
@@ -175,12 +175,12 @@ function handleLogout(e) {
   localStorage.removeItem(LS.assignments)
   localStorage.removeItem(LS.profiles) // Clear profile cache
 
-  // Force reset of values to 0 to be safe
+
   localStorage.setItem(LS.score, "0")
   localStorage.setItem(LS.xp, "0")
   localStorage.setItem(LS.streak, "0")
 
-  // Redirect to home page with cache busting
+
   window.location.href = `/index.html?t=${Date.now()}`
 }
 
@@ -249,7 +249,7 @@ function injectFooter() {
   document.getElementById("toggleTheme")?.addEventListener("click", toggleTheme)
 }
 
-// Theme
+
 function initTheme() {
   const saved = localStorage.getItem(LS.theme) || "light"
   document.documentElement.setAttribute("data-theme", saved)
@@ -260,10 +260,10 @@ function toggleTheme() {
   localStorage.setItem(LS.theme, current)
 }
 
-// Global handlers
+
 function attachGlobalHandlers() {
 
-  // Auth forms
+
   const loginForm = document.getElementById("loginForm")
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
@@ -272,7 +272,7 @@ function attachGlobalHandlers() {
       const role = document.getElementById("role")?.value || "student"
       const password = document.getElementById("password")?.value || ""
 
-      // Try backend auth first
+
       const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE
       try {
         const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/auth/login`, {
@@ -285,7 +285,7 @@ function attachGlobalHandlers() {
           localStorage.setItem('GX_TOKEN', data.token)
           localStorage.setItem(LS.user, JSON.stringify({ name: data.user?.username || name, role: data.user?.role || role, class: data.user?.class }))
 
-          // Wait for profile to load before redirecting
+
           await loadOrCreateUserProfile(data.user?.username || name)
           bootstrapDefaults()
 
@@ -303,7 +303,7 @@ function attachGlobalHandlers() {
     })
   }
 
-  // Feedback
+
   document.getElementById("feedbackForm")?.addEventListener("submit", (e) => {
     e.preventDefault()
     const name = document.getElementById("fb-name")?.value || ""
@@ -325,7 +325,7 @@ function attachGlobalHandlers() {
           e.target.reset()
         } catch {
           alert("Could not send to server right now. Saved locally.")
-          // Fallback: store locally
+
           const list = getJSON('gx_feedback_local', [])
           list.push({ id: Date.now(), name, email, message })
           localStorage.setItem('gx_feedback_local', JSON.stringify(list))
@@ -333,7 +333,7 @@ function attachGlobalHandlers() {
       })()
   })
 
-  // Ask doubt
+
   document.getElementById("doubtForm")?.addEventListener("submit", async (e) => {
     e.preventDefault()
     const subject = document.getElementById("doubt-subject")?.value || "General"
@@ -352,15 +352,15 @@ function attachGlobalHandlers() {
     const content = document.getElementById('aiAnswerContent')
 
     if (box && content) {
-      // Show loading state
+
       content.innerHTML = '<div style="text-align:center; padding:10px;"><i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block;"></i> Thinking...</div>'
       box.style.display = 'block'
 
-      // Try Gemini
+
       const geminiAnswer = await callGemini(subject, query, profile)
 
       if (geminiAnswer) {
-        // Simple formatting for the answer
+
         const formattedAnswer = `
           <div>
             <p><strong>Subject:</strong> ${subject}</p>
@@ -371,11 +371,11 @@ function attachGlobalHandlers() {
         `
         content.innerHTML = formattedAnswer
       } else {
-        // Fallback to local
+
         content.innerHTML = generateLocalAISuggestion(subject, query, profile)
       }
     }
-    // Send to backend if configured
+
     const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE
     const url = `${apiBase.replace(/\/$/, '')}/api/doubts`
       ; (async () => {
@@ -403,7 +403,7 @@ function attachGlobalHandlers() {
   })
 
 
-  // AI Tutor (instant answers)
+
   document.getElementById("aiTutorForm")?.addEventListener("submit", async (e) => {
     e.preventDefault()
     console.log('AI Tutor form submitted')
@@ -428,7 +428,7 @@ function attachGlobalHandlers() {
 
       let answerHTML = ''
 
-      // 1) Try Gemini via Backend
+
       try {
         console.log('Attempting AI call...', { subject, question, profile })
         const geminiResponse = await callGemini(subject, question, profile)
@@ -443,10 +443,10 @@ function attachGlobalHandlers() {
         }
       } catch (error) {
         console.error('AI call failed:', error)
-        // Fall through to local AI suggestions
+
       }
 
-      // 2) Try local smart answers if Gemini failed or not available
+
       if (!answerHTML) {
         const mathAnswer = subject === 'Math' ? tryComputeMathAnswer(question) : null
         if (mathAnswer != null) {
@@ -470,7 +470,7 @@ function attachGlobalHandlers() {
           }
         }
 
-        // Try remote AI endpoint if configured
+
         const endpoint = window.GX_AI_ENDPOINT || localStorage.getItem('GX_AI_ENDPOINT') || DEFAULT_AI_ENDPOINT
         if (!answerHTML && endpoint) {
           try {
@@ -487,11 +487,11 @@ function attachGlobalHandlers() {
               throw new Error('Bad response')
             }
           } catch {
-            // fallback to local heuristic
+
             if (!answerHTML) answerHTML = generateLocalAISuggestion(subject, question, profile)
           }
         } else if (!answerHTML) {
-          // no endpoint configured - use local heuristic
+
           console.log('Using local AI suggestion fallback')
           answerHTML = generateLocalAISuggestion(subject, question, profile)
         }
@@ -511,27 +511,24 @@ function attachGlobalHandlers() {
     }
   })
 
-  // Compute simple math expressions locally (supports + - * / ^ ( ) and × ÷)
+
   function tryComputeMathAnswer(raw) {
     if (!raw) return null
     try {
       let expr = String(raw)
         .replace(/×/g, '*')
         .replace(/x/gi, (m, off) => {
-          // keep 'x' if it seems like a variable word; otherwise treat as multiply
+
           return /\d\s*x\s*\d/i.test(expr) ? '*' : 'x'
         })
         .replace(/÷/g, '/')
         .replace(/\^/g, '**')
         .replace(/\s+/g, ' ')
         .trim()
-      // Extract a likely math expression from the text
-      const match = expr.match(/[0-9().+\-*/**\s/]+/g)
-      const candidate = match ? match.join('') : expr
-      // Validate allowed characters
-      if (!/^[0-9().+\-*/\s*]+$/.test(candidate)) return null
-      // Evaluate safely using Function
-      // eslint-disable-next-line no-new-func
+
+      const match = expr.match(/[0-9().+\-*\s*]+$/.test(candidate)) return null
+
+
       const result = Function(`"use strict"; return (${candidate})`)()
       if (typeof result === 'number' && isFinite(result)) {
         const rounded = Math.round((result + Number.EPSILON) * 1e6) / 1e6
@@ -572,7 +569,7 @@ function attachGlobalHandlers() {
     }
   }
 
-  // simple HTML escaping helper
+
   function escapeHTML(str) {
     return str.replace(/[&<>'"]/g,
       c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -580,7 +577,7 @@ function attachGlobalHandlers() {
 
 
 
-  // Assignments
+
   document.getElementById("assignForm")?.addEventListener("submit", async (e) => {
     e.preventDefault()
     const cls = document.getElementById("assign-class").value
@@ -608,7 +605,7 @@ function attachGlobalHandlers() {
       }
     } catch (err) {
       console.error(err)
-      // Fallback to local
+
       const list = getJSON(LS.assignments, [])
       list.push({ id: Date.now(), class: cls, subject: subj, game, due, notes, status: "Assigned" })
       localStorage.setItem(LS.assignments, JSON.stringify(list))
@@ -618,11 +615,11 @@ function attachGlobalHandlers() {
     e.target.reset()
   })
 
-  // Reports download (Global handler - updated to use the new logic if present, or fallback)
+
   document.getElementById("downloadCSV")?.addEventListener("click", () => {
-    // This listener is redundant if renderReports attaches one, but good for safety.
-    // However, renderReports logic is more specific. 
-    // We'll let renderReports handle it if we are on the reports page.
+
+
+
     if (document.body.dataset.page !== "teacher-reports") {
       const rows = buildReportRows()
       const csv = toCSV(rows)
@@ -636,17 +633,17 @@ function attachGlobalHandlers() {
     }
   })
 
-  // Quiz start (if on math quiz)
+
   if (document.body.dataset.game === "math-quiz") {
     document.getElementById("startQuiz")?.addEventListener("click", startMathQuiz)
   }
 }
 
-// Registration form handler
-// Registration form handler
+
+
 const regForm = document.getElementById('registerForm');
 if (regForm) {
-  // Toggle subject field based on role
+
   const roleSelect = document.getElementById('reg-role');
   const subjectRow = document.getElementById('subject-row');
   const classRow = document.getElementById('class-row');
@@ -655,10 +652,10 @@ if (regForm) {
     const updateFields = () => {
       const isTeacher = roleSelect.value === 'teacher';
 
-      // Show subject for teacher, hide for student
+
       subjectRow.style.display = isTeacher ? 'block' : 'none';
 
-      // Show class for student, hide for teacher
+
       classRow.style.display = isTeacher ? 'none' : 'block';
 
       const subjectInput = document.getElementById('reg-subject');
@@ -669,7 +666,7 @@ if (regForm) {
     };
 
     roleSelect.addEventListener('change', updateFields);
-    // Initialize on load
+
     updateFields();
   }
 
@@ -698,7 +695,7 @@ if (regForm) {
   })
 }
 
-// Helpers
+
 function getUser() {
   return getJSON(LS.user, { name: "Guest", role: "student" })
 }
@@ -715,9 +712,9 @@ function setNumber(key, value, min = 0, max = 1e9) {
   return n
 }
 
-// callGemini moved to end of file
 
-// Lightweight in-browser AI suggestion generator (heuristic, no external calls)
+
+
 function generateLocalAISuggestion(subject, query, profile) {
   const sanitize = (s) => (s || '').toString().replace(/[<>]/g, '')
   const s = sanitize(subject)
@@ -750,7 +747,7 @@ function generateLocalAISuggestion(subject, query, profile) {
     default:
       strategy = `Outline the steps and provide a simple example.`
   }
-  // Simple templated response
+
   return `
   <div>
     <p><strong>Subject:</strong> ${s} • <strong>${cls}</strong></p>
@@ -764,7 +761,7 @@ function generateLocalAISuggestion(subject, query, profile) {
 }
 
 
-// Update the bootstrapDefaults function
+
 function bootstrapDefaults() {
   if (localStorage.getItem(LS.progress) == null) setNumber(LS.progress, 0, 0, 100)
   if (localStorage.getItem(LS.xp) == null) setNumber(LS.xp, 0)
@@ -772,7 +769,7 @@ function bootstrapDefaults() {
   if (localStorage.getItem(LS.score) == null) setNumber(LS.score, 0)
   if (localStorage.getItem(LS.streak) == null) setNumber(LS.streak, 0)
   if (localStorage.getItem(LS.leaderboard) == null) {
-    // seed leaderboard sample
+
     const seed = [
       { name: "Aditi", score: 820, badge: "Eco Hero" },
       { name: "Ravi", score: 760, badge: "Quiz Ace" },
@@ -782,7 +779,7 @@ function bootstrapDefaults() {
     localStorage.setItem(LS.leaderboard, JSON.stringify(seed))
   }
   if (localStorage.getItem(LS.classes) == null) {
-    // Updated to use simple grade numbers
+
     const classes = [
       { name: "6", fullName: "Grade 6" },
       { name: "7", fullName: "Grade 7" },
@@ -795,7 +792,7 @@ function bootstrapDefaults() {
     localStorage.setItem(LS.classes, JSON.stringify(classes))
   }
   if (localStorage.getItem(LS.students) == null) {
-    // Update students to use the new class names
+
     const students = [
       { name: "Aditi", score: 820, class: "6" },
       { name: "Ravi", score: 760, class: "7" },
@@ -808,7 +805,7 @@ function bootstrapDefaults() {
   maintainStreak()
 }
 
-// Per-user profile persistence
+
 async function loadOrCreateUserProfile(name) {
   const user = getUser()
   if (user.name !== "Guest" && localStorage.getItem('GX_TOKEN')) {
@@ -823,19 +820,19 @@ async function loadOrCreateUserProfile(name) {
         const data = await res.json()
         const profile = data.profile || {}
 
-        // Check if local score is higher (migration/sync scenario)
+
         const localScore = Number(localStorage.getItem(LS.score) || 0);
         const serverScore = profile.score ?? 0;
 
         if (localScore > serverScore) {
           console.log("Local score is higher, syncing to server...");
-          // We trust local data more in this case, so we push it to server
-          // But we should still update other fields if they are missing locally
+
+
           await saveCurrentUserProfile();
           return;
         }
 
-        // Update local storage to match server
+
         setNumber(LS.score, profile.score ?? 0)
         setNumber(LS.xp, profile.xp ?? 0)
         setNumber(LS.level, profile.level ?? 1)
@@ -843,7 +840,7 @@ async function loadOrCreateUserProfile(name) {
         setNumber(LS.streak, profile.streak ?? 0)
         if (profile.lastVisit) localStorage.setItem(LS.lastVisit, profile.lastVisit)
 
-        // Update profile cache
+
         const all = getJSON(LS.profiles, {})
         all[name] = {
           score: profile.score ?? 0,
@@ -861,25 +858,25 @@ async function loadOrCreateUserProfile(name) {
     }
   }
 
-  // Fallback to local storage logic
+
   const all = getJSON(LS.profiles, {})
   const key = name || 'User'
   const existing = all[key]
   if (existing) {
-    // hydrate current LS with saved profile
+
     setNumber(LS.score, existing.score ?? 0)
     setNumber(LS.xp, existing.xp ?? 0)
     setNumber(LS.level, existing.level ?? 1)
     setNumber(LS.progress, existing.progress ?? 0, 0, 100)
     setNumber(LS.streak, existing.streak ?? 0)
-    // also persist class on user object if present
+
     const u = getUser()
     if (existing.class) {
       u.class = existing.class
       localStorage.setItem(LS.user, JSON.stringify(u))
     }
   } else {
-    // create a fresh profile snapshot from current defaults
+
     all[key] = {
       score: Number(localStorage.getItem(LS.score) || 0),
       xp: Number(localStorage.getItem(LS.xp) || 0),
@@ -896,7 +893,7 @@ async function saveCurrentUserProfile() {
   const u = getUser()
   const key = u.name || 'User'
 
-  // Save locally first
+
   const all = getJSON(LS.profiles, {})
   const currentProfile = {
     score: Number(localStorage.getItem(LS.score) || 0),
@@ -910,7 +907,7 @@ async function saveCurrentUserProfile() {
   all[key] = currentProfile
   localStorage.setItem(LS.profiles, JSON.stringify(all))
 
-  // Sync with server if logged in
+
   if (u.name !== "Guest" && localStorage.getItem('GX_TOKEN')) {
     try {
       const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE
@@ -928,12 +925,12 @@ async function saveCurrentUserProfile() {
   }
 }
 
-// Page-specific hydration
+
 function hydratePage() {
   bootstrapDefaults()
 
   const user = getUser()
-  // student dashboard
+
   if (document.body.dataset.page === "student-home") {
     const nameEl = document.getElementById("studentName")
     if (nameEl) nameEl.textContent = user.name || "Student"
@@ -947,11 +944,11 @@ function hydratePage() {
     renderLeaderboardPreview()
     updateRankPreview()
     updateBadgeCount()
-    // language picker
+
     initLangPicker("lang-student")
   }
 
-  // teacher dashboard
+
   if (document.body.dataset.page === "teacher-home") {
     document.getElementById("teacherName")?.append(` (${user.name || "Teacher"})`)
     initClassAndStudents()
@@ -960,28 +957,28 @@ function hydratePage() {
     initLangPicker("lang-teacher")
   }
 
-  // assignments
+
   if (document.body.dataset.page === "teacher-assignments") {
     initAssignControls()
     renderAssignments()
   }
 
-  // reports
+
   if (document.body.dataset.page === "teacher-reports") {
     renderReports()
   }
 
-  // leaderboard page
+
   if (document.body.dataset.page === "leaderboard") {
     renderLeaderboardFull()
   }
 
-  // profile
+
   if (document.body.dataset.page === "profile") {
     renderProfile()
   }
 
-  // games (placeholder behavior is minimal)
+
   if (document.body.dataset.game === "math-quiz") {
     document.getElementById("qTotal").textContent = String(MATH_QUIZ.length)
   }
@@ -996,12 +993,12 @@ function setWidth(id, w) {
   if (el) el.style.width = w
 }
 
-// Language
+
 function initLangPicker(id) {
   const sel = document.getElementById(id)
   if (!sel) return
   const saved = localStorage.getItem(LS.lang) || "English"
-  // try set existing option
+
   Array.from(sel.options).forEach((o) => {
     if (o.value === saved || o.text === saved) sel.value = o.value
   })
@@ -1011,11 +1008,11 @@ function initLangPicker(id) {
   })
 }
 
-// Streak maintenance (daily visit increments)
-// Streak maintenance (daily visit increments)
+
+
 function maintainStreak() {
   const user = getUser();
-  // Don't maintain streak for Guest users
+
   if (!user || !user.name || user.name === "Guest") return;
 
   const today = new Date().toDateString()
@@ -1025,12 +1022,12 @@ function maintainStreak() {
     const newStreak = prev + 1
     setNumber(LS.streak, newStreak)
     localStorage.setItem(LS.lastVisit, today)
-    // Sync new streak to backend immediately
+
     saveCurrentUserProfile()
   }
 }
 
-// Fetch Leaderboard (Global Helper)
+
 async function fetchLeaderboard() {
   try {
     const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
@@ -1040,16 +1037,16 @@ async function fetchLeaderboard() {
     return data;
   } catch (error) {
     console.error('Error fetching leaderboard:', error);
-    // Fallback to local storage if API fails
+
     return getJSON(LS.leaderboard, []);
   }
 }
 window.fetchLeaderboard = fetchLeaderboard;
 
-// Standardized game score saving function
+
 async function saveGameResults(score, xp = null, progress = null) {
   try {
-    // Optimistic UI update (Local Storage)
+
     const currentScore = parseInt(localStorage.getItem(LS.score) || 0);
     const newScore = currentScore + score;
     localStorage.setItem(LS.score, newScore);
@@ -1068,12 +1065,12 @@ async function saveGameResults(score, xp = null, progress = null) {
       localStorage.setItem(LS.progress, newProgress);
     }
 
-    // Sync with Server
+
     const user = getUser();
     if (user.name !== "Guest" && localStorage.getItem('GX_TOKEN')) {
       const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
 
-      // 1. Send Game Result
+
       await fetch(`${apiBase.replace(/\/$/, '')}/api/game/results`, {
         method: 'POST',
         headers: {
@@ -1088,17 +1085,17 @@ async function saveGameResults(score, xp = null, progress = null) {
         })
       });
 
-      // 2. Re-fetch Profile to ensure consistency
+
       await loadOrCreateUserProfile(user.name);
     } else {
-      // Guest: just save profile locally
+
       saveCurrentUserProfile();
     }
 
     return { score: newScore, xp: xp !== null ? parseInt(localStorage.getItem(LS.xp) || 0) : null };
   } catch (error) {
     console.error('Error saving game results:', error);
-    // Fallback: ensure local profile is saved even if server fails
+
     saveCurrentUserProfile();
     return null;
   }
@@ -1154,11 +1151,11 @@ async function renderLeaderboardFull() {
   `
 }
 
-// Teacher data
+
 function initClassAndStudents() {
-  // already bootstrapped defaults
+
 }
-// Update the renderTeacherLists function
+
 function renderTeacherLists() {
   const classes = getJSON(LS.classes, []);
   const students = getJSON(LS.students, []);
@@ -1167,7 +1164,7 @@ function renderTeacherLists() {
   document.getElementById("classCount")?.append(` (${classes.length})`)
   document.getElementById("studentCount")?.append(` (${students.length})`)
 
-  // Use full names for class display
+
   if (cl) cl.innerHTML = classes.map((c) =>
     `< li > ${escapeHTML(c.fullName || `Grade ${c.name}`)}</li > `
   ).join("")
@@ -1187,12 +1184,12 @@ function renderTeacherScoreboard() {
   `
 }
 
-// Assignments
-// Update the initAssignControls function
+
+
 function initAssignControls() {
   const classes = getJSON(LS.classes, []);
   const sc = document.getElementById("assign-class")
-  // Use full names for assignment class selection
+
   if (sc) sc.innerHTML = classes.map((c) =>
     `< option value = "${c.name}" > ${escapeHTML(c.fullName || `Grade ${c.name}`)}</option > `
   ).join("")
@@ -1212,10 +1209,10 @@ function initAssignControls() {
   const updateGames = () => {
     const selectedSubject = subjectSel ? subjectSel.value : "Math";
     const subjectGames = SUBJECT_GAMES[selectedSubject] || [];
-    // Only allow Quiz and Assignment as per user request, plus subject games
+
     const games = ["Quiz", "Assignment", ...subjectGames]
 
-    // Add created quizzes
+
     const quizzes = getJSON('gx_quizzes', []);
     const availableQuizzes = quizzes
       .filter(q => !q.class || q.class === 'all' || (sc && q.class === sc.value))
@@ -1231,7 +1228,7 @@ function initAssignControls() {
   subjectSel?.addEventListener("change", updateGames)
   updateGames()
 
-  // Handle form submission
+
   const form = document.getElementById("assignForm")
   if (form) {
     form.addEventListener("submit", async (e) => {
@@ -1242,7 +1239,7 @@ function initAssignControls() {
       const due = document.getElementById("assign-due").value
       const notes = document.getElementById("assign-notes").value
 
-      // If Quiz is selected, redirect to the quiz builder
+
       if (game === "Quiz") {
         window.location.href = `/teacher-create-quiz.html?class=${encodeURIComponent(cls)}&subject=${encodeURIComponent(subj)}&due=${encodeURIComponent(due)}`
         return
@@ -1268,10 +1265,10 @@ function initAssignControls() {
         if (res.ok) {
           alert("Assignment created successfully!")
           renderAssignments()
-          // Also update teacher dashboard cache if needed
+
           const dashboardAssignments = getJSON(LS.assignments, [])
           const newAssign = await res.json() // Assuming API returns created object
-          // We might need to fetch again or push to cache, but renderAssignments handles fetch
+
         } else {
           alert("Failed to create assignment")
         }
@@ -1282,7 +1279,7 @@ function initAssignControls() {
     })
   }
 }
-// Update the renderAssignments function
+
 async function renderAssignments() {
   const root = document.getElementById("assignmentsList")
   if (!root) return
@@ -1297,7 +1294,7 @@ async function renderAssignments() {
     })
     if (res.ok) {
       items = await res.json()
-      // Cache
+
       localStorage.setItem(LS.assignments, JSON.stringify(items))
     } else {
       items = getJSON(LS.assignments, [])
@@ -1308,7 +1305,7 @@ async function renderAssignments() {
 
   const classes = getJSON(LS.classes, []);
 
-  // Create a mapping of class short names to full names
+
   const classMap = {};
   classes.forEach(c => {
     classMap[c.name] = c.fullName || `Grade ${c.name} `;
@@ -1335,11 +1332,11 @@ async function renderAssignments() {
   `
 }
 
-// Reports
+
 async function renderReports() {
   let students = getJSON(LS.students, [])
 
-  // Fetch if empty
+
   if (!students.length) {
     try {
       const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE
@@ -1376,14 +1373,14 @@ async function renderReports() {
   `
   }
 
-  // Setup download button
+
   const dlBtn = document.getElementById("downloadCSV")
   if (dlBtn) {
-    // Populate class filter
+
     const classFilter = document.getElementById("reportClassFilter")
     if (classFilter) {
       const classes = getJSON(LS.classes, [])
-      // Keep "All Classes" option and append others
+
       classFilter.innerHTML = '<option value="all">All Classes</option>' +
         classes.map(c => `< option value = "${c.name}" > ${escapeHTML(c.fullName || `Grade ${c.name}`)}</option > `).join("")
     }
@@ -1406,28 +1403,28 @@ async function renderReports() {
 function buildReportRows(classFilter = "all", subjectFilter = "all") {
   const students = getJSON(LS.students, [])
 
-  // Filter by class
+
   let filtered = students
   if (classFilter !== "all") {
     filtered = students.filter(s => s.class === classFilter)
   }
 
-  // Header
+
   const header = ["Name", "Class", subjectFilter === "all" ? "Overall Score" : `${subjectFilter} Score`]
   const rows = [header]
 
   filtered.forEach((s) => {
     let score = s.score
 
-    // Simulate subject score if specific subject selected
+
     if (subjectFilter !== "all") {
-      // Deterministic simulation based on student name and subject to be consistent
+
       const seed = (s.name.length + subjectFilter.length) * s.score
-      // Variation: +/- 15% of their overall average score
-      // We assume their overall score is out of 1000 roughly, so we normalize to 100 first
+
+
       const baseAvg = Math.min(100, Math.round(s.score / 10))
 
-      // Use a simple hash for consistency
+
       let hash = 0;
       for (let i = 0; i < s.name.length; i++) hash = (hash << 5) - hash + s.name.charCodeAt(i);
       for (let i = 0; i < subjectFilter.length; i++) hash = (hash << 5) - hash + subjectFilter.charCodeAt(i);
@@ -1436,8 +1433,8 @@ function buildReportRows(classFilter = "all", subjectFilter = "all") {
       const variance = (hash % 30) - 15; // -15 to +15
       let subjectScore = Math.max(0, Math.min(100, baseAvg + variance));
 
-      // Scale back up to 1000-point scale for consistency with "Score" column if desired, 
-      // OR keep as 0-100. Let's keep as 0-100 for subject specific reports as it's more standard.
+
+
       score = subjectScore
     }
 
@@ -1450,7 +1447,7 @@ function toCSV(rows) {
   return rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n")
 }
 
-// Profile
+
 function renderProfile() {
   bootstrapDefaults()
   const user = getUser()
@@ -1469,7 +1466,7 @@ function renderProfile() {
     .join("")
 }
 
-// Badges logic
+
 function computeBadges() {
   const score = Number(localStorage.getItem(LS.score) || 0)
   const streak = Number(localStorage.getItem(LS.streak) || 0)
@@ -1486,16 +1483,16 @@ function updateBadgeCount() {
   setText("badgeCount", count)
 }
 
-// Escape HTML
+
 function escapeHTML(s) {
   return (
     s?.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]) || ""
   )
 }
 
-// Toast notification function
+
 function showToast(title, message, type = "info") {
-  // Create toast container if it doesn't exist
+
   let toastContainer = document.getElementById('toastContainer');
   if (!toastContainer) {
     toastContainer = document.createElement('div');
@@ -1564,12 +1561,12 @@ function showToast(title, message, type = "info") {
 
   toastContainer.appendChild(toast);
 
-  // Show toast
+
   setTimeout(() => {
     toast.style.transform = 'translateX(0)';
   }, 10);
 
-  // Auto remove after 5 seconds
+
   setTimeout(() => {
     if (document.getElementById(toastId)) {
       toast.style.transform = 'translateX(100%)';
@@ -1582,7 +1579,7 @@ function showToast(title, message, type = "info") {
   }, 5000);
 }
 
-// Test Gemini function (call from browser console: testGemini())
+
 window.testGemini = async function () {
   try {
     console.log('Testing Gemini with simple question...')
@@ -1595,10 +1592,10 @@ window.testGemini = async function () {
   }
 }
 
-// Gemini API service function
-// Gemini API service function
 
-// Gemini API service function
+
+
+
 async function callGemini(subject, question, profile) {
   console.log('callGemini called with:', { subject, question, profile })
 
@@ -1668,7 +1665,7 @@ Please provide a helpful educational response:`
   }
 }
 
-// Math quiz game
+
 const MATH_QUIZ = [
   { q: "8 + 7 = ?", options: ["14", "15", "16", "18"], a: 1 },
   { q: "12 - 5 = ?", options: ["6", "7", "8", "9"], a: 1 },
@@ -1690,9 +1687,9 @@ function startMathQuiz() {
   startTimer()
 }
 
-// Floating Help Widget
+
 function initFloatingWidget() {
-  // Inject HTML
+
   const widgetHTML = `
     <div class="fab-container">
       <div class="fab-options" id="fabOptions">
@@ -1742,7 +1739,7 @@ function initFloatingWidget() {
   `;
   document.body.insertAdjacentHTML('beforeend', widgetHTML);
 
-  // Elements
+
   const fabBtn = document.getElementById('fabMainBtn');
   const fabOptions = document.getElementById('fabOptions');
   const chatWindow = document.getElementById('chatWindow');
@@ -1762,7 +1759,7 @@ function initFloatingWidget() {
   let chatMode = 'ai'; // 'ai' or 'teacher'
   let selectedTeacher = null;
 
-  // Toggle FAB
+
   fabBtn.addEventListener('click', () => {
     fabBtn.classList.toggle('active');
     fabOptions.classList.toggle('show');
@@ -1773,7 +1770,7 @@ function initFloatingWidget() {
     }
   });
 
-  // Open AI Chat
+
   btnAskAI.addEventListener('click', () => {
     chatMode = 'ai';
     chatTitle.textContent = 'Ask AI';
@@ -1781,7 +1778,7 @@ function initFloatingWidget() {
     openChat();
   });
 
-  // Open Teacher Chat
+
   btnChatTeacher.addEventListener('click', () => {
     chatMode = 'teacher';
     chatTitle.textContent = 'Select a Teacher';
@@ -1789,7 +1786,7 @@ function initFloatingWidget() {
     openChat();
   });
 
-  // Open Notifications
+
   btnNotifications.addEventListener('click', () => {
     renderNotifications();
     notificationWindow.classList.add('show');
@@ -1799,13 +1796,13 @@ function initFloatingWidget() {
     chatWindow.classList.remove('show');
   });
 
-  // Close Notifications
-  // Close Notifications
+
+
   notificationClose.addEventListener('click', () => {
     notificationWindow.classList.remove('show');
   });
 
-  // Clear All Notifications
+
   const notificationClearAll = document.getElementById('notificationClearAll');
   if (notificationClearAll) {
     notificationClearAll.addEventListener('click', async () => {
@@ -1829,12 +1826,12 @@ function initFloatingWidget() {
     });
   }
 
-  // Close Chat
+
   chatClose.addEventListener('click', () => {
     chatWindow.classList.remove('show');
   });
 
-  // Voice Search Logic
+
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
@@ -1872,26 +1869,26 @@ function initFloatingWidget() {
     fabOptions.classList.remove('show');
     fabBtn.classList.remove('active');
     fabBtn.innerHTML = '<i class="ri-question-answer-line"></i>';
-    // Focus input if not in selection mode
+
     if (chatMode === 'ai' || selectedTeacher) {
       setTimeout(() => chatInput.focus(), 300);
     }
   }
 
-  // Send Message
+
   async function sendMessage() {
     const text = chatInput.value.trim();
     if (!text) return;
 
-    // Add user message
+
     addMessage(text, 'user');
     chatInput.value = '';
 
     if (chatMode === 'ai') {
-      // Show typing indicator
+
       const typingId = addMessage('Thinking...', 'ai');
 
-      // Call Gemini
+
       const user = getUser();
       callGemini('General', text, {
         name: user.name,
@@ -1900,7 +1897,7 @@ function initFloatingWidget() {
         xp: localStorage.getItem(LS.xp) || 0,
         score: localStorage.getItem(LS.score) || 0
       }).then(response => {
-        // Remove typing indicator
+
         document.getElementById(typingId)?.remove();
         addMessage(response, 'ai');
       }).catch(err => {
@@ -1908,7 +1905,7 @@ function initFloatingWidget() {
         addMessage("Sorry, I'm having trouble connecting right now.", 'ai');
       });
     } else if (chatMode === 'teacher' && selectedTeacher) {
-      // Send message to teacher
+
       try {
         const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
         const token = localStorage.getItem('GX_TOKEN');
@@ -1932,7 +1929,7 @@ function initFloatingWidget() {
 
         if (!res.ok) throw new Error('Failed to send message');
 
-        // Message added optimistically, but we should probably fetch to confirm or just leave it
+
       } catch (e) {
         console.error("Send message error", e);
         addMessage("Failed to send message. Please try again.", 'bot');
@@ -1950,7 +1947,7 @@ function initFloatingWidget() {
     const div = document.createElement('div');
     div.id = id;
     div.className = `chat-message ${type}`;
-    // Parse markdown-like bold/italic if needed, for now simple text
+
     div.textContent = text;
     chatBody.appendChild(div);
     chatBody.scrollTop = chatBody.scrollHeight;
@@ -1984,7 +1981,7 @@ function initFloatingWidget() {
       ];
     }
 
-    // Dynamic class group
+
     const userClass = getUser().class || 'Gen';
     const classGroup = {
       name: `Class ${userClass} Group`,
@@ -2004,7 +2001,7 @@ function initFloatingWidget() {
 
       const initials = t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
       const icon = t.isGroup ? 'ri-group-line' : 'ri-user-line';
-      // Random pastel color for avatar bg
+
       const hue = Math.floor(Math.random() * 360);
       const avatarStyle = `background: hsl(${hue}, 70%, 80%); color: hsl(${hue}, 80%, 30%); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; font-size: 0.9rem;`;
 
@@ -2029,12 +2026,12 @@ function initFloatingWidget() {
     chatTitle.innerHTML = `<div>${teacher.name}</div><div style="font-size:0.7rem; font-weight:400; opacity:0.8;">${teacher.isGroup ? 'Group Chat' : 'Online'}</div>`;
     chatBody.innerHTML = '<div class="chat-loading" style="text-align:center; padding:20px; color:#aaa;"><i class="ri-loader-2-line spin"></i> Loading messages...</div>';
 
-    // Clear any existing poll
+
     if (chatPollInterval) clearInterval(chatPollInterval);
 
     await fetchAndRenderMessages(teacher);
 
-    // simple Polling every 3s
+
     chatPollInterval = setInterval(() => {
       if (!chatWindow.classList.contains('show') || chatMode !== 'teacher' || !selectedTeacher) {
         clearInterval(chatPollInterval);
@@ -2061,9 +2058,9 @@ function initFloatingWidget() {
       if (res.ok) {
         const messages = await res.json();
 
-        // If polling, checking if we need to update anything is hard without IDs, 
-        // but for now we'll just re-render if count differs or simplistically replace.
-        // A better way is to differ, but let's just replace content for simplicity or check length.
+
+
+
         const currentCount = chatBody.querySelectorAll('.chat-message').length;
         if (isPoll && messages.length === currentCount) return; // Naive: no new messages
 
@@ -2073,12 +2070,12 @@ function initFloatingWidget() {
             : `Hi! I'm ${teacher.name}. How can I help you?`;
           chatBody.innerHTML = `<div class="teacher-intro" style="text-align:center; padding:20px; color:#aaa; font-size:0.9rem;">${welcomeMsg}</div>`;
         } else if (messages.length > 0) {
-          // only re-render if not polling or if new messages found
+
           const myId = getUser().userId; // We need to be careful with getUser returning undefined if not logged in
 
-          // If full re-render
+
           chatBody.innerHTML = '';
-          // Add date separators logic could go here
+
           messages.forEach(m => {
             const isMe = m.sender === myId || m.sender._id === myId;
             const div = document.createElement('div');
@@ -2160,7 +2157,7 @@ function initFloatingWidget() {
     }
   }
 
-  // Check for unread notifications
+
   let badgeErrorCount = 0;
   const MAX_BADGE_ERRORS = 3;
   let badgeInterval = null;
@@ -2195,7 +2192,7 @@ function initFloatingWidget() {
       }
     } catch (e) {
       badgeErrorCount++;
-      // Only log the first few errors to avoid console spam
+
       if (badgeErrorCount <= MAX_BADGE_ERRORS) {
         console.warn("Failed to update notification badge (server might be unreachable)", e);
       }
@@ -2206,17 +2203,17 @@ function initFloatingWidget() {
     }
   }
 
-  // Initial check and periodic update
+
   updateNotificationBadge();
   badgeInterval = setInterval(updateNotificationBadge, 60000); // Check every minute
 }
 
-// Initialize widget on load
+
 document.addEventListener('DOMContentLoaded', () => {
-  // Wait a bit for other things to load
+
   setTimeout(initFloatingWidget, 100);
 
-  // Assignment Form Handler
+
   const assignForm = document.getElementById('assignForm');
   if (assignForm) {
     assignForm.addEventListener('submit', async (e) => {
@@ -2263,7 +2260,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Populate class and game dropdowns if empty (simple mock for now or fetch)
+
     const classSelect = document.getElementById('assign-class');
     if (classSelect && classSelect.options.length === 0) {
       ['6', '7', '8', '9', '10', '11', '12'].forEach(c => {
@@ -2335,17 +2332,17 @@ function endQuiz() {
   document.getElementById("quizEnd").classList.remove("hidden")
   document.getElementById("finalScore").textContent = String(quizState.score)
 
-  // Use standardized score saving function
+
   const xpEarned = quizState.score; // Use score as XP
   const progressEarned = 10; // 10% progress for completing quiz
   saveGameResults(quizState.score, xpEarned, progressEarned);
 
-  // Show success message
+
   showToast('Quiz Completed', `You earned ${xpEarned} XP and ${progressEarned}% progress!`, 'success');
 }
 
 
-// Load Chart.js on demand
+
 function loadChartJs() {
   return new Promise((resolve, reject) => {
     if (window.Chart) {
@@ -2360,22 +2357,22 @@ function loadChartJs() {
   })
 }
 
-// Add this function to create class performance chart
+
 function createClassPerformanceChart() {
   const classes = getJSON(LS.classes, []);
   const students = getJSON(LS.students, []);
 
-  // Calculate average scores per class (raw scores)
+
   const classAverages = {};
   const classStudentCounts = {};
 
-  // Initialize class data
+
   classes.forEach(cls => {
     classAverages[cls.name] = 0;
     classStudentCounts[cls.name] = 0;
   });
 
-  // Sum scores and count students per class
+
   students.forEach(student => {
     if (student.class && classAverages.hasOwnProperty(student.class)) {
       classAverages[student.class] += (student.score || 0);
@@ -2383,7 +2380,7 @@ function createClassPerformanceChart() {
     }
   });
 
-  // Calculate averages
+
   const classNames = [];
   const classDisplayNames = [];
   const averageScores = [];
@@ -2397,7 +2394,7 @@ function createClassPerformanceChart() {
     }
   });
 
-  // Create chart
+
   const el = document.getElementById('classPerformanceChart');
   if (!el || !window.Chart) return;
   const ctx = el.getContext('2d');
@@ -2439,36 +2436,36 @@ function createClassPerformanceChart() {
     }
   });
 
-  // Update class performance stats
+
   updateClassPerformanceStats(classDisplayNames, averageScores);
 }
 
-// Update the createClassPerformanceChart function
+
 function createClassPerformanceChart() {
   const classes = getJSON(LS.classes, []);
   const students = getJSON(LS.students, []);
 
-  // Calculate average scores per class (as percentages)
+
   const classAverages = {};
   const classStudentCounts = {};
 
-  // Initialize class data
+
   classes.forEach(cls => {
     classAverages[cls.name] = 0;
     classStudentCounts[cls.name] = 0;
   });
 
-  // Sum scores and count students per class
+
   students.forEach(student => {
     if (student.class && classAverages.hasOwnProperty(student.class)) {
-      // Convert score to percentage (assuming max score is 1000)
+
       const scorePercent = Math.min(100, Math.round(((student.score || 0) / 1000) * 100));
       classAverages[student.class] += scorePercent;
       classStudentCounts[student.class] += 1;
     }
   });
 
-  // Calculate averages
+
   const classNames = [];
   const classDisplayNames = [];
   const averageScores = [];
@@ -2482,11 +2479,11 @@ function createClassPerformanceChart() {
     }
   });
 
-  // Create chart
+
   const el = document.getElementById('classPerformanceChart');
   if (!el || !window.Chart) return;
 
-  // Destroy existing chart if it exists
+
   const existingChart = Chart.getChart(el);
   if (existingChart) existingChart.destroy();
 
@@ -2530,31 +2527,31 @@ function createClassPerformanceChart() {
     }
   });
 
-  // Update class performance stats
+
   updateClassPerformanceStats(classDisplayNames, averageScores);
 }
 
-// Update the createClassCompletionChart function
+
 function createClassCompletionChart() {
   const classes = getJSON(LS.classes, []);
   const students = getJSON(LS.students, []);
 
-  // Calculate completion rates per class
+
   const completionRates = {};
   const classDisplayNames = {};
 
-  // Create mapping of class names to display names
+
   classes.forEach(cls => {
     classDisplayNames[cls.name] = cls.fullName || `Grade ${cls.name}`;
   });
 
   classes.forEach(cls => {
-    // Count students in this class
+
     const classStudents = students.filter(s => s.class === cls.name);
     const totalStudents = classStudents.length;
 
     if (totalStudents > 0) {
-      // Count students with progress > 70% (as completed)
+
       const completedStudents = classStudents.filter(s => {
         const progress = s.progress || 0;
         return progress >= 70;
@@ -2569,14 +2566,14 @@ function createClassCompletionChart() {
   const classNames = Object.keys(completionRates);
   const completionValues = Object.values(completionRates);
 
-  // Use display names for labels
+
   const displayLabels = classNames.map(name => classDisplayNames[name] || name);
 
-  // Create chart
+
   const el = document.getElementById('classCompletionChart');
   if (!el || !window.Chart) return;
 
-  // Destroy existing chart if it exists
+
   const existingChart = Chart.getChart(el);
   if (existingChart) existingChart.destroy();
 
@@ -2624,12 +2621,12 @@ function createClassCompletionChart() {
   });
 }
 
-// Add function to update class performance stats
+
 function updateClassPerformanceStats(classNames, averageScores) {
   const statsContainer = document.getElementById('classPerformanceStats');
   if (!statsContainer) return;
 
-  // Find best and worst performing classes
+
   let bestClass = { name: '', score: 0 };
   let worstClass = { name: '', score: 100 };
 
@@ -2643,7 +2640,7 @@ function updateClassPerformanceStats(classNames, averageScores) {
     }
   });
 
-  // Calculate overall average
+
   const overallAverage = averageScores.length > 0
     ? Math.round(averageScores.reduce((sum, score) => sum + score, 0) / averageScores.length)
     : 0;
@@ -2666,24 +2663,24 @@ function updateClassPerformanceStats(classNames, averageScores) {
   `;
 }
 
-// Add this function to create student progress chart (score-based)
+
 function createStudentProgressChart() {
   const students = getJSON(LS.students, []);
 
-  // Sort students by score (highest first)
+
   const sortedStudents = [...students].sort((a, b) => (b.score || 0) - (a.score || 0));
 
-  // Get top 10 students
+
   const topStudents = sortedStudents.slice(0, 10);
 
   const studentNames = topStudents.map(s => s.name);
   const studentScores = topStudents.map(s => s.score || 0);
 
-  // Create chart
+
   const el = document.getElementById('studentProgressChart');
   if (!el || !window.Chart) return;
 
-  // Destroy existing chart if it exists
+
   const existingChart = Chart.getChart(el);
   if (existingChart) existingChart.destroy();
 
@@ -2727,14 +2724,14 @@ function createStudentProgressChart() {
   });
 }
 
-// Add function to create progress distribution chart
+
 function createProgressDistributionChart() {
   const students = getJSON(LS.students, []);
 
-  // Use actual progress field
+
   const progressValues = students.map(student => student.progress || 0);
 
-  // Categorize students by performance level
+
   const performanceLevels = {
     'Excellent (90-100%)': 0,
     'Good (75-89%)': 0,
@@ -2757,11 +2754,11 @@ function createProgressDistributionChart() {
   const labels = Object.keys(performanceLevels);
   const data = Object.values(performanceLevels);
 
-  // Create chart
+
   const el = document.getElementById('progressDistributionChart');
   if (!el || !window.Chart) return;
 
-  // Destroy existing chart if it exists
+
   const existingChart = Chart.getChart(el);
   if (existingChart) existingChart.destroy();
 
@@ -2803,12 +2800,12 @@ function createProgressDistributionChart() {
   });
 }
 
-// Update the hydratePage function to include the new charts
+
 function hydratePage() {
   bootstrapDefaults()
 
   const user = getUser()
-  // student dashboard
+
   if (document.body.dataset.page === "student-home") {
     const nameEl = document.getElementById("studentName")
     if (nameEl) nameEl.textContent = user.name || "Student"
@@ -2822,11 +2819,11 @@ function hydratePage() {
     renderLeaderboardPreview()
     updateRankPreview()
     updateBadgeCount()
-    // language picker
+
     initLangPicker("lang-student")
   }
 
-  // teacher dashboard
+
   if (document.body.dataset.page === "teacher-home") {
     document.getElementById("teacherName")?.append(` (${user.name || "Teacher"})`)
     initClassAndStudents()
@@ -2834,7 +2831,7 @@ function hydratePage() {
     renderTeacherScoreboard()
     initLangPicker("lang-teacher")
 
-    // Create charts if canvases are present
+
     const needsCharts = document.getElementById('classPerformanceChart') || document.getElementById('classCompletionChart') || document.getElementById('studentProgressChart') || document.getElementById('progressDistributionChart')
     if (needsCharts) {
       loadChartJs().then(() => {
@@ -2843,42 +2840,42 @@ function hydratePage() {
         createStudentProgressChart();
         createProgressDistributionChart();
       }).catch(() => {
-        // ignore chart load errors
+
       })
     }
   }
 
-  // assignments
+
   if (document.body.dataset.page === "teacher-assignments") {
     initAssignControls()
     renderAssignments()
   }
 
-  // reports
+
   if (document.body.dataset.page === "teacher-reports") {
     renderReports()
   }
 
-  // leaderboard page
+
   if (document.body.dataset.page === "leaderboard") {
     renderLeaderboardFull()
   }
 
-  // profile
+
   if (document.body.dataset.page === "profile") {
     renderProfile()
   }
 
-  // games (placeholder behavior is minimal)
+
   if (document.body.dataset.game === "math-quiz") {
     document.getElementById("qTotal").textContent = String(MATH_QUIZ.length)
   }
 }
-// Secure Backend Call for Gemini AI
+
 async function callGemini(subject, question, profile) {
   try {
     const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
-    // backend expects: subject, question, certain profile fields
+
     const res = await fetch(\\/api/ai\, {
       method: 'POST',
       headers: {

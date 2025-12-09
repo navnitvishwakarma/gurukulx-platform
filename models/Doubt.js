@@ -57,7 +57,7 @@ const doubtSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for efficient queries
+
 doubtSchema.index({ user: 1, created_at: -1 });
 doubtSchema.index({ subject: 1, status: 1 });
 doubtSchema.index({ status: 1, priority: 1, created_at: -1 });

@@ -1,4 +1,4 @@
-// Quick test script for Gemini API integration
+
 const GEMINI_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your key for local testing
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
@@ -55,5 +55,5 @@ async function testGeminiAPI() {
   }
 }
 
-// Run the test
+
 testGeminiAPI();

@@ -1,9 +1,9 @@
-// Debug script for user registration
+
 const mongoose = require('mongoose');
 
 const MONGODB_URI = 'mongodb+srv://digloo:navnit@cluster0.a6xgm1l.mongodb.net/gurukulx?retryWrites=true&w=majority&appName=Cluster0';
 
-// User schema (same as in the function)
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
-// Hash password before saving
+
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   const bcrypt = require('bcryptjs');
@@ -64,13 +64,13 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Compare password method
+
 userSchema.methods.comparePassword = async function(candidatePassword) {
   const bcrypt = require('bcryptjs');
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Get public profile
+
 userSchema.methods.getPublicProfile = function() {
   const userObject = this.toObject();
   delete userObject.password;
@@ -83,7 +83,7 @@ async function testRegistration() {
   try {
     console.log('🔍 Testing user registration...\n');
     
-    // Connect to MongoDB
+
     console.log('1. Connecting to MongoDB...');
     await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
@@ -91,7 +91,7 @@ async function testRegistration() {
     });
     console.log('✅ Connected to MongoDB');
     
-    // Test data
+
     const testUser = {
       username: 'testuser123',
       password: 'password123',
@@ -104,14 +104,14 @@ async function testRegistration() {
     console.log('\n2. Testing user creation...');
     console.log('Test data:', { ...testUser, password: '***' });
     
-    // Check if user already exists
+
     const existingUser = await User.findOne({ username: testUser.username });
     if (existingUser) {
       console.log('⚠️  User already exists, deleting...');
       await User.deleteOne({ username: testUser.username });
     }
     
-    // Create new user
+
     const user = new User({
       username: testUser.username,
       password: testUser.password,
@@ -126,17 +126,17 @@ async function testRegistration() {
     console.log('✅ User created successfully');
     console.log('User ID:', user._id);
     
-    // Test password verification
+
     console.log('\n3. Testing password verification...');
     const isValidPassword = await user.comparePassword('password123');
     console.log('Password verification:', isValidPassword ? '✅ Valid' : '❌ Invalid');
     
-    // Test public profile
+
     console.log('\n4. Testing public profile...');
     const publicProfile = user.getPublicProfile();
     console.log('Public profile:', publicProfile);
     
-    // Clean up
+
     console.log('\n5. Cleaning up test user...');
     await User.deleteOne({ username: testUser.username });
     console.log('✅ Test user deleted');
@@ -152,5 +152,5 @@ async function testRegistration() {
   }
 }
 
-// Run the test
+
 testRegistration();

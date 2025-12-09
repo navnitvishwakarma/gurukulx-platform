@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// MongoDB connection
+
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://digloo:navnit@cluster0.a6xgm1l.mongodb.net/gurukulx?retryWrites=true&w=majority&appName=Cluster0';
 
-// User schema
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
-// Hash password before saving
+
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   try {
@@ -65,12 +65,12 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Compare password method
+
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Get public profile
+
 userSchema.methods.getPublicProfile = function() {
   const userObject = this.toObject();
   delete userObject.password;
@@ -79,7 +79,7 @@ userSchema.methods.getPublicProfile = function() {
 
 const User = mongoose.model('User', userSchema);
 
-// Connect to database
+
 let isConnected = false;
 const connectDB = async () => {
   if (isConnected) return;
@@ -96,7 +96,7 @@ const connectDB = async () => {
   }
 };
 
-// Initialize default users
+
 let usersInitialized = false;
 const initializeDefaultUsers = async () => {
   if (usersInitialized) return;
@@ -138,7 +138,7 @@ const initializeDefaultUsers = async () => {
   }
 };
 
-// Main handler function
+
 const handler = async (event, context) => {
   console.log('Function called:', { 
     path: event.path, 
@@ -147,7 +147,7 @@ const handler = async (event, context) => {
     headers: event.headers
   });
   
-  // Handle CORS
+
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -172,14 +172,14 @@ const handler = async (event, context) => {
   }
 
   try {
-    // Connect to database
+
     await connectDB();
     await initializeDefaultUsers();
 
     const { path, method, body, httpMethod } = event;
     const data = body ? JSON.parse(body) : {};
     
-    // Use httpMethod if method is not available
+
     const actualMethod = method || httpMethod || 'GET';
 
     console.log('Processing request:', { 
@@ -191,7 +191,7 @@ const handler = async (event, context) => {
       rawQuery: event.rawQuery 
     });
 
-    // Health check
+
     if (path === '/api/health') {
       console.log('Matched health route');
       return {
@@ -201,7 +201,7 @@ const handler = async (event, context) => {
       };
     }
 
-    // Login route
+
     if (path === '/api/auth/login' && actualMethod === 'POST') {
       console.log('Matched login route - processing login request');
       
@@ -254,7 +254,7 @@ const handler = async (event, context) => {
       };
     }
 
-    // Registration route
+
     if (path === '/api/auth/register' && actualMethod === 'POST') {
       console.log('Matched registration route - processing registration request');
       
@@ -292,7 +292,7 @@ const handler = async (event, context) => {
       };
     }
 
-    // Default 404
+
     console.log('No route matched:', { path, actualMethod, originalMethod: method, httpMethod, rawQuery: event.rawQuery, availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register'] });
     return {
       statusCode: 404,

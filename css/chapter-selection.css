@@ -1,4 +1,4 @@
-/* Chapter Selection Page Styles */
+
 .chapter-selection-container {
     max-width: 1000px;
     margin: 2rem auto;
@@ -228,7 +228,7 @@
     color: var(--color-primary);
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 768px) {
     .chapters-grid {
         grid-template-columns: 1fr;
@@ -266,7 +266,7 @@
     }
 }
 
-/* Empty state */
+
 .empty-state {
     grid-column: 1 / -1;
     text-align: center;
@@ -282,7 +282,7 @@
     color: var(--color-muted);
 }
 
-/* Animation for chapter cards */
+
 @keyframes fadeIn {
     from {
         opacity: 0;

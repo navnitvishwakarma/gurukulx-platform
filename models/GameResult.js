@@ -49,7 +49,7 @@ const gameResultSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for efficient queries
+
 gameResultSchema.index({ user: 1, created_at: -1 });
 gameResultSchema.index({ game_type: 1, score: -1 });
 gameResultSchema.index({ created_at: -1 });

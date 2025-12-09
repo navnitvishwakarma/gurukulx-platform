@@ -1,4 +1,4 @@
-/* Class Selection Page Styles */
+
 .class-selection-container {
     max-width: 800px;
     margin: 2rem auto;
@@ -68,7 +68,7 @@
     background: var(--color-primary);
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 600px) {
     .class-grid {
         grid-template-columns: repeat(3, 1fr);

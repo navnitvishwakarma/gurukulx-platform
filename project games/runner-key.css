@@ -1,10 +1,10 @@
 :root {
     --primary: #FF6B6B;
-    /* Pastel Red */
+    
     --secondary: #4ECDC4;
-    /* Pastel Teal */
+    
     --accent: #FFE66D;
-    /* Pastel Yellow */
+    
     --dark: #292f36;
     --light: #f7fff7;
     --lane-color: #fce3e3;
@@ -26,7 +26,7 @@ body {
     font-family: 'Nunito', sans-serif;
 }
 
-/* 3D Scene Setup */
+
 #game-container {
     width: 100%;
     height: 100%;
@@ -36,17 +36,17 @@ body {
     background-color: var(--sky-color);
 }
 
-/* Camera setup */
+
 #world {
     width: 100%;
     height: 100%;
     position: absolute;
     transform-style: preserve-3d;
     transform: rotateX(10deg);
-    /* Tilt down */
+    
 }
 
-/* The Floor */
+
 #ground {
     position: absolute;
     top: 50%;
@@ -80,7 +80,7 @@ body {
     background-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Scene matches Ground origin for coordinate sync */
+
 #scene {
     position: absolute;
     top: 50%;
@@ -88,7 +88,7 @@ body {
     width: 0;
     height: 0;
     transform-style: preserve-3d;
-    /* Move scene origin down to match ground level (300px) */
+    
     transform: translateY(300px);
 }
 
@@ -98,10 +98,10 @@ body {
     left: 0;
     width: 80px;
     height: 80px;
-    /* Centered on the coordinate point */
+    
     margin-left: -40px;
     margin-top: -80px;
-    /* Feet at 0 (on floor) */
+    
     transform-origin: bottom center;
 }
 
@@ -134,7 +134,7 @@ body {
     background: white;
     border-radius: 50%;
     box-shadow: 40px 0 0 white;
-    /* Second eye */
+    
 }
 
 .eyes::after {
@@ -160,7 +160,7 @@ body {
     border-radius: 0 0 15px 15px;
 }
 
-/* Game Objects (Answers) */
+
 .game-object {
     position: absolute;
     top: 0;
@@ -168,10 +168,10 @@ body {
     width: 100px;
     height: 100px;
 
-    /* Center origin logic matching player */
+    
     margin-left: -50px;
     margin-top: -100px;
-    /* Sit on floor */
+    
 
     transform-style: preserve-3d;
 }
@@ -191,7 +191,7 @@ body {
     box-shadow: 0 5px 0 #3db5ad;
 }
 
-/* UI Layers */
+
 #ui-layer {
     position: absolute;
     top: 0;

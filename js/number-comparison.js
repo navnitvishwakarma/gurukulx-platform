@@ -1,4 +1,4 @@
-// Number Comparison Game
+
 let cmp = { q: 0, total: 10, score: 0, streak: 0, t: null, time: 30, a: null }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -49,7 +49,7 @@ function randInt(min, max) {
 }
 
 function generatePair() {
-  // Mix of 2- to 6-digit numbers and some with decimals for challenge
+
   const mode = randInt(1, 4)
   if (mode === 1) return [randInt(10, 999), randInt(10, 999)]
   if (mode === 2) return [randInt(1000, 99999), randInt(1000, 99999)]
@@ -110,9 +110,9 @@ function feedback(msg) {
 function endCmp() {
   clearInterval(cmp.t)
   feedback(`Game over! Final Score: ${cmp.score}`)
-  // Update global stats similar to quiz
+
   try {
-    // Use same LS keys as main.js
+
     const prevScore = Number(localStorage.getItem('gx_score') || 0)
     const newScore = prevScore + cmp.score
     localStorage.setItem('gx_score', String(newScore))
@@ -123,7 +123,7 @@ function endCmp() {
     localStorage.setItem('gx_level', String(level))
     const progress = Math.min(100, Number(localStorage.getItem('gx_progress') || 0) + 8)
     localStorage.setItem('gx_progress', String(progress))
-    // Also update leaderboard and students preview if available
+
     if (typeof upsertYouInLeaderboard === 'function') upsertYouInLeaderboard()
     if (typeof upsertYouInStudents === 'function') upsertYouInStudents()
     if (typeof saveCurrentUserProfile === 'function') saveCurrentUserProfile()

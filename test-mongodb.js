@@ -1,4 +1,4 @@
-// Quick test script for MongoDB Atlas connection
+
 const mongoose = require('mongoose');
 
 const MONGODB_URI = 'mongodb+srv://digloo:navnit@cluster0.a6xgm1l.mongodb.net/gurukulx?retryWrites=true&w=majority&appName=Cluster0';
@@ -18,7 +18,7 @@ async function testMongoDBConnection() {
     console.log('Host:', mongoose.connection.host);
     console.log('Port:', mongoose.connection.port);
     
-    // Test creating a simple document
+
     const testSchema = new mongoose.Schema({
       test: String,
       timestamp: { type: Date, default: Date.now }
@@ -33,7 +33,7 @@ async function testMongoDBConnection() {
     await testDoc.save();
     console.log('✅ Test document created successfully');
     
-    // Clean up test document
+
     await TestModel.deleteOne({ _id: testDoc._id });
     console.log('✅ Test document cleaned up');
     
@@ -53,5 +53,5 @@ async function testMongoDBConnection() {
   }
 }
 
-// Run the test
+
 testMongoDBConnection();

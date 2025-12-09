@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
-// Define schemas directly in the function to avoid path issues
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
-// Hash password before saving
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   const bcrypt = require('bcryptjs');
@@ -67,13 +67,13 @@ userSchema.pre('save', async function (next) {
   }
 });
 
-// Compare password method
+
 userSchema.methods.comparePassword = async function (candidatePassword) {
   const bcrypt = require('bcryptjs');
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Get public profile
+
 userSchema.methods.getPublicProfile = function () {
   const userObject = this.toObject();
   delete userObject.password;
@@ -148,7 +148,7 @@ const Doubt = mongoose.model('Doubt', doubtSchema);
 
 const app = express();
 
-// Security middleware
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -166,7 +166,7 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -174,7 +174,7 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// MongoDB connection
+
 let isConnected = false;
 
 const connectDB = async () => {
@@ -193,10 +193,10 @@ const connectDB = async () => {
   }
 };
 
-// JWT secret
+
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
-// Middleware to verify JWT token
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -214,7 +214,7 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Initialize database connection on first request
+
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -224,7 +224,7 @@ app.use(async (req, res, next) => {
   }
 });
 
-// Initialize default users
+
 const initializeDefaultUsers = async () => {
   try {
     const adminExists = await User.findOne({ username: 'admin' });
@@ -261,17 +261,17 @@ const initializeDefaultUsers = async () => {
   }
 };
 
-// Track initialization
+
 let usersInitialized = false;
 
-// API Routes
 
-// Health check
+
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Authentication routes
+
 app.post('/api/auth/register', [
   body('username').isLength({ min: 3 }).trim().escape(),
   body('password').isLength({ min: 6 }),
@@ -341,7 +341,7 @@ app.post('/api/auth/login', [
   }
 });
 
-// User profile routes
+
 app.get('/api/user/profile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -399,7 +399,7 @@ app.put('/api/user/profile', authenticateToken, [
   }
 });
 
-// Game results
+
 app.post('/api/game/results', authenticateToken, [
   body('gameType').notEmpty().trim().escape(),
   body('score').isInt({ min: 0 }),
@@ -442,7 +442,7 @@ app.post('/api/game/results', authenticateToken, [
   }
 });
 
-// Leaderboard
+
 app.get('/api/leaderboard', async (req, res) => {
   try {
     const leaderboard = await User.find({ role: 'student' })
@@ -457,7 +457,7 @@ app.get('/api/leaderboard', async (req, res) => {
   }
 });
 
-// Assignments
+
 app.get('/api/assignments', authenticateToken, async (req, res) => {
   try {
     if (req.user.role !== 'teacher') {
@@ -511,7 +511,7 @@ app.post('/api/assignments', authenticateToken, [
   }
 });
 
-// Feedback
+
 app.post('/api/feedback', [
   body('name').notEmpty().trim().escape(),
   body('email').optional().isEmail().normalizeEmail(),
@@ -537,7 +537,7 @@ app.post('/api/feedback', [
   }
 });
 
-// Doubts
+
 app.post('/api/doubts', authenticateToken, [
   body('subject').notEmpty().trim().escape(),
   body('question').notEmpty().trim().escape()
@@ -564,7 +564,7 @@ app.post('/api/doubts', authenticateToken, [
   }
 });
 
-// AI endpoint with Gemini API integration
+
 app.post('/api/ai', authenticateToken, [
   body('subject').notEmpty().trim().escape(),
   body('question').notEmpty().trim().escape()
@@ -644,25 +644,25 @@ Please provide a helpful educational response:`;
   }
 });
 
-// Error handling middleware
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// 404 handler
+
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Export handler for Netlify Functions
+
 const handler = async (event, context) => {
   console.log('Function called with:', { path: event.path, method: event.method });
 
-  // Set up the request and response objects
+
   const { method, path, headers, body } = event;
 
-  // Create a mock request object
+
   const req = {
     method,
     url: path,
@@ -671,7 +671,7 @@ const handler = async (event, context) => {
     user: null
   };
 
-  // Create a mock response object
+
   const res = {
     status: (code) => ({
       json: (data) => ({
@@ -697,7 +697,7 @@ const handler = async (event, context) => {
     })
   };
 
-  // Handle CORS preflight
+
   if (method === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -710,7 +710,7 @@ const handler = async (event, context) => {
     };
   }
 
-  // Connect to database
+
   try {
     await connectDB();
   } catch (error) {
@@ -718,23 +718,23 @@ const handler = async (event, context) => {
     return res.status(500).json({ error: 'Database connection failed' });
   }
 
-  // Initialize users if needed
+
   if (!usersInitialized) {
     await initializeDefaultUsers();
     usersInitialized = true;
   }
 
-  // Route the request
+
   try {
     console.log('Routing request:', { path, method, body: req.body });
 
-    // Health check
+
     if (path === '/api/health') {
       console.log('Matched health route');
       return res.json({ status: 'OK', timestamp: new Date().toISOString() });
     }
 
-    // Authentication routes
+
     if (path === '/api/auth/register' && method === 'POST') {
       try {
         console.log('Registration attempt:', { username: req.body.username, role: req.body.role });
@@ -746,14 +746,14 @@ const handler = async (event, context) => {
           return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        // Check if user already exists
+
         const existingUser = await User.findOne({ username });
         if (existingUser) {
           console.log('Username already exists:', username);
           return res.status(400).json({ error: 'Username already exists' });
         }
 
-        // Create new user
+
         const user = new User({
           username,
           password,
@@ -820,7 +820,7 @@ const handler = async (event, context) => {
       }
     }
 
-    // User profile routes
+
     if (path === '/api/user/profile' && method === 'GET') {
       const authHeader = headers.authorization;
       const token = authHeader && authHeader.split(' ')[1];
@@ -844,7 +844,7 @@ const handler = async (event, context) => {
       }
     }
 
-    // Game results
+
     if (path === '/api/game/results' && method === 'POST') {
       const authHeader = headers.authorization;
       const token = authHeader && authHeader.split(' ')[1];
@@ -887,7 +887,7 @@ const handler = async (event, context) => {
       }
     }
 
-    // Leaderboard
+
     if (path === '/api/leaderboard' && method === 'GET') {
       const leaderboard = await User.find({ role: 'student' })
         .select('name profile.score profile.badges profile.level')
@@ -897,7 +897,7 @@ const handler = async (event, context) => {
       return res.json(leaderboard);
     }
 
-    // Feedback
+
     if (path === '/api/feedback' && method === 'POST') {
       const { name, email, message } = req.body;
 
@@ -911,7 +911,7 @@ const handler = async (event, context) => {
       return res.status(201).json({ message: 'Feedback submitted successfully' });
     }
 
-    // Doubts
+
     if (path === '/api/doubts' && method === 'POST') {
       const authHeader = headers.authorization;
       const token = authHeader && authHeader.split(' ')[1];
@@ -940,7 +940,7 @@ const handler = async (event, context) => {
       }
     }
 
-    // AI endpoint
+
     if (path === '/api/ai' && method === 'POST') {
       const authHeader = headers.authorization;
       const token = authHeader && authHeader.split(' ')[1];
@@ -1023,7 +1023,7 @@ Please provide a helpful educational response:`;
       }
     }
 
-    // Default 404 - Log the path for debugging
+
     console.log('Route not found:', { path, method });
     return res.status(404).json({ error: 'Route not found', path, method });
 

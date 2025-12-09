@@ -1,4 +1,4 @@
-// Balloon Equations Game
+
 let BE = { level: 1, score: 0, t: 0, time: 180, running: false, current: null, spawner: 0, waveId: 0 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
@@ -13,7 +13,7 @@ function bindBE(){
 function beStart(){
   clearInterval(BE.t)
   clearInterval(BE.spawner)
-  // Reset
+
   BE = { level: 1, score: 0, t: 0, time: 180, running: true, current: null, spawner: 0, waveId: 0 }
   document.getElementById('beOver').classList.add('hidden')
   beUpdateHUD()
@@ -63,7 +63,7 @@ function beNext(){
   const eq = genEquation(BE.level)
   BE.current = eq
   document.getElementById('beEq').textContent = eq.text
-  // continuous waves until correct balloon is clicked
+
   BE.waveId = Date.now()
   clearInterval(BE.spawner)
   const spawnWave = () => {
@@ -81,7 +81,7 @@ function beNext(){
     arr.forEach((val, i)=> beSpawnBalloon(slots[i], val, val===eq.value, BE.waveId))
   }
   spawnWave()
-  // wave frequency increases with level
+
   const intervalMs = Math.max(1400 - (BE.level*80), 600)
   BE.spawner = setInterval(spawnWave, intervalMs)
 }
@@ -95,8 +95,8 @@ function beSpawnBalloon(x, value, isCorrect, waveId){
   b.style.bottom = `-60px`
   b.addEventListener('click', ()=> bePick(isCorrect, waveId))
   board.appendChild(b)
-  // animate upward
-  // slow to faster with level
+
+
   const duration = Math.max(3600 - (BE.level*150), 1000)
   const start = performance.now()
   const h = board.clientHeight
@@ -116,12 +116,12 @@ function bePick(isCorrect, waveId){
     const award = 5 + BE.level*2
     BE.score += award
     BE.level += 1
-    // stop current waves and clear balloons to move to next equation
+
     clearInterval(BE.spawner)
     const board = document.getElementById('beBoard')
     board.querySelectorAll('.balloon').forEach(b=> b.remove())
   } else {
-    // small penalty: -2 seconds
+
     BE.time = Math.max(0, BE.time-2)
   }
   beUpdateHUD()
@@ -134,7 +134,7 @@ function beEnd(){
   clearInterval(BE.spawner)
   document.getElementById('beFinal').textContent = BE.score
   document.getElementById('beOver').classList.remove('hidden')
-  // persist
+
   try {
     const prevScore = Number(localStorage.getItem('gx_score')||0)
     localStorage.setItem('gx_score', String(prevScore + BE.score))

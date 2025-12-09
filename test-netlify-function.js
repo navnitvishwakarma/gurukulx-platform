@@ -1,11 +1,11 @@
-// Test the Netlify function locally
+
 const fetch = require('node-fetch');
 
 async function testFunction() {
   console.log('🧪 Testing Netlify function locally...\n');
   
   try {
-    // Test 1: Health check
+
     console.log('1. Testing health endpoint...');
     const healthResponse = await fetch('https://gurukool-x.netlify.app/api/health');
     const healthData = await healthResponse.json();
@@ -18,7 +18,7 @@ async function testFunction() {
       return;
     }
     
-    // Test 2: Login with sample credentials
+
     console.log('2. Testing login with sample credentials...');
     const loginData = {
       username: 'student1',
@@ -43,7 +43,7 @@ async function testFunction() {
       console.log('❌ Login test failed\n');
     }
     
-    // Test 3: Registration
+
     console.log('3. Testing registration...');
     const registrationData = {
       username: 'testuser' + Date.now(),
@@ -77,5 +77,5 @@ async function testFunction() {
   }
 }
 
-// Run the test
+
 testFunction();

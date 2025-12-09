@@ -1,23 +1,23 @@
-/* add base styles, colors, typography, layout, animations, components */
 
-/* Fonts (max 2 families) */
+
+
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap");
-/* Icons */
+
 @import url("https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css");
 
-/* Color system (exactly 5 colors) */
+
 :root {
   --color-primary: #16a34a;
-  /* green */
+  
   --color-accent: #0ea5e9;
-  /* blue */
+  
   --color-bg: #ffffff;
-  /* white */
+  
   --color-fg: #0f172a;
-  /* near-black */
+  
   --color-muted: #e5e7eb;
-  /* gray for borders/surfaces */
-  /* Added component tokens */
+  
+  
   --card-front-bg: #ffffff;
   --card-back-bg: #f8fafc;
   --card-text: #0f172a;
@@ -28,12 +28,12 @@
   --badge-text: #1e293b;
 }
 
-/* Dark theme */
+
 html[data-theme="dark"] {
   --color-bg: #0b1220;
   --color-fg: #e5e7eb;
   --color-muted: #1f2937;
-  /* Dark overrides for component tokens */
+  
   --card-front-bg: #0b1220;
   --card-back-bg: #111827;
   --card-text: #e5e7eb;
@@ -44,7 +44,7 @@ html[data-theme="dark"] {
   --badge-text: #e5e7eb;
 }
 
-/* Reset and base */
+
 * {
   box-sizing: border-box;
 }
@@ -62,7 +62,7 @@ body {
   line-height: 1.55;
 }
 
-/* Custom Scrollbar */
+
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -131,7 +131,7 @@ a {
   color: #64748b;
 }
 
-/* Layout */
+
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -195,7 +195,7 @@ a {
   }
 }
 
-/* Header */
+
 #site-header {
   position: sticky;
   top: 0;
@@ -210,10 +210,10 @@ a {
   justify-content: space-between;
   padding: .75rem 1rem;
   border-bottom: 1px solid var(--color-muted);
-  /* position: sticky; removed */
-  /* top: 0; removed */
-  /* background: var(--color-bg); removed */
-  /* z-index: 20; removed */
+  
+  
+  
+  
 }
 
 .brand {
@@ -251,7 +251,7 @@ a {
   background: var(--color-muted);
 }
 
-/* Hamburger button and responsive nav */
+
 .nav-toggle {
   display: none;
   background: transparent;
@@ -272,7 +272,7 @@ a {
   border-radius: 2px;
 }
 
-/* Mobile nav behavior */
+
 @media (max-width: 768px) {
   .nav-toggle {
     display: inline-flex;
@@ -280,7 +280,7 @@ a {
 
   .site-header-inner {
     position: sticky;
-    /* already sticky, ensures a positioned ancestor */
+    
     top: 0;
     z-index: 20;
   }
@@ -308,7 +308,7 @@ a {
   }
 }
 
-/* Footer */
+
 .site-footer-inner {
   padding: 1rem;
   border-top: 1px solid var(--color-muted);
@@ -331,7 +331,7 @@ a {
   gap: .5rem;
 }
 
-/* Buttons */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -376,7 +376,7 @@ a {
   box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
 }
 
-/* Auth Links */
+
 .auth-links {
   margin-top: 1rem;
   text-align: center;
@@ -394,7 +394,7 @@ a {
   text-decoration: underline;
 }
 
-/* Cards */
+
 .card {
   background: transparent;
   backdrop-filter: blur(12px);
@@ -419,7 +419,7 @@ html[data-theme="dark"] .card {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Hero */
+
 .hero {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -427,7 +427,7 @@ html[data-theme="dark"] .card {
   gap: 2rem;
   padding: 3rem 0 1rem;
   min-height: 60vh;
-  /* Make it feel more substantial */
+  
 }
 
 .hero h1 {
@@ -494,13 +494,13 @@ html[data-theme="dark"] .card {
   }
 }
 
-/* Sections */
+
 .section-title {
   margin: 1.25rem 0 .75rem;
 }
 
-/* Subject cards flip */
-/* Subject cards new design */
+
+
 .subject-card {
   background: transparent;
   backdrop-filter: blur(12px);
@@ -564,19 +564,19 @@ html[data-theme="dark"] .subject-card {
   color: var(--color-fg);
 }
 
-/* Background pattern */
+
 body {
   background-image: url('/assets/images/bg-pattern-new.png');
   background-repeat: repeat;
   background-size: cover;
-  /* Changed to cover as it looks like a full page background */
+  
   background-attachment: fixed;
-  /* Keep background fixed fixed while scrolling */
+  
   background-color: var(--color-bg);
-  /* Fallback */
+  
 }
 
-/* Forms */
+
 .form {
   display: grid;
   gap: .75rem;
@@ -601,7 +601,7 @@ textarea {
   min-height: 120px;
 }
 
-/* Table-like */
+
 .table-like {
   border: 1px solid var(--color-muted);
   border-radius: .6rem;
@@ -627,7 +627,7 @@ textarea {
   text-align: center;
 }
 
-/* Progress */
+
 .progress-wrap {
   margin-top: .5rem;
 }
@@ -654,7 +654,7 @@ textarea {
   transition: width .6s ease;
 }
 
-/* Stats */
+
 .stats-row {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -683,7 +683,7 @@ html[data-theme="dark"] .stat-card {
   color: var(--color-accent);
 }
 
-/* Avatars & badges */
+
 .avatar {
   width: 36px;
   height: 36px;
@@ -721,7 +721,7 @@ html[data-theme="dark"] .stat-card {
   font-size: .85rem;
 }
 
-/* Quiz UI */
+
 .quiz-intro,
 .quiz-play,
 .quiz-end {
@@ -753,7 +753,7 @@ html[data-theme="dark"] .stat-card {
   display: none;
 }
 
-/* Utilities */
+
 .list {
   list-style: none;
   padding: 0;
@@ -778,13 +778,13 @@ html[data-theme="dark"] .stat-card {
 
 
 
-/* Add to style.css */
+
 canvas {
   max-width: 100%;
   height: auto;
 }
 
-/* Performance stats grid */
+
 .performance-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -811,7 +811,7 @@ canvas {
   color: var(--color-fg);
 }
 
-/* Responsive adjustments for charts */
+
 @media (max-width: 900px) {
   .grid-2 {
     grid-template-columns: 1fr;
@@ -822,7 +822,7 @@ canvas {
   }
 }
 
-/* Section spacing */
+
 section.card {
   margin-bottom: 2rem;
 }
@@ -834,7 +834,7 @@ section.card h2 {
 }
 
 
-/* Google Translate Widget Styling */
+
 .goog-te-banner-frame {
   display: none !important;
 }
@@ -846,7 +846,7 @@ section.card h2 {
   max-width: 200px !important;
 }
 
-/* Hide Google logo and other elements */
+
 .goog-te-gadget img {
   display: none !important;
 }
@@ -867,7 +867,7 @@ section.card h2 {
   display: none !important;
 }
 
-/* Hide any remaining Google elements */
+
 .goog-te-gadget *[src*="translate"] {
   display: none !important;
 }
@@ -878,9 +878,9 @@ section.card h2 {
 
 .goog-te-gadget-simple {
   background: transparent !important;
-  /* Transparent background */
+  
   border: 1px solid transparent !important;
-  /* Transparent border */
+  
   border-radius: 0.5rem !important;
   padding: 0.4rem 0.8rem !important;
   font-size: 0.8rem !important;
@@ -902,7 +902,7 @@ section.card h2 {
   background: var(--color-muted) !important;
 }
 
-/* Hide Google Translate Banner/Footer Artifacts */
+
 .goog-te-banner-frame,
 .goog-te-balloon-frame,
 iframe[name="goog-te-banner-frame"],
@@ -914,7 +914,7 @@ body {
   top: 0 !important;
 }
 
-/* Style the Google Translate dropdown to match the widget */
+
 .goog-te-gadget-simple .goog-te-menu-value {
   color: var(--color-fg) !important;
   width: 100% !important;
@@ -959,28 +959,28 @@ body {
   order: 2 !important;
 }
 
-/* Dark mode specific overrides for Google Translate */
+
 html[data-theme="dark"] .goog-te-gadget-simple {
   background: transparent !important;
-  /* Transparent background */
+  
   border-color: #374151 !important;
 }
 
 html[data-theme="dark"] .goog-te-gadget-simple * {
   color: #e5e7eb !important;
-  /* Light text for all children */
+  
 }
 
 html[data-theme="dark"] .goog-te-gadget-simple .goog-te-menu-value:after {
   color: #e5e7eb !important;
 }
 
-/* Ensure dropdown is visible in dark mode */
+
 html[data-theme="dark"] .goog-te-menu-frame {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Style the dropdown menu */
+
 .goog-te-menu {
   background: var(--color-bg) !important;
   border: 1px solid var(--color-muted) !important;
@@ -1018,7 +1018,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
 }
 
 
-/* Ensure the translate widget container has proper width */
+
 #google_translate_element {
   width: auto !important;
   min-width: 80px !important;
@@ -1026,7 +1026,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   display: inline-block !important;
 }
 
-/* Mobile responsive adjustments */
+
 @media (max-width: 768px) {
 
   .goog-te-gadget,
@@ -1069,16 +1069,16 @@ html[data-theme="dark"] .goog-te-menu-frame {
     margin-top: 0.5rem;
     order: 0;
     min-height: 40px;
-    /* Ensure visibility on mobile */
+    
   }
 }
 
-/* Footer Styles */
+
 #site-footer {
   background-color: #1f2937;
-  /* Dark gray background */
+  
   color: #f3f4f6;
-  /* Light text */
+  
   padding: 3rem 0 1rem;
   margin-top: 4rem;
 }
@@ -1188,7 +1188,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   font-size: 0.85rem;
 }
 
-/* Responsive Footer */
+
 @media (max-width: 900px) {
   .footer-grid {
     grid-template-columns: 1fr 1fr;
@@ -1223,7 +1223,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   }
 }
 
-/* Floating Help Widget */
+
 .fab-container {
   position: fixed;
   bottom: 2rem;
@@ -1234,7 +1234,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   align-items: flex-end;
   gap: 1rem;
   pointer-events: none;
-  /* Let clicks pass through the invisible container */
+  
 }
 
 .fab-button {
@@ -1253,7 +1253,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   pointer-events: auto;
   position: relative;
-  /* Re-enable clicks for the button */
+  
 }
 
 .fab-button:hover {
@@ -1328,7 +1328,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   color: var(--color-primary);
 }
 
-/* Chat Window */
+
 .chat-window {
   position: fixed;
   bottom: 6rem;
@@ -1340,7 +1340,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   border-radius: 1rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   z-index: 1001;
-  /* Ensure it's above the FAB container */
+  
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1405,7 +1405,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
 .chat-message.teacher {
   align-self: flex-end;
   background: #f1f5f9;
-  /* Light gray/blue slate */
+  
   border: none;
   color: var(--color-fg);
   border-bottom-right-radius: 0.25rem;
@@ -1447,7 +1447,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   justify-content: center;
 }
 
-/* Teacher Selection */
+
 .teacher-list {
   display: flex;
   flex-direction: column;
@@ -1504,7 +1504,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   }
 }
 
-/* Notification Window */
+
 .notification-window {
   position: fixed;
   bottom: 6rem;
@@ -1610,7 +1610,7 @@ html[data-theme="dark"] .goog-te-menu-frame {
   margin-top: 0.5rem;
 }
 
-/* Chat Microphone Button */
+
 .chat-mic {
   background: none;
   border: none;

@@ -1,9 +1,9 @@
-// Test login functionality
+
 const fetch = require('node-fetch');
 
 const API_BASE = 'https://gurukool-x.netlify.app';
 
-// Sample login credentials
+
 const testCredentials = [
   { username: 'teacher1', password: 'teacher123', role: 'teacher', name: 'Ms. Priya Sharma' },
   { username: 'student1', password: 'student123', role: 'student', name: 'Arjun Singh' },
@@ -15,7 +15,7 @@ async function testLogin() {
   console.log('🔐 Testing login functionality...\n');
   
   try {
-    // Test health check first
+
     console.log('1. Testing API health...');
     const healthResponse = await fetch(`${API_BASE}/api/health`);
     const healthData = await healthResponse.json();
@@ -27,7 +27,7 @@ async function testLogin() {
       return;
     }
     
-    // Test each login credential
+
     for (let i = 0; i < testCredentials.length; i++) {
       const cred = testCredentials[i];
       console.log(`${i + 2}. Testing login for ${cred.name} (${cred.role})...`);
@@ -68,5 +68,5 @@ async function testLogin() {
   }
 }
 
-// Run the test
+
 testLogin();

@@ -1,10 +1,10 @@
-// Fix deployment issues script
+
 const fs = require('fs');
 const path = require('path');
 
 console.log('🔧 Fixing Netlify deployment issues...\n');
 
-// Check if all required files exist
+
 const requiredFiles = [
   'package.json',
   'netlify.toml',
@@ -24,7 +24,7 @@ requiredFiles.forEach(file => {
   }
 });
 
-// Check package.json dependencies
+
 console.log('\n📦 Checking package.json...');
 const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
@@ -42,7 +42,7 @@ requiredDeps.forEach(dep => {
   }
 });
 
-// Check netlify.toml configuration
+
 console.log('\n⚙️ Checking netlify.toml...');
 const netlifyConfig = fs.readFileSync('netlify.toml', 'utf8');
 
@@ -60,7 +60,7 @@ if (netlifyConfig.includes('NODE_VERSION = "18"')) {
   allGood = false;
 }
 
-// Check function file
+
 console.log('\n🔧 Checking Netlify function...');
 const functionFile = fs.readFileSync('netlify/functions/api.js', 'utf8');
 

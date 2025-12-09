@@ -1,9 +1,9 @@
-// Script to create sample data for testing
+
 const mongoose = require('mongoose');
 
 const MONGODB_URI = 'mongodb+srv://digloo:navnit@cluster0.a6xgm1l.mongodb.net/gurukulx?retryWrites=true&w=majority&appName=Cluster0';
 
-// User schema
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
-// Hash password before saving
+
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   const bcrypt = require('bcryptjs');
@@ -64,13 +64,13 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Compare password method
+
 userSchema.methods.comparePassword = async function(candidatePassword) {
   const bcrypt = require('bcryptjs');
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Get public profile
+
 userSchema.methods.getPublicProfile = function() {
   const userObject = this.toObject();
   delete userObject.password;
@@ -79,9 +79,9 @@ userSchema.methods.getPublicProfile = function() {
 
 const User = mongoose.model('User', userSchema);
 
-// Sample users data
+
 const sampleUsers = [
-  // Teachers
+
   {
     username: 'teacher1',
     password: 'teacher123',
@@ -110,7 +110,7 @@ const sampleUsers = [
     profile: { score: 2000, xp: 3000, level: 6, progress: 90, streak: 20, badges: ['Super Admin', 'Platform Manager'] }
   },
   
-  // Students
+
   {
     username: 'student1',
     password: 'student123',
@@ -162,7 +162,7 @@ async function createSampleData() {
   try {
     console.log('🚀 Creating sample data for GuruKulX...\n');
     
-    // Connect to MongoDB
+
     console.log('1. Connecting to MongoDB...');
     await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
@@ -170,12 +170,12 @@ async function createSampleData() {
     });
     console.log('✅ Connected to MongoDB');
     
-    // Clear existing users (optional - comment out if you want to keep existing data)
+
     console.log('\n2. Clearing existing users...');
     await User.deleteMany({});
     console.log('✅ Existing users cleared');
     
-    // Create sample users
+
     console.log('\n3. Creating sample users...');
     for (let i = 0; i < sampleUsers.length; i++) {
       const userData = sampleUsers[i];
@@ -188,7 +188,7 @@ async function createSampleData() {
     const allUsers = await User.find({});
     console.log(`✅ Total users created: ${allUsers.length}`);
     
-    // Display login credentials
+
     console.log('\n📋 LOGIN CREDENTIALS:');
     console.log('='.repeat(50));
     console.log('TEACHERS:');
@@ -213,5 +213,5 @@ async function createSampleData() {
   }
 }
 
-// Run the script
+
 createSampleData();

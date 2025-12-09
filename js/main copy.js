@@ -1,4 +1,4 @@
-// Data keys
+
 const LS = {
   user: "gx_user", // {name, role}
   theme: "gx_theme",
@@ -15,7 +15,7 @@ const LS = {
   students: "gx_students", // []
 }
 
-// Initialize once DOM is ready
+
 document.addEventListener("DOMContentLoaded", () => {
   injectHeader()
   injectFooter()
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   hydratePage()
 })
 
-// Header/Footer(//<a href="/contact.html">Contact Teachers</a>)
+
 function injectHeader() {
   const header = document.getElementById("site-header")
   if (!header) return
@@ -47,7 +47,7 @@ function injectHeader() {
       </nav>
     </div>
   `
-  // active link
+
   const path = location.pathname.replace(/\/$/, "")
   header.querySelectorAll(".nav a").forEach((a) => {
     if (a.getAttribute("href") === path) a.classList.add("active")
@@ -99,7 +99,7 @@ function injectFooter() {
   document.getElementById("toggleTheme")?.addEventListener("click", toggleTheme)
 }
 
-// Theme
+
 function initTheme() {
   const saved = localStorage.getItem(LS.theme) || "light"
   document.documentElement.setAttribute("data-theme", saved)
@@ -110,9 +110,9 @@ function toggleTheme() {
   localStorage.setItem(LS.theme, current)
 }
 
-// Global handlers
+
 function attachGlobalHandlers() {
-  // Auth forms
+
   const loginForm = document.getElementById("loginForm")
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
@@ -126,21 +126,21 @@ function attachGlobalHandlers() {
     })
   }
 
-  // Feedback
+
   document.getElementById("feedbackForm")?.addEventListener("submit", (e) => {
     e.preventDefault()
     alert("Thank you for your feedback!")
     e.target.reset()
   })
 
-  // Ask doubt
+
   document.getElementById("doubtForm")?.addEventListener("submit", (e) => {
     e.preventDefault()
     alert("Your doubt has been sent to teachers.")
     e.target.reset()
   })
 
-  // Assignments
+
   document.getElementById("assignForm")?.addEventListener("submit", (e) => {
     e.preventDefault()
     const cls = document.getElementById("assign-class").value
@@ -156,7 +156,7 @@ function attachGlobalHandlers() {
     e.target.reset()
   })
 
-  // Reports download
+
   document.getElementById("downloadCSV")?.addEventListener("click", () => {
     const rows = buildReportRows()
     const csv = toCSV(rows)
@@ -169,11 +169,11 @@ function attachGlobalHandlers() {
     URL.revokeObjectURL(url)
   })
 
-  // Quiz start (if on math quiz)
+
   document.getElementById("startQuiz")?.addEventListener("click", startMathQuiz)
 }
 
-// Helpers
+
 function getUser() {
   return getJSON(LS.user, { name: "Guest", role: "student" })
 }
@@ -190,7 +190,7 @@ function setNumber(key, value, min = 0, max = 1e9) {
   return n
 }
 
-// Bootstrap defaults for first-time
+
 function bootstrapDefaults() {
   if (localStorage.getItem(LS.progress) == null) setNumber(LS.progress, 0, 0, 100)
   if (localStorage.getItem(LS.xp) == null) setNumber(LS.xp, 0)
@@ -198,7 +198,7 @@ function bootstrapDefaults() {
   if (localStorage.getItem(LS.score) == null) setNumber(LS.score, 0)
   if (localStorage.getItem(LS.streak) == null) setNumber(LS.streak, 0)
   if (localStorage.getItem(LS.leaderboard) == null) {
-    // seed leaderboard sample
+
     const seed = [
       { name: "Aditi", score: 820, badge: "Eco Hero" },
       { name: "Ravi", score: 760, badge: "Quiz Ace" },
@@ -224,12 +224,12 @@ function bootstrapDefaults() {
   maintainStreak()
 }
 
-// Page-specific hydration
+
 function hydratePage() {
   bootstrapDefaults()
 
   const user = getUser()
-  // student dashboard
+
   if (document.body.dataset.page === "student-home") {
     const nameEl = document.getElementById("studentName")
     if (nameEl) nameEl.textContent = user.name || "Student"
@@ -243,11 +243,11 @@ function hydratePage() {
     renderLeaderboardPreview()
     updateRankPreview()
     updateBadgeCount()
-    // language picker
+
     initLangPicker("lang-student")
   }
 
-  // teacher dashboard
+
   if (document.body.dataset.page === "teacher-home") {
     document.getElementById("teacherName")?.append(` (${user.name || "Teacher"})`)
     initClassAndStudents()
@@ -256,28 +256,28 @@ function hydratePage() {
     initLangPicker("lang-teacher")
   }
 
-  // assignments
+
   if (document.body.dataset.page === "teacher-assignments") {
     initAssignControls()
     renderAssignments()
   }
 
-  // reports
+
   if (document.body.dataset.page === "teacher-reports") {
     renderReports()
   }
 
-  // leaderboard page
+
   if (document.body.dataset.page === "leaderboard") {
     renderLeaderboardFull()
   }
 
-  // profile
+
   if (document.body.dataset.page === "profile") {
     renderProfile()
   }
 
-  // games (placeholder behavior is minimal)
+
   if (document.body.dataset.game === "math-quiz") {
     document.getElementById("qTotal").textContent = String(MATH_QUIZ.length)
   }
@@ -292,12 +292,12 @@ function setWidth(id, w) {
   if (el) el.style.width = w
 }
 
-// Language
+
 function initLangPicker(id) {
   const sel = document.getElementById(id)
   if (!sel) return
   const saved = localStorage.getItem(LS.lang) || "English"
-  // try set existing option
+
   Array.from(sel.options).forEach((o) => {
     if (o.value === saved || o.text === saved) sel.value = o.value
   })
@@ -307,7 +307,7 @@ function initLangPicker(id) {
   })
 }
 
-// Streak maintenance (daily visit increments)
+
 function maintainStreak() {
   const today = new Date().toDateString()
   const last = localStorage.getItem(LS.lastVisit)
@@ -319,7 +319,7 @@ function maintainStreak() {
   }
 }
 
-// Leaderboard preview and table
+
 function getLeaderboard() {
   return getJSON(LS.leaderboard, [])
 }
@@ -372,9 +372,9 @@ function renderLeaderboardFull() {
   `
 }
 
-// Teacher data
+
 function initClassAndStudents() {
-  // already bootstrapped defaults
+
 }
 function renderTeacherLists() {
   const classes = getJSON(LS.classes, [])
@@ -397,7 +397,7 @@ function renderTeacherScoreboard() {
   `
 }
 
-// Assignments
+
 function initAssignControls() {
   const classes = getJSON(LS.classes, [])
   const sc = document.getElementById("assign-class")
@@ -448,7 +448,7 @@ function renderAssignments() {
   `
 }
 
-// Reports
+
 function renderReports() {
   const students = getJSON(LS.students, [])
   const avg = Math.round(students.reduce((s, x) => s + x.score, 0) / Math.max(1, students.length))
@@ -477,7 +477,7 @@ function toCSV(rows) {
   return rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n")
 }
 
-// Profile
+
 function renderProfile() {
   bootstrapDefaults()
   const user = getUser()
@@ -496,7 +496,7 @@ function renderProfile() {
     .join("")
 }
 
-// Badges logic
+
 function computeBadges() {
   const score = Number(localStorage.getItem(LS.score) || 0)
   const streak = Number(localStorage.getItem(LS.streak) || 0)
@@ -513,14 +513,14 @@ function updateBadgeCount() {
   setText("badgeCount", count)
 }
 
-// Escape HTML
+
 function escapeHTML(s) {
   return (
     s?.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]) || ""
   )
 }
 
-// Math quiz game
+
 const MATH_QUIZ = [
   { q: "8 + 7 = ?", options: ["14", "15", "16", "18"], a: 1 },
   { q: "12 - 5 = ?", options: ["6", "7", "8", "9"], a: 1 },
@@ -591,7 +591,7 @@ function endQuiz() {
   document.getElementById("quizEnd").classList.remove("hidden")
   document.getElementById("finalScore").textContent = String(quizState.score)
 
-  // Update user stats
+
   const prevScore = Number(localStorage.getItem(LS.score) || 0)
   const newScore = prevScore + quizState.score
   setNumber(LS.score, newScore)

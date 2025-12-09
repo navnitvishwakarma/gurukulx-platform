@@ -51,7 +51,7 @@ const feedbackSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for efficient queries
+
 feedbackSchema.index({ status: 1, created_at: -1 });
 feedbackSchema.index({ type: 1, priority: 1 });
 

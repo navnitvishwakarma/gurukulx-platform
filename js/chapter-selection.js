@@ -1,28 +1,28 @@
-// Chapter Selection Page Functionality
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Wait for header/footer to be injected
+
     setTimeout(initChapterSelection, 100);
 });
 
 function initChapterSelection() {
-    // Get the selected class from URL parameters or user data
+
     const urlParams = new URLSearchParams(window.location.search);
     const classId = urlParams.get('class') || (getUser()?.class || '6');
     
-    // Load chapters for the selected class
+
     loadChapters(classId);
     
-    // Set up subject filter
+
     const subjectSelect = document.getElementById('subjectSelect');
     subjectSelect.addEventListener('change', function() {
         filterChaptersBySubject(this.value);
     });
     
-    // Update progress
+
     updateOverallProgress();
 }
 
-// Sample chapter data for Class 6
+
 const CLASS_6_CHAPTERS = [
     {
         id: 1,
@@ -128,10 +128,10 @@ const CLASS_6_CHAPTERS = [
 function loadChapters(classId) {
     const chaptersGrid = document.getElementById('chaptersGrid');
     
-    // Clear existing content
+
     chaptersGrid.innerHTML = '';
     
-    // Filter chapters by class (in a real app, this would come from an API)
+
     const chapters = CLASS_6_CHAPTERS; // For now, we'll use the sample data
     
     if (chapters.length === 0) {
@@ -144,7 +144,7 @@ function loadChapters(classId) {
         return;
     }
     
-    // Render chapters
+
     chapters.forEach(chapter => {
         const chapterCard = createChapterCard(chapter);
         chaptersGrid.appendChild(chapterCard);
@@ -156,7 +156,7 @@ function createChapterCard(chapter) {
     card.className = 'chapter-card';
     card.dataset.subject = chapter.subject;
     
-    // Get subject display name
+
     const subjectNames = {
         'math': 'Mathematics',
         'science': 'Science',
@@ -165,7 +165,7 @@ function createChapterCard(chapter) {
         'environment': 'Environmental Studies'
     };
     
-    // Get icon based on subject
+
     const subjectIcons = {
         'math': 'ri-calculator-line',
         'science': 'ri-flask-line',
@@ -251,12 +251,12 @@ function updateOverallProgress() {
 }
 
 function startChapter(chapterId) {
-    // Find the chapter
+
     const chapter = CLASS_6_CHAPTERS.find(c => c.id === chapterId);
     
     if (!chapter) return;
     
-    // Navigate to the chapter's games page (for Chapter 1 -> Knowing Our Numbers)
+
     if (chapter.title === 'Knowing Our Numbers') {
         window.location.href = 'chapter1-games.html';
         return;
@@ -265,17 +265,17 @@ function startChapter(chapterId) {
 }
 
 function viewChapterDetails(chapterId) {
-    // Find the chapter
+
     const chapter = CLASS_6_CHAPTERS.find(c => c.id === chapterId);
     
     if (!chapter) return;
     
-    // In a real app, this would show a modal with chapter details
+
     showToast('Chapter Details', `Showing details for "${chapter.title}"`, 'info');
 }
 
 function updateChapterProgress(chapterId, progress) {
-    // Update the chapter progress in the UI
+
     const chaptersGrid = document.getElementById('chaptersGrid');
     const chapterCard = chaptersGrid.querySelector(`.chapter-card:nth-child(${chapterId})`);
     
@@ -299,9 +299,9 @@ function updateChapterProgress(chapterId, progress) {
     }
 }
 
-// Toast notification function (reusing from teacher dashboard)
+
 function showToast(title, message, type = "info") {
-    // Create toast container if it doesn't exist
+
     let toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) {
         toastContainer = document.createElement('div');
@@ -334,12 +334,12 @@ function showToast(title, message, type = "info") {
     
     toastContainer.appendChild(toast);
     
-    // Show toast
+
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
     
-    // Auto remove after 5 seconds
+
     setTimeout(() => {
         if (document.getElementById(toastId)) {
             toast.classList.remove('show');

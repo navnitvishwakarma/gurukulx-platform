@@ -12,7 +12,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Security middleware
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -30,7 +30,7 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
@@ -38,10 +38,10 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Serve static files
+
 app.use(express.static('.'));
 
-// Database setup
+
 const db = new sqlite3.Database(':memory:', (err) => {
   if (err) {
     console.error('Error opening database:', err.message);
@@ -52,7 +52,7 @@ const db = new sqlite3.Database(':memory:', (err) => {
 });
 
 function initializeDatabase() {
-  // Users table
+
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
@@ -65,7 +65,7 @@ function initializeDatabase() {
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  // User profiles table
+
   db.run(`CREATE TABLE IF NOT EXISTS user_profiles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -80,7 +80,7 @@ function initializeDatabase() {
     FOREIGN KEY (user_id) REFERENCES users (id)
   )`);
 
-  // Assignments table
+
   db.run(`CREATE TABLE IF NOT EXISTS assignments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     teacher_id INTEGER NOT NULL,
@@ -94,7 +94,7 @@ function initializeDatabase() {
     FOREIGN KEY (teacher_id) REFERENCES users (id)
   )`);
 
-  // Feedback table
+
   db.run(`CREATE TABLE IF NOT EXISTS feedback (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -103,7 +103,7 @@ function initializeDatabase() {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  // Doubts table
+
   db.run(`CREATE TABLE IF NOT EXISTS doubts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -115,7 +115,7 @@ function initializeDatabase() {
     FOREIGN KEY (user_id) REFERENCES users (id)
   )`);
 
-  // Game results table
+
   db.run(`CREATE TABLE IF NOT EXISTS game_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -127,13 +127,13 @@ function initializeDatabase() {
     FOREIGN KEY (user_id) REFERENCES users (id)
   )`);
 
-  // Create default admin user
+
   const hashedPassword = bcrypt.hashSync('admin123', 10);
   db.run(`INSERT OR IGNORE INTO users (username, password, name, role, class, email) 
           VALUES ('admin', ?, 'Admin User', 'teacher', 'admin', 'admin@gurukulx.com')`, 
           [hashedPassword]);
 
-  // Create sample student
+
   const studentPassword = bcrypt.hashSync('student123', 10);
   db.run(`INSERT OR IGNORE INTO users (username, password, name, role, class, email) 
           VALUES ('student', ?, 'Sample Student', 'student', '6', 'student@gurukulx.com')`, 
@@ -142,10 +142,10 @@ function initializeDatabase() {
   console.log('Database initialized successfully');
 }
 
-// JWT secret
+
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
-// Middleware to verify JWT token
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -163,14 +163,14 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// API Routes
 
-// Health check
+
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Authentication routes
+
 app.post('/api/auth/register', [
   body('username').isLength({ min: 3 }).trim().escape(),
   body('password').isLength({ min: 6 }),
@@ -187,7 +187,7 @@ app.post('/api/auth/register', [
 
     const { username, password, name, role, userClass, email } = req.body;
 
-    // Check if user already exists
+
     db.get('SELECT id FROM users WHERE username = ?', [username], async (err, row) => {
       if (err) {
         return res.status(500).json({ error: 'Database error' });
@@ -196,10 +196,10 @@ app.post('/api/auth/register', [
         return res.status(400).json({ error: 'Username already exists' });
       }
 
-      // Hash password
+
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create user
+
       db.run(
         'INSERT INTO users (username, password, name, role, class, email) VALUES (?, ?, ?, ?, ?, ?)',
         [username, hashedPassword, name, role, userClass, email],
@@ -210,7 +210,7 @@ app.post('/api/auth/register', [
 
           const userId = this.lastID;
 
-          // Create user profile
+
           db.run(
             'INSERT INTO user_profiles (user_id, score, xp, level, progress, streak) VALUES (?, 0, 0, 1, 0, 0)',
             [userId],
@@ -258,7 +258,7 @@ app.post('/api/auth/login', [
           return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Get user profile
+
         db.get(
           'SELECT * FROM user_profiles WHERE user_id = ?',
           [user.id],
@@ -299,7 +299,7 @@ app.post('/api/auth/login', [
   }
 });
 
-// User profile routes
+
 app.get('/api/user/profile', authenticateToken, (req, res) => {
   db.get(
     'SELECT u.*, p.* FROM users u LEFT JOIN user_profiles p ON u.id = p.user_id WHERE u.id = ?',
@@ -392,7 +392,7 @@ app.put('/api/user/profile', authenticateToken, [
   );
 });
 
-// Game results
+
 app.post('/api/game/results', authenticateToken, [
   body('gameType').notEmpty().trim().escape(),
   body('score').isInt({ min: 0 }),
@@ -414,7 +414,7 @@ app.post('/api/game/results', authenticateToken, [
         return res.status(500).json({ error: 'Database error' });
       }
 
-      // Update user profile
+
       db.run(
         'UPDATE user_profiles SET score = score + ?, xp = xp + ?, progress = MIN(100, progress + ?), updated_at = CURRENT_TIMESTAMP WHERE user_id = ?',
         [score, xpEarned, progressEarned, req.user.userId],
@@ -430,7 +430,7 @@ app.post('/api/game/results', authenticateToken, [
   );
 });
 
-// Leaderboard
+
 app.get('/api/leaderboard', (req, res) => {
   db.all(
     `SELECT u.name, p.score, p.badges, p.level 
@@ -448,7 +448,7 @@ app.get('/api/leaderboard', (req, res) => {
   );
 });
 
-// Assignments
+
 app.get('/api/assignments', authenticateToken, (req, res) => {
   if (req.user.role !== 'teacher') {
     return res.status(403).json({ error: 'Access denied' });
@@ -496,7 +496,7 @@ app.post('/api/assignments', authenticateToken, [
   );
 });
 
-// Feedback
+
 app.post('/api/feedback', [
   body('name').notEmpty().trim().escape(),
   body('email').optional().isEmail().normalizeEmail(),
@@ -521,7 +521,7 @@ app.post('/api/feedback', [
   );
 });
 
-// Doubts
+
 app.post('/api/doubts', authenticateToken, [
   body('subject').notEmpty().trim().escape(),
   body('question').notEmpty().trim().escape()
@@ -545,7 +545,7 @@ app.post('/api/doubts', authenticateToken, [
   );
 });
 
-// AI endpoint (placeholder - integrate with your Gemini API)
+
 app.post('/api/ai', authenticateToken, [
   body('subject').notEmpty().trim().escape(),
   body('question').notEmpty().trim().escape()
@@ -557,31 +557,31 @@ app.post('/api/ai', authenticateToken, [
 
   const { subject, question, profile } = req.body;
 
-  // This is a placeholder - you can integrate with Gemini API here
+
   const response = `This is a placeholder AI response for the question: "${question}" in subject: "${subject}". 
   In a real implementation, this would call the Gemini API with the user's profile information.`;
 
   res.json({ answer: response });
 });
 
-// Error handling middleware
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// 404 handler
+
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Start server
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`API available at http://localhost:${PORT}/api`);
 });
 
-// Graceful shutdown
+
 process.on('SIGINT', () => {
   console.log('Shutting down server...');
   db.close((err) => {

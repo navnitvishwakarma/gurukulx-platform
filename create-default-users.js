@@ -1,10 +1,10 @@
-// Script to manually create default users in MongoDB Atlas
+
 const mongoose = require('mongoose');
 
-// MongoDB connection string from your env.example
+
 const MONGODB_URI = 'mongodb+srv://digloo:navnit@cluster0.a6xgm1l.mongodb.net/gurukulx?retryWrites=true&w=majority&appName=Cluster0';
 
-// User schema
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
-// Hash password before saving
+
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   const bcrypt = require('bcryptjs');
@@ -76,7 +76,7 @@ async function createDefaultUsers() {
     });
     console.log('✅ Connected to MongoDB Atlas');
 
-    // Check if admin user exists
+
     const adminExists = await User.findOne({ username: 'admin' });
     if (adminExists) {
       console.log('✅ Admin user already exists');
@@ -101,7 +101,7 @@ async function createDefaultUsers() {
       console.log('✅ Admin user created successfully');
     }
 
-    // Check if student user exists
+
     const studentExists = await User.findOne({ username: 'student' });
     if (studentExists) {
       console.log('✅ Student user already exists');
@@ -126,7 +126,7 @@ async function createDefaultUsers() {
       console.log('✅ Student user created successfully');
     }
 
-    // List all users
+
     const allUsers = await User.find({}, 'username name role email');
     console.log('\n📋 All users in database:');
     allUsers.forEach(user => {
@@ -149,5 +149,5 @@ async function createDefaultUsers() {
   }
 }
 
-// Run the script
+
 createDefaultUsers();

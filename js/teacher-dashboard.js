@@ -1,6 +1,6 @@
-// Teacher Dashboard Specific JavaScript
 
-// Data keys for teacher-specific data
+
+
 const TEACHER_LS = {
   announcements: "gx_teacher_announcements",
   notifications: "gx_teacher_notifications",
@@ -11,11 +11,11 @@ const TEACHER_LS = {
   performanceFilter: "gx_teacher_performance_filter"
 };
 
-// Initialize teacher dashboard
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Wait for main.js to initialize
+
   setTimeout(() => {
-    // Security check
+
     const user = getUser();
     if (!user || user.role !== 'teacher') {
       window.location.href = '/index.html';
@@ -26,13 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initTeacherDashboard() {
-  // Initialize teacher-specific functionality
+
   initTeacherData();
   initEventListeners();
   renderTeacherDashboard();
   initCharts();
 
-  // Set current date
+
   setDashboardDate();
 }
 
@@ -43,11 +43,11 @@ async function initTeacherData() {
 
     if (!token) return;
 
-    // Fetch students (from leaderboard/users endpoint)
+
     const usersRes = await fetch(`${apiBase.replace(/\/$/, '')}/api/leaderboard`);
     if (usersRes.ok) {
       const users = await usersRes.json();
-      // Filter for students only and map to expected format
+
       const students = users.map(u => ({
         name: u.name,
         class: u.profile?.class || u.class || "N/A",
@@ -58,13 +58,13 @@ async function initTeacherData() {
       localStorage.setItem(LS.students, JSON.stringify(students));
     }
 
-    // Fetch assignments
+
     const assignRes = await fetch(`${apiBase.replace(/\/$/, '')}/api/assignments`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     if (assignRes.ok) {
       const assignments = await assignRes.json();
-      // Map to local format if needed, or store directly
+
       const mappedAssignments = assignments.map(a => ({
         id: a._id,
         class: a.class_name,
@@ -76,7 +76,7 @@ async function initTeacherData() {
       localStorage.setItem(LS.assignments, JSON.stringify(mappedAssignments));
     }
 
-    // Fetch notifications
+
     const notifRes = await fetch(`${apiBase.replace(/\/$/, '')}/api/notifications`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -85,7 +85,7 @@ async function initTeacherData() {
       localStorage.setItem(TEACHER_LS.notifications, JSON.stringify(notifications));
     }
 
-    // Initialize other defaults
+
     if (!localStorage.getItem(TEACHER_LS.announcements)) {
       localStorage.setItem(TEACHER_LS.announcements, JSON.stringify([]));
     }
@@ -102,7 +102,7 @@ async function initTeacherData() {
       localStorage.setItem(TEACHER_LS.performanceFilter, "score");
     }
 
-    // Refresh UI
+
     renderTeacherDashboard();
 
   } catch (error) {
@@ -111,11 +111,11 @@ async function initTeacherData() {
 }
 
 function initEventListeners() {
-  // Refresh dashboard
+
   const refreshBtn = document.getElementById("refreshDashboard");
   if (refreshBtn) refreshBtn.addEventListener("click", refreshDashboard);
 
-  // Class filter
+
   const classFilter = document.getElementById("classFilter");
   if (classFilter) {
     classFilter.addEventListener("change", (e) => {
@@ -126,25 +126,25 @@ function initEventListeners() {
     });
   }
 
-  // Performance filter
-  // Performance filter & Rows filter - Removed in UI update
 
-  // Student search
+
+
+
   document.getElementById("studentSearch").addEventListener("input", debounce(renderStudentList, 300));
 
-  // Refresh students
+
   document.getElementById("refreshStudents").addEventListener("click", () => {
     renderStudentList();
     renderUnderPerformingStudentList();
   });
 
-  // View all students
+
   document.getElementById("viewAllStudents").addEventListener("click", () => {
-    // In a real app, this would navigate to a student management page
+
     showToast("Info", "Student management page would open here", "info");
   });
 
-  // View all under performing students
+
   const viewAllUnderPerformingBtn = document.getElementById("viewAllUnderPerforming");
   if (viewAllUnderPerformingBtn) {
     viewAllUnderPerformingBtn.addEventListener("click", () => {
@@ -152,16 +152,16 @@ function initEventListeners() {
     });
   }
 
-  // Expand leaderboard
+
   const expandLeaderboardBtn = document.getElementById("expandLeaderboard");
   if (expandLeaderboardBtn) {
     expandLeaderboardBtn.addEventListener("click", () => {
-      // In a real app, this would expand the leaderboard or open a modal
+
       showToast("Info", "Expanded leaderboard view would open here", "info");
     });
   }
 
-  // Customize actions
+
   const customizeActionsBtn = document.getElementById("customizeActions");
   if (customizeActionsBtn) {
     customizeActionsBtn.addEventListener("click", () => {
@@ -169,25 +169,25 @@ function initEventListeners() {
     });
   }
 
-  // View all deadlines
+
   document.getElementById("viewAllDeadlines").addEventListener("click", () => {
-    // In a real app, this would navigate to a deadlines page
+
     showToast("Info", "All deadlines page would open here", "info");
   });
 
-  // Clear all notifications
+
   const clearAllNotifsBtn = document.getElementById("clearAllNotifications");
   if (clearAllNotifsBtn) {
     clearAllNotifsBtn.addEventListener("click", clearAllNotifications);
   }
 
-  // View options for analytics
+
   document.querySelectorAll(".view-option").forEach(option => {
     option.addEventListener("click", (e) => {
       const view = e.target.dataset.view;
       localStorage.setItem(TEACHER_LS.analyticsView, view);
 
-      // Update active state
+
       document.querySelectorAll(".view-option").forEach(opt => {
         opt.classList.remove("active");
       });
@@ -197,53 +197,53 @@ function initEventListeners() {
     });
   });
 
-  // Chart type buttons
+
   document.querySelectorAll(".chart-action-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const chartId = e.target.dataset.chart;
       const chartType = e.target.dataset.type;
 
-      // Update active state
+
       document.querySelectorAll(`[data-chart="${chartId}"]`).forEach(b => {
         b.classList.remove("active");
       });
       e.target.classList.add("active");
 
-      // Change chart type
+
       changeChartType(chartId, chartType);
     });
   });
 
-  // Export analytics
+
   document.getElementById("exportAnalytics").addEventListener("click", exportAnalytics);
 
-  // Export class data
+
   const exportClassDataBtn = document.getElementById("exportClassData");
   if (exportClassDataBtn) {
     exportClassDataBtn.addEventListener("click", exportClassData);
   }
 
-  // Activity filter
-  // Activity filter & Notification controls - Removed in UI update
 
-  // Announcement modal
+
+
+
   document.getElementById("sendAnnouncement").addEventListener("click", openAnnouncementModal);
   document.getElementById("cancelAnnouncement").addEventListener("click", closeAnnouncementModal);
   document.querySelector(".modal-close").addEventListener("click", closeAnnouncementModal);
   document.getElementById("announcementForm").addEventListener("submit", handleAnnouncementSubmit);
 
-  // Tab buttons
+
   document.querySelectorAll(".tab-btn").forEach(tab => {
     tab.addEventListener("click", (e) => {
       const tabName = e.target.dataset.tab;
 
-      // Update active tab
+
       document.querySelectorAll(".tab-btn").forEach(t => {
         t.classList.remove("active");
       });
       e.target.classList.add("active");
 
-      // Show corresponding content
+
       document.querySelectorAll(".tab-content").forEach(content => {
         content.classList.remove("active");
       });
@@ -251,7 +251,7 @@ function initEventListeners() {
     });
   });
 
-  // Close modal when clicking outside
+
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("modal")) {
       closeAnnouncementModal();
@@ -260,25 +260,25 @@ function initEventListeners() {
 }
 
 function renderTeacherDashboard() {
-  // Update teacher name
+
   const user = getUser();
   document.getElementById("teacherName").textContent = user.name || "Teacher";
 
-  // Update stats
+
   updateDashboardStats();
 
-  // Render lists
-  // Render lists
-  // renderClassList(); // Removed
+
+
+
   renderStudentList();
   renderUnderPerformingStudentList();
-  // renderSubjectList(); // Removed
-  // renderTeacherScoreboard(); // Removed in UI update
+
+
   renderRecentActivity();
   renderNotifications();
   renderUpcomingDeadlines();
 
-  // Update class average progress
+
   updateClassAverageProgress();
 }
 
@@ -287,44 +287,44 @@ function updateDashboardStats() {
   const assignments = getJSON(LS.assignments, []);
   const classes = getJSON(LS.classes, []);
 
-  // Update counts
+
   document.getElementById("studentCount").textContent = students.length;
   document.getElementById("classCount").textContent = classes.length;
   document.getElementById("assignmentCount").textContent = assignments.length;
 
-  // Calculate active sessions (simulated)
-  // Calculate active sessions (simulated)
-  // const activeSessions = Math.min(students.length, Math.floor(Math.random() * 10) + 5);
-  // const activeSessionsEl = document.getElementById("activeSessions");
-  // if (activeSessionsEl) activeSessionsEl.textContent = activeSessions;
 
-  // Calculate top student score
+
+
+
+
+
+
   const topStudent = [...students].sort((a, b) => b.score - a.score)[0];
   const topScore = topStudent ? topStudent.score : 0;
   document.getElementById("topStudentScore").textContent = topScore;
 
-  // Calculate average score
+
   const avgScore = students.length ? Math.round(students.reduce((sum, student) => sum + student.score, 0) / students.length) : 0;
   document.getElementById("avgScore").textContent = avgScore;
 
-  // Calculate total badges (simulated)
+
   const totalBadges = students.length * 2; // Simulated
   document.getElementById("totalBadges").textContent = totalBadges;
 
-  // Calculate completion rate (simulated)
+
   const completionRate = Math.min(100, Math.round(avgScore / 10)); // Simulated
   document.getElementById("completionRate").textContent = `${completionRate}%`;
 
-  // Update changes (simulated)
-  // Removed in UI update
-  // document.getElementById("topScoreChange").querySelector("span").textContent = "5%";
-  // document.getElementById("avgScoreChange").querySelector("span").textContent = "2%";
-  // document.getElementById("badgesChange").querySelector("span").textContent = "3";
-  // document.getElementById("completionChange").querySelector("span").textContent = "3%";
+
+
+
+
+
+
 }
 
 function renderClassList() {
-  // Removed in UI update
+
 }
 
 function renderStudentList() {
@@ -335,29 +335,29 @@ function renderStudentList() {
   const rowsFilter = 10;
   const searchTerm = document.getElementById("studentSearch").value.toLowerCase();
 
-  // Filter students
-  // Exclude the currently logged-in user and placeholder 'You'
+
+
   let filteredStudents = students.filter(s => s.name !== currentName && s.name !== 'You');
 
-  // Filter by class
+
   if (classFilter !== "all") {
     filteredStudents = filteredStudents.filter(student => student.class === classFilter);
   }
 
-  // Filter by search term
+
   if (searchTerm) {
     filteredStudents = filteredStudents.filter(student =>
       student.name.toLowerCase().includes(searchTerm)
     );
   }
 
-  // Sort students
+
   switch (performanceFilter) {
     case "score":
       filteredStudents.sort((a, b) => b.score - a.score);
       break;
     case "progress":
-      // Simulated progress based on score
+
       filteredStudents.sort((a, b) => (b.progress || b.score / 10) - (a.progress || a.score / 10));
       break;
     case "name":
@@ -368,7 +368,7 @@ function renderStudentList() {
       break;
   }
 
-  // Limit rows
+
   filteredStudents = filteredStudents.slice(0, rowsFilter);
 
   const studentList = document.getElementById("studentList");
@@ -394,14 +394,14 @@ function renderUnderPerformingStudentList() {
   const students = getJSON(LS.students, []);
   const currentName = (getUser()?.name) || "You";
 
-  // Filter students
-  // Exclude the currently logged-in user and placeholder 'You'
+
+
   let filteredStudents = students.filter(s => s.name !== currentName && s.name !== 'You');
 
-  // Sort by score ascending (lowest first)
+
   filteredStudents.sort((a, b) => a.score - b.score);
 
-  // Limit to 10
+
   filteredStudents = filteredStudents.slice(0, 10);
 
   const listContainer = document.getElementById("underPerformingStudentList");
@@ -426,22 +426,22 @@ function renderUnderPerformingStudentList() {
 }
 
 function renderSubjectList() {
-  // Removed in UI update
+
 }
 
 function renderTeacherScoreboard() {
-  // Removed in UI update
+
 }
 
 function renderRecentActivity() {
   const activities = getJSON(TEACHER_LS.activities, []);
-  // Filter activities
-  let filteredActivities = activities;
-  // if (activityFilter !== "all") {
-  //   filteredActivities = activities.filter(activity => activity.type === activityFilter);
-  // }
 
-  // Sort by time (newest first)
+  let filteredActivities = activities;
+
+
+
+
+
   filteredActivities.sort((a, b) => new Date(b.time) - new Date(a.time));
 
   const activityFeed = document.getElementById("recentActivity");
@@ -560,13 +560,13 @@ function updateClassAverageProgress() {
   const students = getJSON(LS.students, []);
   const classFilter = localStorage.getItem(TEACHER_LS.classFilter) || "all";
 
-  // Filter students by class if needed
+
   let filteredStudents = students;
   if (classFilter !== "all") {
     filteredStudents = students.filter(student => student.class === classFilter);
   }
 
-  // Calculate average progress (simulated based on score)
+
   const avgProgress = filteredStudents.length
     ? Math.min(100, Math.round(filteredStudents.reduce((sum, student) => sum + (student.progress || student.score / 10), 0) / filteredStudents.length))
     : 0;
@@ -587,27 +587,27 @@ function createClassPerformanceChart() {
   const classes = getJSON(LS.classes, []);
   const students = getJSON(LS.students, []);
 
-  // Calculate average scores per class
+
   const classAverages = {};
   const classStudentCounts = {};
 
-  // Initialize class data
+
   classes.forEach(cls => {
     classAverages[cls.name] = 0;
     classStudentCounts[cls.name] = 0;
   });
 
-  // Sum scores and count students per class
+
   students.forEach(student => {
     if (student.class && classAverages.hasOwnProperty(student.class)) {
-      // Convert score to percentage (assuming max score is 1000)
+
       const scorePercent = Math.min(100, Math.round(((student.score || 0) / 1000) * 100));
       classAverages[student.class] += scorePercent;
       classStudentCounts[student.class] += 1;
     }
   });
 
-  // Calculate averages
+
   const classNames = [];
   const classDisplayNames = [];
   const averageScores = [];
@@ -621,11 +621,11 @@ function createClassPerformanceChart() {
     }
   });
 
-  // Create chart
+
   const el = document.getElementById('classPerformanceChart');
   if (!el || !window.Chart) return;
 
-  // Destroy existing chart if it exists
+
   const existingChart = Chart.getChart(el);
   if (existingChart) existingChart.destroy();
 
@@ -676,32 +676,32 @@ function createClassPerformanceChart() {
     }
   });
 
-  // Update class performance stats
+
   updateClassPerformanceStats(classDisplayNames, averageScores);
 }
 
 function createSubjectPerformanceChart() {
-  // Get real student data
+
   const students = getJSON(LS.students, []);
   const assignments = getJSON(LS.assignments, []);
 
-  // Calculate subject performance based on actual data
+
   const subjectStats = {};
   const subjectCounts = {};
 
-  // Initialize subject data
+
   const subjects = ['Mathematics', 'Science', 'English', 'Social Studies', 'Computer Science', 'Environment', 'GK'];
   subjects.forEach(subject => {
     subjectStats[subject] = 0;
     subjectCounts[subject] = 0;
   });
 
-  // Calculate performance based on student scores and assignments
+
   students.forEach(student => {
     const studentScore = student.score || 0;
     const scorePercent = Math.min(100, Math.round((studentScore / 1000) * 100));
 
-    // Distribute score across subjects based on available assignments
+
     const studentAssignments = assignments.filter(assignment =>
       assignment.class === student.class || assignment.class === 'all'
     );
@@ -716,7 +716,7 @@ function createSubjectPerformanceChart() {
         }
       });
     } else {
-      // If no assignments, distribute evenly across all subjects
+
       const scorePerSubject = scorePercent / subjects.length;
       subjects.forEach(subject => {
         subjectStats[subject] += scorePerSubject;
@@ -725,7 +725,7 @@ function createSubjectPerformanceChart() {
     }
   });
 
-  // Calculate averages
+
   const performance = [];
   const labels = [];
   subjects.forEach(subject => {
@@ -736,7 +736,7 @@ function createSubjectPerformanceChart() {
     }
   });
 
-  // If no real data, use fallback
+
   if (performance.length === 0) {
     performance.push(75, 70, 80, 65, 85, 60, 55);
     labels.push(...subjects);
@@ -792,7 +792,7 @@ function createSubjectPerformanceChart() {
     }
   });
 
-  // Update subject performance summary
+
   const avgPerformance = Math.round(performance.reduce((a, b) => a + b, 0) / performance.length);
   const bestSubject = labels[performance.indexOf(Math.max(...performance))];
   document.getElementById('subjectPerformanceSummary').innerHTML = `
@@ -802,25 +802,25 @@ function createSubjectPerformanceChart() {
 }
 
 function createProgressOverTimeChart() {
-  // Get real student data
+
   const students = getJSON(LS.students, []);
 
-  // Calculate progress over time based on student scores
+
   const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'];
   let progress = [];
 
   if (students.length > 0) {
-    // Calculate average progress for each week based on student scores
+
     const maxScore = Math.max(...students.map(s => s.score || 0));
     const baseProgress = maxScore > 0 ? Math.min(100, Math.round((maxScore / 1000) * 100)) : 50;
 
-    // Simulate progress over time with some variation
+
     progress = weeks.map((week, index) => {
       const weekProgress = Math.min(100, baseProgress + (index * 5) + Math.random() * 10 - 5);
       return Math.round(weekProgress);
     });
   } else {
-    // Fallback data if no students
+
     progress = [45, 52, 60, 68, 75, 82];
   }
 
@@ -873,7 +873,7 @@ function createProgressOverTimeChart() {
     }
   });
 
-  // Update progress over time summary
+
   const progressIncrease = progress[progress.length - 1] - progress[0];
   document.getElementById('progressOverTimeSummary').innerHTML = `
     <p>Overall progress increase: <strong>${progressIncrease}%</strong> over ${weeks.length} weeks</p>
@@ -882,7 +882,7 @@ function createProgressOverTimeChart() {
 }
 
 function createCompletionChart() {
-  // Get real student data
+
   const students = getJSON(LS.students, []);
   const assignments = getJSON(LS.assignments, []);
 
@@ -891,7 +891,7 @@ function createCompletionChart() {
   const colors = ['#16a34a', '#0ea5e9', '#94a3b8'];
 
   if (students.length > 0 && assignments.length > 0) {
-    // Calculate completion rates based on student progress
+
     let completed = 0;
     let inProgress = 0;
     let notStarted = 0;
@@ -950,7 +950,7 @@ function createCompletionChart() {
     }
   });
 
-  // Update completion chart summary
+
   document.getElementById('completionChartSummary').innerHTML = `
     <p><strong>${data[0]}%</strong> of activities have been completed</p>
     <p><strong>${data[1]}%</strong> of activities are in progress</p>
@@ -958,13 +958,13 @@ function createCompletionChart() {
 }
 
 function updateCharts() {
-  // In a real application, this would update charts based on the selected view
+
   const view = localStorage.getItem(TEACHER_LS.analyticsView) || "weekly";
   showToast("View Changed", `Charts updated to show ${view} data`, "info");
 }
 
 function changeChartType(chartId, chartType) {
-  // In a real application, this would change the chart type
+
   showToast("Chart Updated", `${chartId} changed to ${chartType} view`, "info");
 }
 
@@ -972,7 +972,7 @@ function updateClassPerformanceStats(classNames, averageScores) {
   const statsContainer = document.getElementById('classPerformanceSummary');
   if (!statsContainer) return;
 
-  // Find best and worst performing classes
+
   let bestClass = { name: '', score: 0 };
   let worstClass = { name: '', score: 100 };
 
@@ -986,7 +986,7 @@ function updateClassPerformanceStats(classNames, averageScores) {
     }
   });
 
-  // Calculate overall average
+
   const overallAverage = averageScores.length > 0
     ? Math.round(averageScores.reduce((sum, score) => sum + score, 0) / averageScores.length)
     : 0;
@@ -1007,7 +1007,7 @@ function exportAnalytics() {
     return;
   }
 
-  // Create CSV content
+
   const headers = ["Name", "Class", "Score", "Progress", "Badges"];
   const rows = students.map(s => [
     `"${s.name}"`,
@@ -1032,7 +1032,7 @@ function exportClassData() {
     return;
   }
 
-  // Group by class
+
   const classData = {};
   students.forEach(s => {
     if (!classData[s.class]) classData[s.class] = { count: 0, totalScore: 0 };
@@ -1087,10 +1087,10 @@ async function handleAnnouncementSubmit(e) {
   const message = document.getElementById('announcementMessage').value;
   const recipientsSelect = document.getElementById('announcementRecipients');
 
-  // Get selected value and map it to backend expected format
+
   let recipients = recipientsSelect.value;
   if (recipients !== 'all') {
-    // Extract number from "grade6" -> "6"
+
     recipients = recipients.replace('grade', '');
   }
 
@@ -1108,7 +1108,7 @@ async function handleAnnouncementSubmit(e) {
     });
 
     if (res.ok) {
-      // Save locally for history (optional, but good for offline/cache)
+
       const announcements = getJSON(TEACHER_LS.announcements, []);
       announcements.push({
         id: Date.now(),
@@ -1119,7 +1119,7 @@ async function handleAnnouncementSubmit(e) {
       });
       localStorage.setItem(TEACHER_LS.announcements, JSON.stringify(announcements));
 
-      // Add to activity feed
+
       const activities = getJSON(TEACHER_LS.activities, []);
       activities.unshift({
         id: Date.now(),
@@ -1183,7 +1183,7 @@ async function clearAllNotifications() {
 function refreshDashboard() {
   showLoadingOverlay();
 
-  // Simulate data refresh
+
   setTimeout(() => {
     renderTeacherDashboard();
     hideLoadingOverlay();
@@ -1231,12 +1231,12 @@ function showToast(title, message, type = "info") {
 
   toastContainer.appendChild(toast);
 
-  // Show toast
+
   setTimeout(() => {
     toast.classList.add('show');
   }, 10);
 
-  // Auto remove after 5 seconds
+
   setTimeout(() => {
     if (document.getElementById(toastId)) {
       toast.classList.remove('show');
@@ -1249,7 +1249,7 @@ function showToast(title, message, type = "info") {
   }, 5000);
 }
 
-// Utility functions
+
 function getTimeAgo(date) {
   const now = new Date();
   const diffMs = now - date;

@@ -1,4 +1,4 @@
-// Test user registration functionality
+
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 async function testRegistration() {
@@ -7,7 +7,7 @@ async function testRegistration() {
   const baseUrl = 'https://gurukool-x.netlify.app';
   
   try {
-    // Test 1: Registration
+
     console.log('1. Testing user registration...');
     const registrationData = {
       username: 'newuser' + Date.now(),
@@ -35,7 +35,7 @@ async function testRegistration() {
     if (registerResponse.ok) {
       console.log('✅ Registration successful!');
       
-      // Test 2: Login with new user
+
       console.log('\n2. Testing login with new user...');
       const loginResponse = await fetch(`${baseUrl}/api/auth/login`, {
         method: 'POST',

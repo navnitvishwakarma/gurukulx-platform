@@ -7,7 +7,7 @@ const { body, validationResult } = require('express-validator');
 const path = require('path');
 require('dotenv').config();
 
-// Import MongoDB models
+
 const { connectDB } = require('./models');
 const User = require('./models/User');
 const Assignment = require('./models/Assignment');
@@ -27,10 +27,10 @@ const Quiz = require('./models/Quiz');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Connect to MongoDB
+
 connectDB();
 
-// Security middleware
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -49,7 +49,7 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 3000, // limit each IP to 3000 requests per windowMs
@@ -57,13 +57,13 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Serve static files
+
 app.use(express.static('.'));
 
-// JWT secret
+
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
-// Middleware to verify JWT token
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -81,10 +81,10 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Initialize default users
+
 const initializeDefaultUsers = async () => {
   try {
-    // Check if admin user exists
+
     const adminExists = await User.findOne({ username: 'admin' });
     if (!adminExists) {
       const admin = new User({
@@ -107,7 +107,7 @@ const initializeDefaultUsers = async () => {
       console.log('Admin user created');
     }
 
-    // Check if student user exists
+
     const studentExists = await User.findOne({ username: 'student' });
     if (!studentExists) {
       const student = new User({
@@ -130,7 +130,7 @@ const initializeDefaultUsers = async () => {
       console.log('Student user created');
     }
 
-    // Seed extra leaderboard users
+
     const seedUsers = [
       { name: "Aditi", username: "aditi", score: 820, badges: ["Eco Hero"], class: "6" },
       { name: "Ravi", username: "ravi", score: 760, badges: ["Quiz Ace"], class: "7" },
@@ -164,17 +164,17 @@ const initializeDefaultUsers = async () => {
   }
 };
 
-// Initialize default users
+
 initializeDefaultUsers();
 
-// API Routes
 
-// Health check
+
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Authentication routes
+
 app.post('/api/auth/register', [
   body('username').isLength({ min: 3 }).trim().escape(),
   body('password').isLength({ min: 6 }),
@@ -192,13 +192,13 @@ app.post('/api/auth/register', [
 
     const { username, password, name, role, userClass, subject, email } = req.body;
 
-    // Check if user already exists
+
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: 'Username already exists' });
     }
 
-    // Create user
+
     const user = new User({
       username,
       password,
@@ -269,7 +269,7 @@ app.post('/api/auth/login', [
   }
 });
 
-// User profile routes
+
 app.get('/api/user/profile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -331,7 +331,7 @@ app.put('/api/user/profile', authenticateToken, [
   }
 });
 
-// Game results
+
 app.post('/api/game/results', authenticateToken, [
   body('gameType').notEmpty().trim().escape(),
   body('score').isInt({ min: 0 }),
@@ -346,7 +346,7 @@ app.post('/api/game/results', authenticateToken, [
 
     const { gameType, score, xpEarned = 0, progressEarned = 0 } = req.body;
 
-    // Save game result
+
     const gameResult = new GameResult({
       user: req.user.userId,
       game_type: gameType,
@@ -357,7 +357,7 @@ app.post('/api/game/results', authenticateToken, [
 
     await gameResult.save();
 
-    // Update user profile
+
     await User.findByIdAndUpdate(
       req.user.userId,
       {
@@ -376,7 +376,7 @@ app.post('/api/game/results', authenticateToken, [
   }
 });
 
-// Leaderboard
+
 app.get('/api/leaderboard', async (req, res) => {
   try {
     const leaderboard = await User.find({ role: 'student' })
@@ -391,7 +391,7 @@ app.get('/api/leaderboard', async (req, res) => {
   }
 });
 
-// Teachers list
+
 app.get('/api/teachers', async (req, res) => {
   try {
     const teachers = await User.find({ role: 'teacher' })
@@ -405,7 +405,7 @@ app.get('/api/teachers', async (req, res) => {
   }
 });
 
-// Assignments
+
 app.get('/api/assignments', authenticateToken, async (req, res) => {
   try {
     let query = {};
@@ -413,14 +413,14 @@ app.get('/api/assignments', authenticateToken, async (req, res) => {
     if (req.user.role === 'teacher') {
       query = { teacher: req.user.userId };
     } else if (req.user.role === 'student') {
-      // Find user to get their class
+
       const user = await User.findById(req.user.userId);
-      // Check user.class (root field) or user.profile.class (legacy/fallback)
+
       const studentClass = user.class || (user.profile && user.profile.class);
 
       if (user && studentClass) {
-        // Match assignments for this class
-        // Try to match exact number or "Grade X"
+
+
         const classNum = studentClass.replace(/\D/g, ''); // Extract number
         console.log(`[API] Fetching assignments for student: ${user.username}, Class: ${studentClass}, Num: ${classNum}`);
 
@@ -429,13 +429,13 @@ app.get('/api/assignments', authenticateToken, async (req, res) => {
             class_name: { $regex: classNum, $options: 'i' }
           };
         } else {
-          // Fallback for non-numeric class names
+
           query = {
             class_name: studentClass
           };
         }
       } else {
-        // If no class assigned, return empty
+
         return res.json([]);
       }
     }
@@ -488,7 +488,7 @@ app.post('/api/assignments', authenticateToken, [
   }
 });
 
-// Feedback
+
 app.post('/api/feedback', [
   body('name').notEmpty().trim().escape(),
   body('email').optional().isEmail().normalizeEmail(),
@@ -517,9 +517,9 @@ app.post('/api/feedback', [
   }
 });
 
-// --- Advanced Features Routes ---
 
-// Questions
+
+
 app.get('/api/questions', async (req, res) => {
   try {
     const { subject, topic, difficulty } = req.query;
@@ -541,7 +541,7 @@ app.post('/api/questions', authenticateToken, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Classrooms
+
 app.get('/api/classrooms', authenticateToken, async (req, res) => {
   try {
     const query = req.user.role === 'teacher' ? { teacher: req.user.userId } : { students: req.user.userId };
@@ -572,7 +572,7 @@ app.post('/api/classrooms/join', authenticateToken, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Resources
+
 app.get('/api/resources', authenticateToken, async (req, res) => {
   try {
     const resources = await Resource.find().sort({ createdAt: -1 }).limit(50);
@@ -589,14 +589,14 @@ app.post('/api/resources', authenticateToken, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Quizzes
+
 app.get('/api/quizzes', async (req, res) => {
   try {
     const { subject, class: className } = req.query;
     let query = {};
     if (subject && subject !== 'All') query.subject = subject;
 
-    // Filter by class (match specific class, 'all', or null)
+
     if (className && className !== 'all') {
       query.$or = [
         { class: className },
@@ -628,7 +628,7 @@ app.post('/api/quizzes', authenticateToken, async (req, res) => {
   }
 });
 
-// Assignments
+
 app.post('/api/assignments', authenticateToken, [
   body('class_name').notEmpty(),
   body('subject').notEmpty(),
@@ -648,11 +648,11 @@ app.post('/api/assignments', authenticateToken, [
     });
     await assignment.save();
 
-    // Notify students of that class
+
     console.log(`Creating assignment for class: ${req.body.class_name}`);
     const students = await User.find({ role: 'student', 'class': req.body.class_name });
     console.log(`Found ${students.length} students for notification.`);
-    // Based on User model, it is 'class' at root
+
 
     const notifications = students.map(s => ({
       user: s._id,
@@ -672,7 +672,7 @@ app.post('/api/assignments', authenticateToken, [
   }
 });
 
-// Announcements
+
 app.post('/api/announcements', authenticateToken, [
   body('title').notEmpty().trim().escape(),
   body('message').notEmpty().trim().escape(),
@@ -690,7 +690,7 @@ app.post('/api/announcements', authenticateToken, [
     });
     await announcement.save();
 
-    // Notify students
+
     let query = { role: 'student' };
     if (req.body.recipients !== 'all') {
       query.class = req.body.recipients;
@@ -716,7 +716,7 @@ app.post('/api/announcements', authenticateToken, [
   }
 });
 
-// Schedule
+
 app.post('/api/schedule', authenticateToken, [
   body('class_name').notEmpty(),
   body('subject').notEmpty(),
@@ -736,7 +736,7 @@ app.post('/api/schedule', authenticateToken, [
     });
     await schedule.save();
 
-    // Notify students of that class
+
     const students = await User.find({ role: 'student', 'class': req.body.class_name });
 
     const notifications = students.map(s => ({
@@ -757,7 +757,7 @@ app.post('/api/schedule', authenticateToken, [
   }
 });
 
-// Notifications
+
 app.get('/api/notifications', authenticateToken, async (req, res) => {
   try {
     const notifs = await Notification.find({ user: req.user.userId }).sort({ createdAt: -1 }).limit(20);
@@ -765,7 +765,7 @@ app.get('/api/notifications', authenticateToken, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Clear all notifications
+
 app.delete('/api/notifications', authenticateToken, async (req, res) => {
   try {
     await Notification.deleteMany({ user: req.user.userId });
@@ -784,7 +784,7 @@ app.post('/api/notifications/send', authenticateToken, async (req, res) => {
     let query = { role: 'student' };
 
     if (recipients && recipients !== 'all') {
-      // recipients could be a specific class like "6" or "grade6"
+
       const classNum = recipients.replace('grade', '');
       query.class = classNum;
     }
@@ -806,14 +806,14 @@ app.post('/api/notifications/send', authenticateToken, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Audit Log Middleware (Helper)
+
 const logAction = async (userId, action, details, req) => {
   try {
     await new AuditLog({ user: userId, action, details, ip: req.ip, user_agent: req.get('User-Agent') }).save();
   } catch (e) { console.error('Audit log failed', e); }
 };
 
-// Messages (Chat)
+
 app.get('/api/messages/:otherUserId', authenticateToken, async (req, res) => {
   try {
     const { otherUserId } = req.params;
@@ -843,13 +843,13 @@ app.get('/api/messages/:otherUserId', authenticateToken, async (req, res) => {
   }
 });
 
-// Get list of users who have messaged the current user (for teacher dashboard)
+
 app.get('/api/conversations', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
-    // Find unique senders where recipient is current user
+
     const senders = await Message.distinct('sender', { recipient: userId });
-    // Also find unique recipients where sender is current user (in case teacher initiated)
+
     const recipients = await Message.distinct('recipient', { sender: userId });
 
     const userIds = [...new Set([...senders, ...recipients].map(id => id.toString()))];
@@ -857,7 +857,7 @@ app.get('/api/conversations', authenticateToken, async (req, res) => {
     const users = await User.find({ _id: { $in: userIds } })
       .select('name role class subject');
 
-    // Add class groups for teachers
+
     if (req.user.role === 'teacher') {
       const classes = ['6', '7', '8', '9', '10', '11', '12'];
       const groupChats = classes.map(c => ({
@@ -907,15 +907,15 @@ app.post('/api/messages', authenticateToken, [
   }
 });
 
-// Doubts
+
 app.get('/api/doubts', authenticateToken, async (req, res) => {
   try {
     let query = {};
-    // If student, only show their own doubts
+
     if (req.user.role === 'student') {
       query = { user: req.user.userId };
     }
-    // Teachers see all doubts (or could filter by subject/status via query params)
+
 
     const doubts = await Doubt.find(query)
       .sort({ createdAt: -1 })
@@ -949,11 +949,11 @@ app.post('/api/doubts', authenticateToken, [
 
     await doubt.save();
 
-    // Notify teachers
-    // Find teachers of this subject or all teachers if subject is generic
+
+
     const teachers = await User.find({ role: 'teacher', $or: [{ subject: subject }, { subject: 'General' }] });
 
-    // If no specific teachers found, notify all teachers
+
     const recipients = teachers.length > 0 ? teachers : await User.find({ role: 'teacher' });
 
     const notifications = recipients.map(t => ({
@@ -974,7 +974,7 @@ app.post('/api/doubts', authenticateToken, [
   }
 });
 
-// AI endpoint with Gemini API integration
+
 app.post('/api/ai', authenticateToken, [
   body('question').notEmpty().trim().escape()
 ], async (req, res) => {
@@ -985,67 +985,52 @@ app.post('/api/ai', authenticateToken, [
     }
 
     const { subject = 'General', question, profile } = req.body;
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+    
 
-    if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your-gemini-api-key-here') {
-      return res.json({
-        answer: `This is a placeholder AI response for the question: "${question}" in subject: "${subject}". Please configure your Gemini API key to get real AI responses.`
-      });
-    }
+    const OpenAI = require('openai');
+    const NV_API_KEY = process.env.NV_API_KEY || "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";
+    const NV_BASE_URL = "https://integrate.api.nvidia.com/v1";
 
-    // Get user profile for context
+    const client = new OpenAI({
+      apiKey: NV_API_KEY,
+      baseURL: NV_BASE_URL
+    });
+
+
     const user = await User.findById(req.user.userId);
     const userProfile = user?.profile || { level: 1, xp: 0, score: 0 };
 
-    const prompt = `You are an AI tutor for GuruKulX, an educational platform. You help students with their academic questions across various subjects.
-
+    const systemPrompt = `You are an AI tutor for GuruKulX, an educational platform. You help students with their academic questions.
+    
 Student Profile:
 - Name: ${user?.name || 'Student'}
 - Class: ${user?.class || 'Not specified'}
 - Level: ${userProfile.level || 1}
-- Experience Points: ${userProfile.xp || 0}
-- Score: ${userProfile.score || 0}
 
 Guidelines:
-1. Provide clear, educational explanations appropriate for the student's level
-2. Use simple language and examples when possible
-3. Encourage learning and provide study tips
-4. If the question is unclear, ask for clarification
-5. Keep responses concise but comprehensive
-6. Always be encouraging and supportive
+1. Provide clear, educational explanations appropriate for the student's level.
+2. Use simple language and examples.
+3. Keep responses concise but comprehensive.
+4. Always be encouraging and supportive.`;
 
-Subject: ${subject}
+    const userPrompt = `Subject: ${subject}
 Question: ${question}
 
-Please provide a helpful educational response:`;
+Please provide a helpful educational response.`;
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 500,
-          topP: 0.8,
-          topK: 10
-        }
-      })
+    const completion = await client.chat.completions.create({
+      model: "mistralai/mamba-codestral-7b-v0.1",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      temperature: 0.5,
+      top_p: 1,
+      max_tokens: 1024,
+      stream: false
     });
 
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received from Gemini';
+    const answer = completion.choices[0]?.message?.content || 'No response received from AI.';
 
     res.json({ answer });
   } catch (error) {
@@ -1054,24 +1039,24 @@ Please provide a helpful educational response:`;
   }
 });
 
-// Error handling middleware
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// 404 handler
+
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Start server
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`API available at http://localhost:${PORT}/api`);
 });
 
-// Graceful shutdown
+
 process.on('SIGINT', async () => {
   console.log('Shutting down server...');
   try {

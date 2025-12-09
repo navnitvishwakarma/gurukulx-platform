@@ -1,27 +1,27 @@
-/* add base styles, colors, typography, layout, animations, components */
 
-/* Fonts (max 2 families) */
+
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap");
-/* Icons */
+
 @import url("https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css");
 
-/* Color system (exactly 5 colors) */
+
 :root {
-  --color-primary: #16a34a; /* green */
-  --color-accent: #0ea5e9; /* blue */
-  --color-bg: #ffffff; /* white */
-  --color-fg: #0f172a; /* near-black */
-  --color-muted: #e5e7eb; /* gray for borders/surfaces */
+  --color-primary: #16a34a; 
+  --color-accent: #0ea5e9; 
+  --color-bg: #ffffff; 
+  --color-fg: #0f172a; 
+  --color-muted: #e5e7eb; 
 }
 
-/* Dark theme */
+
 html[data-theme="dark"] {
   --color-bg: #0b1220;
   --color-fg: #e5e7eb;
   --color-muted: #1f2937;
 }
 
-/* Reset and base */
+
 * {
   box-sizing: border-box;
 }
@@ -70,7 +70,7 @@ a {
   color: #64748b;
 }
 
-/* Layout */
+
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -122,7 +122,7 @@ a {
   }
 }
 
-/* Header */
+
 .site-header-inner {
   display: flex;
   align-items: center;
@@ -157,7 +157,7 @@ a {
   background: var(--color-muted);
 }
 
-/* Hamburger button and responsive nav */
+
 .nav-toggle {
   display: none;
   background: transparent;
@@ -177,13 +177,13 @@ a {
   border-radius: 2px;
 }
 
-/* Mobile nav behavior */
+
 @media (max-width: 768px) {
   .nav-toggle {
     display: inline-flex;
   }
   .site-header-inner {
-    position: sticky; /* already sticky, ensures a positioned ancestor */
+    position: sticky; 
     top: 0;
     z-index: 20;
   }
@@ -208,7 +208,7 @@ a {
   }
 }
 
-/* Footer */
+
 .site-footer-inner {
   padding: 1rem;
   border-top: 1px solid var(--color-muted);
@@ -229,7 +229,7 @@ a {
   gap: .5rem;
 }
 
-/* Buttons */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -265,7 +265,7 @@ a {
   border-color: #0d8ec8;
 }
 
-/* Cards */
+
 .card {
   background: var(--color-bg);
   border: 1px solid var(--color-muted);
@@ -282,7 +282,7 @@ a {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Hero */
+
 .hero {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -300,12 +300,12 @@ a {
   justify-content: center;
 }
 
-/* Sections */
+
 .section-title {
   margin: 1.25rem 0 .75rem;
 }
 
-/* Subject cards flip */
+
 .subject-card {
   perspective: 800px;
   position: relative;
@@ -350,7 +350,7 @@ a {
   color: var(--color-primary);
 }
 
-/* Forms */
+
 .form {
   display: grid;
   gap: .75rem;
@@ -372,7 +372,7 @@ textarea {
   min-height: 120px;
 }
 
-/* Table-like */
+
 .table-like {
   border: 1px solid var(--color-muted);
   border-radius: .6rem;
@@ -396,7 +396,7 @@ textarea {
   text-align: center;
 }
 
-/* Progress */
+
 .progress-wrap {
   margin-top: .5rem;
 }
@@ -420,7 +420,7 @@ textarea {
   transition: width .6s ease;
 }
 
-/* Stats */
+
 .stats-row {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -440,7 +440,7 @@ textarea {
   color: var(--color-accent);
 }
 
-/* Avatars & badges */
+
 .avatar {
   width: 36px;
   height: 36px;
@@ -474,7 +474,7 @@ textarea {
   font-size: .85rem;
 }
 
-/* Quiz UI */
+
 .quiz-intro,
 .quiz-play,
 .quiz-end {
@@ -501,7 +501,7 @@ textarea {
   display: none;
 }
 
-/* Utilities */
+
 .list {
   list-style: none;
   padding: 0;

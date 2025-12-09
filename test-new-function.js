@@ -1,4 +1,4 @@
-// Test the new simplified function
+
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 async function testNewFunction() {
@@ -7,7 +7,7 @@ async function testNewFunction() {
   const baseUrl = 'https://gurukool-x.netlify.app';
   
   try {
-    // Test 1: Health check
+
     console.log('1. Testing health endpoint...');
     const healthResponse = await fetch(`${baseUrl}/api/health`);
     console.log('Status:', healthResponse.status);
@@ -21,7 +21,7 @@ async function testNewFunction() {
       return;
     }
     
-    // Test 2: Login
+
     console.log('2. Testing login...');
     const loginResponse = await fetch(`${baseUrl}/api/auth/login`, {
       method: 'POST',

@@ -1,6 +1,6 @@
-/* Profile Page Styles */
 
-/* Profile header */
+
+
 .profile-header {
   display: flex;
   justify-content: space-between;
@@ -10,12 +10,12 @@
   gap: 1rem;
 }
 
-/* Add spacing between main sections */
+
 main.container>section {
   margin-bottom: 2rem;
 }
 
-/* Layout adjustments */
+
 .grid-2-1 {
   grid-template-columns: 2fr 1fr;
   gap: 2rem;
@@ -27,7 +27,7 @@ main.container>section {
   }
 }
 
-/* Avatar container */
+
 .avatar-container {
   position: relative;
   display: inline-block;
@@ -54,7 +54,7 @@ main.container>section {
   font-size: 1rem;
 }
 
-/* Profile card */
+
 .profile-card {
   text-align: center;
   padding: 1.5rem;
@@ -66,7 +66,7 @@ main.container>section {
   margin: 0.25rem 0 1rem;
 }
 
-/* Stats grid */
+
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -78,7 +78,7 @@ main.container>section {
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
-  /* Background handled by global style.css */
+  
 }
 
 .stat-card i {
@@ -103,7 +103,7 @@ main.container>section {
   opacity: 0.8;
 }
 
-/* Card header */
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -126,7 +126,7 @@ html[data-theme="dark"] .badge-count {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Badge grid */
+
 .badge-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -186,7 +186,7 @@ html[data-theme="dark"] .badge-item {
   opacity: 0.7;
 }
 
-/* Activity list */
+
 .activity-list {
   min-height: 200px;
 }
@@ -246,7 +246,7 @@ html[data-theme="dark"] .badge-item {
   color: #cbd5e1;
 }
 
-/* Performance grid */
+
 .performance-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -282,7 +282,7 @@ html[data-theme="dark"] .performance-card {
   margin-bottom: 0.5rem;
 }
 
-/* Modal */
+
 .modal {
   display: none;
   position: fixed;
@@ -346,7 +346,7 @@ html[data-theme="dark"] .performance-card {
   border-color: #d1d5db;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 768px) {
   .profile-header {
     flex-direction: column;

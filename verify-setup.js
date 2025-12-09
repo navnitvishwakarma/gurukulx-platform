@@ -1,11 +1,11 @@
-// Verification script for GuruKulX deployment setup
+
 const fs = require('fs');
 const path = require('path');
 
 console.log('🔍 GuruKulX Deployment Verification');
 console.log('=====================================\n');
 
-// Check required files
+
 const requiredFiles = [
   'package.json',
   'server-mongodb.js',
@@ -48,7 +48,7 @@ requiredDeps.forEach(dep => {
 
 console.log('\n🔧 Checking configuration...');
 
-// Check netlify.toml
+
 if (fs.existsSync('netlify.toml')) {
   const netlifyConfig = fs.readFileSync('netlify.toml', 'utf8');
   if (netlifyConfig.includes('server-mongodb')) {
@@ -62,7 +62,7 @@ if (fs.existsSync('netlify.toml')) {
   allFilesExist = false;
 }
 
-// Check main.js for API key
+
 if (fs.existsSync('js/main.js')) {
   const mainJs = fs.readFileSync('js/main.js', 'utf8');
   if (!mainJs.includes('AIzaSyALj_4-lYI__CEE9u14RkQAIYCsvN0H6Do')) {

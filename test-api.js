@@ -1,4 +1,4 @@
-// Test API endpoints directly
+
 const fetch = require('node-fetch');
 
 const API_BASE = 'https://gurukool-x.netlify.app';
@@ -7,7 +7,7 @@ async function testAPI() {
   console.log('🧪 Testing GuruKulX API endpoints...\n');
   
   try {
-    // Test 1: Health check
+
     console.log('1. Testing health endpoint...');
     const healthResponse = await fetch(`${API_BASE}/api/health`);
     const healthData = await healthResponse.json();
@@ -20,7 +20,7 @@ async function testAPI() {
       return;
     }
     
-    // Test 2: User registration
+
     console.log('2. Testing user registration...');
     const registrationData = {
       username: 'testuser' + Date.now(),
@@ -48,7 +48,7 @@ async function testAPI() {
     if (registerResponse.ok) {
       console.log('✅ Registration successful\n');
       
-      // Test 3: User login
+
       console.log('3. Testing user login...');
       const loginData = {
         username: registrationData.username,
@@ -85,5 +85,5 @@ async function testAPI() {
   }
 }
 
-// Run the test
+
 testAPI();

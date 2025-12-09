@@ -1,4 +1,4 @@
-// Test CORS and API accessibility
+
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 async function testCORS() {
@@ -7,7 +7,7 @@ async function testCORS() {
   const baseUrl = 'https://gurukool-x.netlify.app';
   
   try {
-    // Test 1: Health check with CORS headers
+
     console.log('1. Testing health check with CORS...');
     const healthResponse = await fetch(`${baseUrl}/api/health`, {
       method: 'GET',
@@ -26,7 +26,7 @@ async function testCORS() {
     const healthData = await healthResponse.json();
     console.log('Health data:', healthData);
     
-    // Test 2: Login with CORS headers
+
     console.log('\n2. Testing login with CORS...');
     const loginResponse = await fetch(`${baseUrl}/api/auth/login`, {
       method: 'POST',
@@ -49,7 +49,7 @@ async function testCORS() {
     const loginData = await loginResponse.json();
     console.log('Login data:', loginData);
     
-    // Test 3: Check if the issue is with the redirect
+
     console.log('\n3. Testing direct function call...');
     const directResponse = await fetch(`${baseUrl}/.netlify/functions/api`, {
       method: 'POST',

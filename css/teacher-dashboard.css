@@ -1,6 +1,6 @@
-/* Teacher Dashboard Specific Styles */
 
-/* Dashboard Header */
+
+
 .dashboard-header {
   margin-bottom: 1.5rem;
 }
@@ -58,7 +58,7 @@
   transform: translateY(-100%);
 }
 
-/* Quick Stats */
+
 .quick-stats {
   margin-bottom: 2rem;
 }
@@ -151,7 +151,7 @@
   color: #ef4444;
 }
 
-/* Grid Layout */
+
 .grid-2-1 {
   grid-template-columns: 2fr 1fr;
 }
@@ -166,7 +166,7 @@
   gap: 1.5rem;
 }
 
-/* Card Styles */
+
 .card {
   background: var(--color-bg);
   border: 1px solid var(--color-muted);
@@ -215,7 +215,7 @@
   justify-content: center;
 }
 
-/* Tabs */
+
 .card-tabs {
   display: flex;
   border-bottom: 1px solid var(--color-muted);
@@ -251,7 +251,7 @@
   display: block;
 }
 
-/* Lists */
+
 .class-list, .student-list, .subject-list {
   display: flex;
   flex-direction: column;
@@ -309,7 +309,7 @@
   text-decoration: underline;
 }
 
-/* Scoreboard */
+
 .scoreboard {
   display: flex;
   flex-direction: column;
@@ -335,7 +335,7 @@
   font-weight: 600;
 }
 
-/* Quick Actions */
+
 .quick-actions {
   display: grid;
   gap: 0.75rem;
@@ -371,7 +371,7 @@
   font-weight: 500;
 }
 
-/* Deadlines */
+
 .deadlines-list {
   display: flex;
   flex-direction: column;
@@ -423,7 +423,7 @@
   margin-bottom: 0.5rem;
 }
 
-/* Analytics */
+
 .analytics-grid {
   gap: 1.5rem;
   margin-bottom: 1.5rem;
@@ -508,7 +508,7 @@
   color: white;
 }
 
-/* Activity Feed */
+
 .activity-feed {
   display: flex;
   flex-direction: column;
@@ -578,7 +578,7 @@
   margin-bottom: 0.5rem;
 }
 
-/* Notifications */
+
 .notifications-list {
   display: flex;
   flex-direction: column;
@@ -647,7 +647,7 @@
   background-color: var(--color-accent);
 }
 
-/* Modal */
+
 .modal {
   position: fixed;
   top: 0;
@@ -748,7 +748,7 @@
   margin-top: 1.5rem;
 }
 
-/* Loading Overlay */
+
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -791,7 +791,7 @@
   font-weight: 500;
 }
 
-/* Toast Notifications */
+
 .toast-container {
   position: fixed;
   top: 1rem;
@@ -887,7 +887,7 @@
   opacity: 1;
 }
 
-/* Responsive Design */
+
 @media (max-width: 1024px) {
   .grid-2-1 {
     grid-template-columns: 1fr;

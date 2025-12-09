@@ -19,7 +19,7 @@ const STATE = {
     gameStartTime: 0 // Track when game started
 };
 
-// DOM Elements
+
 const playerEl = document.getElementById('player');
 const sceneEl = document.getElementById('scene');
 const scoreEl = document.getElementById('score');
@@ -27,7 +27,7 @@ const finalScoreEl = document.getElementById('final-score');
 const questionText = document.getElementById('question-text');
 const groundEl = document.getElementById('ground');
 
-// Input Handling
+
 document.addEventListener('keydown', (e) => {
     if (!STATE.isPlaying && e.code === 'Space') startGame();
     if (!STATE.isPlaying) return;
@@ -51,16 +51,16 @@ function moveLane(dir) {
 }
 
 function updatePlayerPosition() {
-    // Lane 0: -200, Lane 1: 0, Lane 2: +200
+
     const x = (STATE.currentLane - 1) * GAME_CONFIG.laneWidth;
 
-    // Player is a child of #scene (0,0,0).
+
     const y = 0; // Push down to match floor
     const z = 0; // Close to camera
     playerEl.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
 }
 
-// Math Generator
+
 function generateQuestion() {
     const operators = ['+', '-', '*'];
     const op = operators[Math.floor(Math.random() * operators.length)];
@@ -117,7 +117,7 @@ function spawnRow() {
     });
 }
 
-// Game Loop
+
 let lastTime = 0;
 function loop(timestamp) {
     if (!STATE.isPlaying) return;
@@ -126,7 +126,7 @@ function loop(timestamp) {
 
     scoreEl.innerText = Math.floor(STATE.score);
 
-    // Sync Question Display
+
     if (STATE.objects.length > 0) {
         const closestObj = STATE.objects[0];
         if (questionText.innerText !== closestObj.questionText) {
@@ -135,37 +135,37 @@ function loop(timestamp) {
         }
     }
 
-    // Ground scrolling effect
+
     STATE.groundOffset = (STATE.groundOffset + (GAME_CONFIG.speed * STATE.speedMultiplier)) % 300;
     groundEl.style.backgroundPositionY = `${STATE.groundOffset}px`;
 
-    // Spawn Trigger
+
     if (timestamp - STATE.lastSpawnTime > (GAME_CONFIG.spawnInterval / STATE.speedMultiplier)) {
         spawnRow();
         STATE.lastSpawnTime = timestamp;
 
-        // SPEED INCREASE LOGIC
-        // Only start increasing speed after 30 seconds
+
+
         if (timestamp - STATE.gameStartTime > 30000) {
             STATE.speedMultiplier = Math.min(STATE.speedMultiplier + 0.03, 3.0);
         }
     }
 
-    // Update Objects
+
     for (let i = STATE.objects.length - 1; i >= 0; i--) {
         const obj = STATE.objects[i];
 
-        // Move towards camera
+
         obj.z += (GAME_CONFIG.speed * STATE.speedMultiplier * 2);
 
-        // Collision Logic
+
         if (obj.z > -100 && obj.z < 100) {
             if (obj.lane === STATE.currentLane) {
                 handleCollision(obj);
             }
         }
 
-        // Cleanup
+
         if (obj.z > 500) {
             obj.el.remove();
             STATE.objects.splice(i, 1);
@@ -209,7 +209,7 @@ function startGame() {
     STATE.objects = [];
     STATE.lastSpawnTime = 0;
 
-    // START TIMER
+
     STATE.gameStartTime = performance.now();
 
     document.getElementById('start-screen').classList.add('hidden');
@@ -227,5 +227,5 @@ function gameOver() {
     finalScoreEl.innerText = Math.floor(STATE.score);
 }
 
-// Init
+
 updatePlayerPosition();

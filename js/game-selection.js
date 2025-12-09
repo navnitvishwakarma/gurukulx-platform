@@ -1,16 +1,16 @@
-// Game Selection Page Functionality
+
 document.addEventListener('DOMContentLoaded', function () {
-    // Wait for header/footer to be injected
+
     setTimeout(initGameSelection, 100);
 });
 
 function initGameSelection() {
-    // Update chapter progress from localStorage if available
+
     updateProgressFromStorage();
 }
 
 function updateProgressFromStorage() {
-    // In a real app, this would fetch from user data
+
     const progress = localStorage.getItem('chapter1_progress') || 35;
     document.getElementById('chapterProgress').textContent = `${progress}%`;
     document.querySelector('.chapter-progress .progress').style.width = `${progress}%`;
@@ -38,9 +38,9 @@ function startGame(gameType) {
     }
 }
 
-// Toast notification function
+
 function showToast(title, message, type = "info") {
-    // Create toast container if it doesn't exist
+
     let toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) {
         toastContainer = document.createElement('div');
@@ -73,12 +73,12 @@ function showToast(title, message, type = "info") {
 
     toastContainer.appendChild(toast);
 
-    // Show toast
+
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
 
-    // Auto remove after 5 seconds
+
     setTimeout(() => {
         if (document.getElementById(toastId)) {
             toast.classList.remove('show');

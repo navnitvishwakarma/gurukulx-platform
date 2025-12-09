@@ -1,11 +1,11 @@
-// Balloon Game Functionality
+
 document.addEventListener('DOMContentLoaded', function () {
-    // Wait for header/footer to be injected
+
     setTimeout(initBalloonGame, 100);
 });
 
 function initBalloonGame() {
-    // Game variables
+
     let gameState = {
         level: 1,
         score: 0,
@@ -15,7 +15,7 @@ function initBalloonGame() {
         gameActive: false
     };
 
-    // DOM elements
+
     const balloonsContainer = document.getElementById('balloonsContainer');
     const startButton = document.getElementById('startButton');
     const restartButton = document.getElementById('restartButton');
@@ -24,14 +24,14 @@ function initBalloonGame() {
     const closeHelpModal = document.getElementById('closeHelpModal');
     const helpModal = document.getElementById('helpModal');
 
-    // Event listeners
+
     startButton.addEventListener('click', startGame);
     restartButton.addEventListener('click', restartGame);
     backButton.addEventListener('click', goBack);
     helpButton.addEventListener('click', showHelp);
     closeHelpModal.addEventListener('click', hideHelp);
 
-    // Close modal when clicking outside
+
     window.addEventListener('click', function (event) {
         if (event.target === helpModal) {
             hideHelp();
@@ -92,7 +92,7 @@ function initBalloonGame() {
         const min = Math.pow(10, gameState.level - 1); // Scale difficulty with level
         const max = min * 10;
 
-        // Generate unique random numbers
+
         while (numbers.length < count) {
             const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
             if (!numbers.includes(randomNum)) {
@@ -111,19 +111,19 @@ function initBalloonGame() {
             .map(b => b.value));
 
         if (number === minValue) {
-            // Correct balloon popped
+
             balloonElement.classList.add('pop-animation');
             gameState.score += 10 * gameState.level;
             gameState.currentMin = number;
 
-            // Mark as popped
+
             const balloon = gameState.balloons.find(b => b.value === number);
             balloon.popped = true;
 
-            // Show feedback
+
             showFeedback('Correct! +' + (10 * gameState.level), 'feedback-correct');
 
-            // Check if all balloons are popped
+
             setTimeout(() => {
                 const balloonsLeft = gameState.balloons.filter(b => !b.popped).length;
                 document.getElementById('balloonsLeft').textContent = balloonsLeft;
@@ -133,7 +133,7 @@ function initBalloonGame() {
                 }
             }, 500);
         } else {
-            // Wrong balloon popped
+
             gameState.lives--;
             showFeedback('Wrong! Try the smallest number', 'feedback-incorrect');
 
@@ -162,19 +162,19 @@ function initBalloonGame() {
         gameState.gameActive = false;
         showFeedback('Congratulations! You completed all levels!', 'feedback-levelup');
 
-        // Calculate XP earned (30 base + 5 per level)
+
         const xpEarned = 30 + (gameState.level * 5);
 
-        // Update user progress and XP
+
         updateUserProgress(xpEarned);
 
-        // Sync leaderboards/students with latest totals if helper exists
+
         try {
             if (typeof syncScoreboards === 'function') syncScoreboards();
             if (typeof saveCurrentUserProfile === 'function') saveCurrentUserProfile();
         } catch { }
 
-        // Show final score
+
         setTimeout(() => {
             showFeedback(`Final Score: ${gameState.score} | XP Earned: ${xpEarned}`, 'feedback-levelup');
             restartButton.style.display = 'inline-flex';
@@ -197,7 +197,7 @@ function initBalloonGame() {
         feedbackElement.textContent = message;
         feedbackElement.className = 'game-feedback ' + className;
 
-        // Clear feedback after 2 seconds
+
         setTimeout(() => {
             feedbackElement.textContent = '';
             feedbackElement.className = 'game-feedback';
@@ -205,23 +205,23 @@ function initBalloonGame() {
     }
 
     function updateUserProgress(xpEarned) {
-        // Update chapter progress in localStorage
+
         const currentProgress = parseInt(localStorage.getItem('chapter1_progress') || 35);
         const newProgress = Math.min(100, currentProgress + 15); // Add 15% for completing the game
 
         localStorage.setItem('chapter1_progress', newProgress);
 
-        // Update user XP (in a real app, this would be saved to the server)
+
         const currentXP = parseInt(localStorage.getItem(LS.xp) || 0);
         const newXP = currentXP + xpEarned;
         localStorage.setItem(LS.xp, newXP);
 
-        // Update user score
+
         const currentScore = parseInt(localStorage.getItem(LS.score) || 0);
         const newScore = currentScore + gameState.score;
         localStorage.setItem(LS.score, newScore);
 
-        // Show XP earned message
+
         showToast('XP Earned', `You earned ${xpEarned} XP for completing the game!`, 'success');
     }
 
@@ -238,9 +238,9 @@ function initBalloonGame() {
     }
 }
 
-// Toast notification function
+
 function showToast(title, message, type = "info") {
-    // Create toast container if it doesn't exist
+
     let toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) {
         toastContainer = document.createElement('div');
@@ -273,12 +273,12 @@ function showToast(title, message, type = "info") {
 
     toastContainer.appendChild(toast);
 
-    // Show toast
+
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
 
-    // Auto remove after 5 seconds
+
     setTimeout(() => {
         if (document.getElementById(toastId)) {
             toast.classList.remove('show');

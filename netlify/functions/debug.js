@@ -1,4 +1,4 @@
-// Debug function to test routing
+
 const handler = async (event, context) => {
   console.log('Debug function called:', { 
     path: event.path, 

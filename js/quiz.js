@@ -1,11 +1,11 @@
-// Quiz Functionality for Knowing Our Numbers
+
 document.addEventListener('DOMContentLoaded', function () {
-    // Wait for header/footer to be injected
+
     setTimeout(initQuiz, 100);
 });
 
 function initQuiz() {
-    // Quiz questions for Class 6 Chapter 1: Knowing Our Numbers
+
     const quizQuestions = [
         {
             question: "Which of the following is the correct expanded form of 45,678?",
@@ -119,7 +119,7 @@ function initQuiz() {
         }
     ];
 
-    // Quiz state
+
     let quizState = {
         currentQuestion: 0,
         score: 0,
@@ -128,7 +128,7 @@ function initQuiz() {
         reviewMode: false
     };
 
-    // DOM elements
+
     const quizIntro = document.getElementById('quizIntro');
     const quizPlay = document.getElementById('quizPlay');
     const quizEnd = document.getElementById('quizEnd');
@@ -138,7 +138,7 @@ function initQuiz() {
     const reviewQuizBtn = document.getElementById('reviewQuizBtn');
     const retryQuizBtn = document.getElementById('retryQuizBtn');
 
-    // Event listeners
+
     startQuizBtn.addEventListener('click', startQuiz);
     prevQuestionBtn.addEventListener('click', showPreviousQuestion);
     nextQuestionBtn.addEventListener('click', showNextQuestion);
@@ -158,14 +158,14 @@ function initQuiz() {
         quizState.currentQuestion = questionIndex;
         const question = quizQuestions[questionIndex];
 
-        // Update question counter
+
         document.getElementById('currentQuestion').textContent = questionIndex + 1;
         document.getElementById('totalQuestions').textContent = quizQuestions.length;
 
-        // Display question text
+
         document.getElementById('questionText').textContent = question.question;
 
-        // Display options
+
         const optionsContainer = document.getElementById('questionOptions');
         optionsContainer.innerHTML = '';
 
@@ -175,7 +175,7 @@ function initQuiz() {
             const optionElement = document.createElement('div');
             optionElement.className = 'option';
 
-            // If in review mode, show correct/incorrect status
+
             if (quizState.reviewMode) {
                 if (index === question.correctIndex) {
                     optionElement.classList.add('correct');
@@ -191,7 +191,7 @@ function initQuiz() {
                 <span class="option-text">${option}</span>
             `;
 
-            // Only add click event if not in review mode
+
             if (!quizState.reviewMode) {
                 optionElement.addEventListener('click', () => selectOption(index));
             }
@@ -199,7 +199,7 @@ function initQuiz() {
             optionsContainer.appendChild(optionElement);
         });
 
-        // Update navigation buttons
+
         prevQuestionBtn.disabled = questionIndex === 0;
 
         if (questionIndex === quizQuestions.length - 1) {
@@ -218,21 +218,21 @@ function initQuiz() {
     function selectOption(optionIndex) {
         quizState.userAnswers[quizState.currentQuestion] = optionIndex;
 
-        // Update UI to show selected option
+
         const options = document.querySelectorAll('.option');
         options.forEach(option => option.classList.remove('selected'));
         options[optionIndex].classList.add('selected');
 
-        // Check if answer is correct and update score
+
         const currentQuestion = quizQuestions[quizState.currentQuestion];
         if (optionIndex === currentQuestion.correctIndex) {
-            // Only add to score if not already scored for this question
+
             if (quizState.userAnswers[quizState.currentQuestion] !== currentQuestion.correctIndex) {
                 quizState.score += 10;
                 document.getElementById('currentScore').textContent = quizState.score;
             }
         } else {
-            // If changing from correct to incorrect answer, subtract points
+
             if (quizState.userAnswers[quizState.currentQuestion] === currentQuestion.correctIndex) {
                 quizState.score -= 10;
                 document.getElementById('currentScore').textContent = quizState.score;
@@ -256,16 +256,16 @@ function initQuiz() {
         quizPlay.classList.add('hidden');
         quizEnd.classList.remove('hidden');
 
-        // Calculate final score and results
+
         const correctAnswers = calculateCorrectAnswers();
         const xpEarned = calculateXPEarned(correctAnswers);
 
-        // Update results display
+
         document.getElementById('finalScore').textContent = quizState.score;
         document.getElementById('correctAnswers').textContent = `${correctAnswers}/${quizQuestions.length}`;
         document.getElementById('xpEarned').textContent = xpEarned;
 
-        // Display feedback based on performance
+
         const feedbackElement = document.getElementById('resultsFeedback');
         let feedbackText = '';
 
@@ -281,7 +281,7 @@ function initQuiz() {
 
         feedbackElement.innerHTML = feedbackText;
 
-        // Save progress and XP
+
         saveQuizResults(xpEarned);
     }
 
@@ -296,23 +296,23 @@ function initQuiz() {
     }
 
     function calculateXPEarned(correctAnswers) {
-        // Base XP is 30, plus 2 XP for each correct answer
+
         return 30 + (correctAnswers * 2);
     }
 
     function saveQuizResults(xpEarned) {
-        // Update chapter progress in localStorage
+
         const currentProgress = parseInt(localStorage.getItem('chapter1_progress') || 35);
         const newProgress = Math.min(100, currentProgress + 20); // Add 20% for completing the quiz
 
         localStorage.setItem('chapter1_progress', newProgress);
 
-        // Use standardized score saving function
+
         const progressEarned = 20; // 20% progress for completing the quiz
         if (typeof saveGameResults === 'function') {
             saveGameResults(quizState.score, xpEarned, progressEarned);
         } else {
-            // Fallback to manual updates if function not available
+
             const currentXP = parseInt(localStorage.getItem(LS.xp) || 0);
             const newXP = currentXP + xpEarned;
             localStorage.setItem(LS.xp, newXP);
@@ -324,7 +324,7 @@ function initQuiz() {
             try { if (typeof syncScoreboards === 'function') syncScoreboards(); } catch { }
         }
 
-        // Show XP earned message
+
         showToast('Quiz Completed', `You earned ${xpEarned} XP and ${progressEarned}% progress!`, 'success');
     }
 
@@ -333,17 +333,17 @@ function initQuiz() {
         quizEnd.classList.add('hidden');
         quizPlay.classList.remove('hidden');
 
-        // Add review class to body for special styling
+
         document.body.classList.add('review-mode');
 
-        // Display first question
+
         displayQuestion(0);
 
-        // Change next button text
+
         nextQuestionBtn.textContent = 'Next <i class="ri-arrow-right-line"></i> ';
         nextQuestionBtn.addEventListener('click', showNextQuestion);
 
-        // Add a back to results button
+
         if (!document.getElementById('backToResultsBtn')) {
             const backToResultsBtn = document.createElement('button');
             backToResultsBtn.id = 'backToResultsBtn';
@@ -361,7 +361,7 @@ function initQuiz() {
         quizEnd.classList.remove('hidden');
         document.body.classList.remove('review-mode');
 
-        // Remove back to results button
+
         const backToResultsBtn = document.getElementById('backToResultsBtn');
         if (backToResultsBtn) {
             backToResultsBtn.remove();
@@ -369,7 +369,7 @@ function initQuiz() {
     }
 
     function retryQuiz() {
-        // Reset quiz state
+
         quizState = {
             currentQuestion: 0,
             score: 0,
@@ -378,15 +378,15 @@ function initQuiz() {
             reviewMode: false
         };
 
-        // Reset UI
+
         quizEnd.classList.add('hidden');
         quizIntro.classList.remove('hidden');
         document.body.classList.remove('review-mode');
 
-        // Update score display
+
         document.getElementById('currentScore').textContent = '0';
 
-        // Remove back to results button if it exists
+
         const backToResultsBtn = document.getElementById('backToResultsBtn');
         if (backToResultsBtn) {
             backToResultsBtn.remove();
@@ -400,9 +400,9 @@ function initQuiz() {
     }
 }
 
-// Toast notification function
+
 function showToast(title, message, type = "info") {
-    // Create toast container if it doesn't exist
+
     let toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) {
         toastContainer = document.createElement('div');
@@ -435,12 +435,12 @@ function showToast(title, message, type = "info") {
 
     toastContainer.appendChild(toast);
 
-    // Show toast
+
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
 
-    // Auto remove after 5 seconds
+
     setTimeout(() => {
         if (document.getElementById(toastId)) {
             toast.classList.remove('show');
