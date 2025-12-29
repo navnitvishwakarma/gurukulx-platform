@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   try {
     const salt = await bcrypt.genSalt(10);
@@ -66,12 +66,12 @@ userSchema.pre('save', async function(next) {
 });
 
 
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
 
-userSchema.methods.getPublicProfile = function() {
+userSchema.methods.getPublicProfile = function () {
   const userObject = this.toObject();
   delete userObject.password;
   return userObject;
@@ -100,7 +100,7 @@ const connectDB = async () => {
 let usersInitialized = false;
 const initializeDefaultUsers = async () => {
   if (usersInitialized) return;
-  
+
   try {
     const adminExists = await User.findOne({ username: 'admin' });
     if (!adminExists) {
@@ -131,7 +131,7 @@ const initializeDefaultUsers = async () => {
       await student.save();
       console.log('Student user created');
     }
-    
+
     usersInitialized = true;
   } catch (error) {
     console.error('Error initializing users:', error);
@@ -140,13 +140,13 @@ const initializeDefaultUsers = async () => {
 
 
 const handler = async (event, context) => {
-  console.log('Function called:', { 
-    path: event.path, 
+  console.log('Function called:', {
+    path: event.path,
     method: event.method,
     body: event.body,
     headers: event.headers
   });
-  
+
 
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -155,11 +155,11 @@ const handler = async (event, context) => {
   };
 
   if (event.method === 'OPTIONS' || event.httpMethod === 'OPTIONS') {
-    console.log('Handling OPTIONS request:', { 
-      method: event.method, 
+    console.log('Handling OPTIONS request:', {
+      method: event.method,
       httpMethod: event.httpMethod,
       path: event.path,
-      headers: event.headers 
+      headers: event.headers
     });
     return {
       statusCode: 200,
@@ -178,17 +178,17 @@ const handler = async (event, context) => {
 
     const { path, method, body, httpMethod } = event;
     const data = body ? JSON.parse(body) : {};
-    
+
 
     const actualMethod = method || httpMethod || 'GET';
 
-    console.log('Processing request:', { 
-      path, 
-      method: actualMethod, 
+    console.log('Processing request:', {
+      path,
+      method: actualMethod,
       originalMethod: method,
       httpMethod: httpMethod,
-      data, 
-      rawQuery: event.rawQuery 
+      data,
+      rawQuery: event.rawQuery
     });
 
 
@@ -204,9 +204,9 @@ const handler = async (event, context) => {
 
     if (path === '/api/auth/login' && actualMethod === 'POST') {
       console.log('Matched login route - processing login request');
-      
+
       const { username, password } = data;
-      
+
       if (!username || !password) {
         return {
           statusCode: 400,
@@ -214,7 +214,7 @@ const handler = async (event, context) => {
           body: JSON.stringify({ error: 'Username and password required' })
         };
       }
-      
+
       const user = await User.findOne({ username });
       if (!user) {
         console.log('User not found:', username);
@@ -224,7 +224,7 @@ const handler = async (event, context) => {
           body: JSON.stringify({ error: 'Invalid credentials' })
         };
       }
-      
+
       const isValidPassword = await user.comparePassword(password);
       if (!isValidPassword) {
         console.log('Invalid password for user:', username);
@@ -234,14 +234,14 @@ const handler = async (event, context) => {
           body: JSON.stringify({ error: 'Invalid credentials' })
         };
       }
-      
+
       const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
       const token = jwt.sign(
         { userId: user._id, username: user.username, role: user.role, class: user.class },
         JWT_SECRET,
         { expiresIn: '24h' }
       );
-      
+
       console.log('Login successful for user:', username);
       return {
         statusCode: 200,
@@ -257,9 +257,9 @@ const handler = async (event, context) => {
 
     if (path === '/api/auth/register' && actualMethod === 'POST') {
       console.log('Matched registration route - processing registration request');
-      
+
       const { username, password, name, role, userClass, email } = data;
-      
+
       if (!username || !password || !name || !role) {
         return {
           statusCode: 400,
@@ -267,7 +267,7 @@ const handler = async (event, context) => {
           body: JSON.stringify({ error: 'Missing required fields' })
         };
       }
-      
+
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         return {
@@ -276,15 +276,15 @@ const handler = async (event, context) => {
           body: JSON.stringify({ error: 'Username already exists' })
         };
       }
-      
+
       const user = new User({
         username, password, name, role, class: userClass, email,
         profile: { score: 0, xp: 0, level: 1, progress: 0, streak: 0, badges: [] }
       });
-      
+
       await user.save();
       console.log('User created successfully:', user._id);
-      
+
       return {
         statusCode: 201,
         headers: { ...headers, 'Content-Type': 'application/json' },
@@ -293,13 +293,69 @@ const handler = async (event, context) => {
     }
 
 
-    console.log('No route matched:', { path, actualMethod, originalMethod: method, httpMethod, rawQuery: event.rawQuery, availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register'] });
+    if (path === '/api/ai' && actualMethod === 'POST') {
+      console.log('Matched AI route - processing request');
+
+      const { subject = 'General', question, profile } = data;
+
+      const OpenAI = require('openai');
+      const NV_API_KEY = process.env.NV_API_KEY;
+      const NV_BASE_URL = "https://integrate.api.nvidia.com/v1";
+
+      if (!NV_API_KEY) {
+        console.error('NV_API_KEY is missing');
+        return {
+          statusCode: 500,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: 'Server configuration error' })
+        };
+      }
+
+      const client = new OpenAI({
+        apiKey: NV_API_KEY,
+        baseURL: NV_BASE_URL
+      });
+
+      // Need user context for system prompt
+      // For simple implementation, we might skip detailed profile or fetch if needed
+      // But let's try to match server logic
+      const systemPrompt = `You are an AI tutor for GuruKulX. Subject: ${subject}. Question: ${question}`;
+
+      try {
+        const completion = await client.chat.completions.create({
+          model: "mistralai/mamba-codestral-7b-v0.1",
+          messages: [
+            { role: "system", content: "You are a helpful AI tutor." },
+            { role: "user", content: question }
+          ],
+          temperature: 0.5,
+          top_p: 1,
+          max_tokens: 1024
+        });
+
+        const answer = completion.choices[0]?.message?.content || 'No response received.';
+        return {
+          statusCode: 200,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answer })
+        };
+      } catch (aiError) {
+        console.error('AI API Error:', aiError);
+        return {
+          statusCode: 500,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: 'AI Error' })
+        };
+      }
+    }
+
+    console.log('No route matched:', { path, actualMethod, originalMethod: method, httpMethod, rawQuery: event.rawQuery, availableRoutes: ['/api/health', '/api/auth/login', '/api/auth/register', '/api/ai'] });
     return {
       statusCode: 404,
       headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        error: 'Route not found', 
-        path, 
+      body: JSON.stringify({
+        error: 'Route not found',
+        path,
         method: actualMethod,
         originalMethod: method,
         httpMethod: httpMethod,
