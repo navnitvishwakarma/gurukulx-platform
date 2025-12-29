@@ -526,8 +526,8 @@ function attachGlobalHandlers() {
         .replace(/\s+/g, ' ')
         .trim()
 
-      const match = expr.match(/[0-9().+\-*\s*]+$/.test(candidate)) return null
-
+      const candidate = expr;
+      if (!/^[0-9().+\-*\s]+$/.test(candidate)) return null;
 
       const result = Function(`"use strict"; return (${candidate})`)()
       if (typeof result === 'number' && isFinite(result)) {
@@ -2876,11 +2876,11 @@ async function callGemini(subject, question, profile) {
   try {
     const apiBase = window.GX_API_BASE || localStorage.getItem('GX_API_BASE') || DEFAULT_API_BASE;
 
-    const res = await fetch(\\/api/ai\, {
+    const res = await fetch(`${apiBase.replace(/\/$/, '')}/api/ai`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': \Bearer \\
+        'Authorization': `Bearer ${localStorage.getItem('GX_TOKEN')}`
       },
       body: JSON.stringify({ subject, question, profile })
     });
