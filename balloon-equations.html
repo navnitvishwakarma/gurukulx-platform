@@ -1,53 +1,113 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Balloon Equations – GuruKulX</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="icon" href="/assets/images/logo.png" type="image/png" />
-    <script defer src="/js/main.js"></script>
-    <script defer src="/js/balloon-equations.js"></script>
-    <style>
-      .be-wrap { max-width: 900px; margin: 1rem auto; }
-      .hud { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; }
-      .board { position: relative; height: 420px; border:1px solid var(--color-muted); border-radius:.75rem; overflow:hidden; background: linear-gradient(#eef2ff, #f8fafc); margin-top:.5rem; }
-      .eq-top { position:absolute; top:10px; left:0; right:0; text-align:center; font-size:1.25rem; font-weight:700; }
-      .balloon { position:absolute; bottom:-60px; left:50%; transform:translateX(-50%) scale(2.5); transform-origin: bottom center; padding:.45rem .7rem; border-radius:999px; background:#fff; border:2px solid var(--color-accent); box-shadow:0 4px 0 rgba(0,0,0,.06); cursor:pointer; user-select:none; z-index:2; }
-      .balloon:hover { box-shadow:0 6px 0 rgba(0,0,0,.08); }
-      /* no special styling for correct balloons to avoid revealing the answer */
-      .balloon.is-wrong { background:#fef2f2; border-color:#ef4444; }
-      /* remove any special correct styling */
-      .controls { display:flex; gap:.5rem; margin-top:.5rem; }
-      .over { text-align:center; padding:1rem; }
-    </style>
-  </head>
-  <body data-page="balloon-equations">
-    <header id="site-header"></header>
-    <main class="container">
-      <section class="card be-wrap">
-        <h1>Balloon Equations</h1>
-        <p class="muted">Solve as many as you can in 3 minutes. Tap/click the correct answer balloon.</p>
-        <div class="hud">
-          <span class="badge">Score: <span id="beScore">0</span></span>
-          <span class="badge">Level: <span id="beLevel">1</span></span>
-          <span class="badge">Time: <span id="beTime">180</span>s</span>
-        </div>
-        <div class="board" id="beBoard">
-          <div class="eq-top" id="beEq">—</div>
-        </div>
-        <div class="controls">
-          <button class="btn" id="beRestart">Restart</button>
-          <a class="btn" href="/chapter1-games.html" style="margin-left:auto;">Back to Games</a>
-        </div>
-        <div class="over hidden" id="beOver">
-          <h3>Time Up!</h3>
-          <p>Final Score: <span id="beFinal">0</span></p>
-        </div>
-      </section>
-    </main>
-    <footer id="site-footer"></footer>
-  </body>
-  </html>
 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Balloon Equations – GuruKulX</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="project games/balloon-equations.css" />
+  <link rel="icon" href="assets/images/logo.png" type="image/png" />
+  <script defer src="js/main.js"></script>
+  <script defer src="js/balloon-equations.js"></script>
+  <style>
+    .be-wrap {
+      max-width: 900px;
+      margin: 1rem auto;
+    }
 
+    .hud {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .board {
+      position: relative;
+      height: 420px;
+      border: 1px solid var(--color-muted);
+      border-radius: .75rem;
+      overflow: hidden;
+      background: linear-gradient(#eef2ff, #f8fafc);
+      margin-top: .5rem;
+    }
+
+    .eq-top {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%) scale(2.5);
+      transform-origin: bottom center;
+      padding: .45rem .7rem;
+      border-radius: 999px;
+      background: #fff;
+      border: 2px solid var(--color-accent);
+      box-shadow: 0 4px 0 rgba(0, 0, 0, .06);
+      cursor: pointer;
+      user-select: none;
+      z-index: 2;
+    }
+
+    .balloon:hover {
+      box-shadow: 0 6px 0 rgba(0, 0, 0, .08);
+    }
+
+    /* no special styling for correct balloons to avoid revealing the answer */
+    .balloon.is-wrong {
+      background: #fef2f2;
+      border-color: #ef4444;
+    }
+
+    /* remove any special correct styling */
+    .controls {
+      display: flex;
+      gap: .5rem;
+      margin-top: .5rem;
+    }
+
+    .over {
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+
+<body data-page="balloon-equations">
+  <header id="site-header"></header>
+  <main class="container">
+    <section class="card be-wrap">
+      <h1>Balloon Equations</h1>
+      <p class="muted">Solve as many as you can in 3 minutes. Tap/click the correct answer balloon.</p>
+      <div class="hud">
+        <span class="badge">Score: <span id="beScore">0</span></span>
+        <span class="badge">Level: <span id="beLevel">1</span></span>
+        <span class="badge">Time: <span id="beTime">180</span>s</span>
+      </div>
+      <div class="board" id="beBoard">
+        <div class="eq-top" id="beEq">—</div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="beRestart">Restart</button>
+        <a class="btn" href="/chapter1-games.html" style="margin-left:auto;">Back to Games</a>
+      </div>
+      <div class="over hidden" id="beOver">
+        <h3>Time Up!</h3>
+        <p>Final Score: <span id="beFinal">0</span></p>
+      </div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+</body>
+
+</html>
