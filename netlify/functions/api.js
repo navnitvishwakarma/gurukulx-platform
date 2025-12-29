@@ -122,6 +122,54 @@ const gameResultSchema = new mongoose.Schema({
 }, { timestamps: true });
 const GameResult = mongoose.models.GameResult || mongoose.model('GameResult', gameResultSchema);
 
+const announcementSchema = new mongoose.Schema({
+  teacher: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, required: true, trim: true, maxlength: 100 },
+  message: { type: String, required: true, trim: true, maxlength: 500 },
+  recipients: { type: String, required: true, trim: true } // 'all' or class name
+}, { timestamps: true });
+const Announcement = mongoose.models.Announcement || mongoose.model('Announcement', announcementSchema);
+
+const scheduleSchema = new mongoose.Schema({
+  teacher: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  class_name: { type: String, required: true, trim: true },
+  subject: { type: String, required: true, trim: true },
+  date: { type: String, required: true }, // YYYY-MM-DD
+  time: { type: String, required: true }, // HH:MM
+  notes: { type: String, trim: true, maxlength: 200 }
+}, { timestamps: true });
+const Schedule = mongoose.models.Schedule || mongoose.model('Schedule', scheduleSchema);
+
+const messageSchema = new mongoose.Schema({
+  sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  group: { type: String },
+  content: { type: String, required: true, trim: true },
+  isRead: { type: Boolean, default: false }
+}, { timestamps: true });
+const Message = mongoose.models.Message || mongoose.model('Message', messageSchema);
+
+const feedbackSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  email: { type: String, trim: true },
+  message: { type: String, required: true, trim: true },
+  type: { type: String, default: 'feedback' },
+  status: { type: String, default: 'new' }
+}, { timestamps: true });
+const Feedback = mongoose.models.Feedback || mongoose.model('Feedback', feedbackSchema);
+
+const questionSchema = new mongoose.Schema({
+  subject: { type: String, required: true },
+  topic: { type: String, required: true },
+  difficulty: { type: String, default: 'medium' },
+  question: { type: String, required: true },
+  options: [{ type: String }],
+  answer: { type: mongoose.Schema.Types.Mixed, required: true },
+  type: { type: String, default: 'mcq' },
+  created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+}, { timestamps: true });
+const Question = mongoose.models.Question || mongoose.model('Question', questionSchema);
+
 
 
 let isConnected = false;
