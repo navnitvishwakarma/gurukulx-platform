@@ -79,6 +79,50 @@ userSchema.methods.getPublicProfile = function () {
 
 const User = mongoose.model('User', userSchema);
 
+const notificationSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  title: String,
+  message: { type: String, required: true },
+  type: { type: String, default: 'info' }, // info, warning, success, error
+  link: String,
+  is_read: { type: Boolean, default: false }
+}, { timestamps: true });
+const Notification = mongoose.models.Notification || mongoose.model('Notification', notificationSchema);
+
+const assignmentSchema = new mongoose.Schema({
+  teacher: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  class_name: { type: String, required: true },
+  subject: { type: String, required: true },
+  game: { type: String, required: true },
+  due_date: Date,
+  notes: String,
+  status: { type: String, default: 'Active' }
+}, { timestamps: true });
+const Assignment = mongoose.models.Assignment || mongoose.model('Assignment', assignmentSchema);
+
+const doubtSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  subject: { type: String, required: true },
+  question: { type: String, required: true },
+  status: { type: String, default: 'Open' }, // Open, Answered
+  answers: [{
+    answered_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    answer: String,
+    created_at: { type: Date, default: Date.now }
+  }]
+}, { timestamps: true });
+const Doubt = mongoose.models.Doubt || mongoose.model('Doubt', doubtSchema);
+
+const gameResultSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  game_type: { type: String, required: true },
+  score: { type: Number, required: true },
+  xp_earned: { type: Number, default: 0 },
+  progress_earned: { type: Number, default: 0 }
+}, { timestamps: true });
+const GameResult = mongoose.models.GameResult || mongoose.model('GameResult', gameResultSchema);
+
+
 
 let isConnected = false;
 const connectDB = async () => {
@@ -252,6 +296,213 @@ const handler = async (event, context) => {
           user: user.getPublicProfile()
         })
       };
+    }
+
+
+    // --- Authentication Helper ---
+    const getAuth = () => {
+      const authHeader = headers['authorization'] || headers['Authorization'];
+      if (!authHeader) throw new Error('No token provided');
+      const token = authHeader.split(' ')[1];
+      if (!token) throw new Error('No token provided');
+      return jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-in-production');
+    };
+
+    // --- Route Handlers ---
+
+    // 1. GET /api/user/profile
+    if (path === '/api/user/profile' && actualMethod === 'GET') {
+      try {
+        const decoded = getAuth();
+        const user = await User.findById(decoded.userId);
+        if (!user) return { statusCode: 404, body: JSON.stringify({ error: 'User not found' }) };
+        return {
+          statusCode: 200,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify(user.getPublicProfile())
+        };
+      } catch (err) {
+        return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
+      }
+    }
+
+    // 2. PUT /api/user/profile
+    if (path === '/api/user/profile' && actualMethod === 'PUT') {
+      try {
+        const decoded = getAuth();
+        const { score, xp, level, progress, streak, badges, subject } = data;
+        const updateData = {};
+        if (score !== undefined) updateData['profile.score'] = score;
+        if (xp !== undefined) updateData['profile.xp'] = xp;
+        if (level !== undefined) updateData['profile.level'] = level;
+        if (progress !== undefined) updateData['profile.progress'] = progress;
+        if (streak !== undefined) updateData['profile.streak'] = streak;
+        if (badges !== undefined) updateData['profile.badges'] = badges;
+        if (subject !== undefined) updateData['subject'] = subject;
+
+        const user = await User.findByIdAndUpdate(decoded.userId, { $set: updateData }, { new: true });
+        return {
+          statusCode: 200,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Profile updated' })
+        };
+      } catch (err) {
+        return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
+      }
+    }
+
+    // 3. GET /api/leaderboard
+    if (path === '/api/leaderboard' && actualMethod === 'GET') {
+      const leaderboard = await User.find({ role: 'student' })
+        .select('name class profile.score profile.badges profile.level')
+        .sort({ 'profile.score': -1 })
+        .limit(50);
+      return {
+        statusCode: 200,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(leaderboard)
+      };
+    }
+
+    // 4. GET /api/assignments
+    if (path === '/api/assignments' && actualMethod === 'GET') {
+      try {
+        const decoded = getAuth();
+        const user = await User.findById(decoded.userId);
+        let query = {};
+        if (user.role === 'teacher') {
+          query = { teacher: decoded.userId };
+        } else {
+          // Simple matching for student class
+          const cls = user.class || (user.profile && user.profile.class) || '';
+          if (cls) {
+            // Regex query to match class number loosely
+            const classNum = cls.replace(/\D/g, '');
+            if (classNum) {
+              query = { class_name: { $regex: classNum, $options: 'i' } };
+            } else {
+              query = { class_name: cls };
+            }
+          } else {
+            // No class set, return empty
+            return { statusCode: 200, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify([]) };
+          }
+        }
+        const assignments = await Assignment.find(query).sort({ createdAt: -1 });
+        return {
+          statusCode: 200,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify(assignments)
+        };
+      } catch (err) {
+        console.log(err);
+        return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
+      }
+    }
+
+    // 5. GET /api/notifications
+    if (path === '/api/notifications' && actualMethod === 'GET') {
+      try {
+        const decoded = getAuth();
+        const notifs = await Notification.find({ user: decoded.userId }).sort({ createdAt: -1 }).limit(20);
+        return {
+          statusCode: 200,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify(notifs)
+        };
+      } catch (err) {
+        return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
+      }
+    }
+
+    // 6. DELETE /api/notifications
+    if (path === '/api/notifications' && actualMethod === 'DELETE') {
+      try {
+        const decoded = getAuth();
+        await Notification.deleteMany({ user: decoded.userId });
+        return {
+          statusCode: 200,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Cleared' })
+        };
+      } catch (err) {
+        return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
+      }
+    }
+
+    // 7. GET /api/doubts
+    if (path === '/api/doubts' && actualMethod === 'GET') {
+      try {
+        const decoded = getAuth();
+        let query = {};
+        if (decoded.role === 'student') query = { user: decoded.userId };
+        const doubts = await Doubt.find(query).sort({ createdAt: -1 }).populate('user', 'name profile.class').limit(50);
+        return {
+          statusCode: 200,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify(doubts)
+        };
+      } catch (err) {
+        // If populate fails or other internal error, try basic fetch
+        try {
+          const doubts = await Doubt.find({}).sort({ createdAt: -1 }).limit(50);
+          return { statusCode: 200, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(doubts) };
+        } catch (e) {
+          return { statusCode: 500, body: JSON.stringify({ error: 'Server Error' }) };
+        }
+      }
+    }
+
+    // 8. POST /api/doubts
+    if (path === '/api/doubts' && actualMethod === 'POST') {
+      try {
+        const decoded = getAuth();
+        const { subject, question } = data;
+        const doubt = new Doubt({ user: decoded.userId, subject, question });
+        await doubt.save();
+        return {
+          statusCode: 201,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Doubt sent' })
+        };
+      } catch (err) {
+        return { statusCode: 400, body: JSON.stringify({ error: 'Error saving doubt' }) };
+      }
+    }
+
+
+    // 9. POST /api/game/results
+    if (path === '/api/game/results' && actualMethod === 'POST') {
+      try {
+        const decoded = getAuth();
+        const { gameType, score, xpEarned = 0, progressEarned = 0 } = data;
+
+        const gameResult = new GameResult({
+          user: decoded.userId,
+          game_type: gameType,
+          score,
+          xp_earned: xpEarned,
+          progress_earned: progressEarned
+        });
+        await gameResult.save();
+
+        await User.findByIdAndUpdate(decoded.userId, {
+          $inc: {
+            'profile.score': score,
+            'profile.xp': xpEarned,
+            'profile.progress': progressEarned
+          }
+        });
+
+        return {
+          statusCode: 201,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Saved', resultId: gameResult._id })
+        };
+
+      } catch (err) {
+        return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+      }
     }
 
 
