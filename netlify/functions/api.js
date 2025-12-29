@@ -554,6 +554,168 @@ const handler = async (event, context) => {
     }
 
 
+    // 10. POST /api/assignments (Teacher Create)
+    if (path === '/api/assignments' && actualMethod === 'POST') {
+      try {
+        const decoded = getAuth();
+        if (decoded.role !== 'teacher') return { statusCode: 403, body: JSON.stringify({ error: 'Access denied' }) };
+
+        const assignment = new Assignment({ teacher: decoded.userId, ...data });
+        await assignment.save();
+
+        const students = await User.find({ role: 'student', 'class': data.class_name });
+        const notifications = students.map(s => ({
+          user: s._id,
+          message: `New Assignment: ${data.subject} - ${data.game}`,
+          type: 'warning',
+          link: '/student-tasks.html'
+        }));
+        if (notifications.length > 0) await Notification.insertMany(notifications);
+
+        return { statusCode: 201, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(assignment) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+    // 11. POST /api/announcements
+    if (path === '/api/announcements' && actualMethod === 'POST') {
+      try {
+        const decoded = getAuth();
+        if (decoded.role !== 'teacher') return { statusCode: 403, body: JSON.stringify({ error: 'Access denied' }) };
+
+        const announcement = new Announcement({ teacher: decoded.userId, ...data });
+        await announcement.save();
+
+        let query = { role: 'student' };
+        if (data.recipients !== 'all') query.class = data.recipients;
+        const students = await User.find(query);
+        const notifications = students.map(s => ({
+          user: s._id,
+          message: `Announcement: ${data.title}`,
+          type: 'info',
+          link: '#'
+        }));
+        if (notifications.length > 0) await Notification.insertMany(notifications);
+
+        return { statusCode: 201, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(announcement) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+    // 12. POST /api/schedule
+    if (path === '/api/schedule' && actualMethod === 'POST') {
+      try {
+        const decoded = getAuth();
+        if (decoded.role !== 'teacher') return { statusCode: 403, body: JSON.stringify({ error: 'Access denied' }) };
+
+        const schedule = new Schedule({ teacher: decoded.userId, ...data });
+        await schedule.save();
+
+        const students = await User.find({ role: 'student', 'class': data.class_name });
+        const notifications = students.map(s => ({
+          user: s._id,
+          message: `Class Scheduled: ${data.subject} @ ${data.time}`,
+          type: 'success',
+          link: '/student-schedule.html'
+        }));
+        if (notifications.length > 0) await Notification.insertMany(notifications);
+
+        return { statusCode: 201, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(schedule) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+    // 13. POST /api/feedback
+    if (path === '/api/feedback' && actualMethod === 'POST') {
+      try {
+        const feedback = new Feedback(data);
+        await feedback.save();
+        return { statusCode: 201, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'Feedback sent' }) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+    // 14. POST /api/messages
+    if (path === '/api/messages' && actualMethod === 'POST') {
+      try {
+        const decoded = getAuth();
+        const { recipientId, groupId, content } = data;
+        const message = new Message({
+          sender: decoded.userId,
+          recipient: recipientId || undefined,
+          group: groupId || undefined,
+          content
+        });
+        await message.save();
+        return { statusCode: 201, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(message) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+    // 15. GET /api/conversations
+    if (path === '/api/conversations' && actualMethod === 'GET') {
+      try {
+        const decoded = getAuth();
+        const userId = decoded.userId;
+        const senders = await Message.distinct('sender', { recipient: userId });
+        const recipients = await Message.distinct('recipient', { sender: userId });
+        const userIds = [...new Set([...senders, ...recipients].map(id => id.toString()))];
+        const users = await User.find({ _id: { $in: userIds } }).select('name role class subject');
+
+        let result = users;
+        if (decoded.role === 'teacher') {
+          const classes = ['6', '7', '8', '9', '10', '11', '12'];
+          const groupChats = classes.map(c => ({ _id: `group:class-${c}`, name: `Class ${c} Group`, isGroup: true, class: c }));
+          result = [...groupChats, ...users];
+        }
+        return { statusCode: 200, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(result) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+    // 16. GET /api/messages/:id (Dynamic Path)
+    if (path.startsWith('/api/messages/') && actualMethod === 'GET') {
+      try {
+        const decoded = getAuth();
+        const otherUserId = path.split('/').pop(); // Extract ID
+
+        let query;
+        if (otherUserId.startsWith('group:')) {
+          const groupId = otherUserId.replace('group:', '');
+          query = { group: groupId };
+        } else {
+          query = {
+            $or: [
+              { sender: decoded.userId, recipient: otherUserId },
+              { sender: otherUserId, recipient: decoded.userId }
+            ]
+          };
+        }
+        const messages = await Message.find(query).sort({ createdAt: 1 }).limit(100);
+        return { statusCode: 200, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(messages) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+    // 17. GET /api/questions
+    if (path === '/api/questions' && actualMethod === 'GET') {
+      const { subject, topic, difficulty } = queryStringParameters;
+      const query = {};
+      if (subject) query.subject = subject;
+      if (topic) query.topic = topic;
+      if (difficulty) query.difficulty = difficulty;
+      try {
+        const questions = await Question.find(query).limit(20);
+        return { statusCode: 200, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(questions) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+    // 18. POST /api/questions
+    if (path === '/api/questions' && actualMethod === 'POST') {
+      try {
+        const decoded = getAuth();
+        if (decoded.role !== 'teacher') return { statusCode: 403, body: JSON.stringify({ error: 'Access denied' }) };
+
+        const q = new Question({ ...data, created_by: decoded.userId });
+        await q.save();
+        return { statusCode: 201, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(q) };
+      } catch (err) { return { statusCode: 500, body: JSON.stringify({ error: err.message }) }; }
+    }
+
+
     if (path === '/api/auth/register' && actualMethod === 'POST') {
       console.log('Matched registration route - processing registration request');
 
