@@ -87,7 +87,7 @@ A comprehensive educational platform that makes environmental education engaging
 4. **Set environment variables**
    In Netlify dashboard, go to Site settings > Environment variables:
    ```
-   MONGODB_URI=mongodb+srv://digloo:navnit@cluster0.a6xgm1l.mongodb.net/gurukulx?retryWrites=true&w=majority&appName=Cluster0
+   MONGODB_URI=mongodb+srv://digloo:password@cluster0.a6xgm1l.mongodb.net/gurukulx?retryWrites=true&w=majority&appName=Cluster0
    JWT_SECRET=gurukulx-super-secret-jwt-key-2024
    GEMINI_API_KEY=YOUR_GEMINI_API_KEY
    NODE_ENV=production
